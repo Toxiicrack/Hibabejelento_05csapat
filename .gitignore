@@ -1,0 +1,126 @@
+# ==========================================
+# .NET / Build output
+# ==========================================
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+build/
+bld/
+[Oo]ut/
+[Ll]og/
+[Ll]ogs/
+*.dll
+*.exe
+*.pdb
+*.cache
+*.ilk
+*.exp
+*.lib
+*.tlog
+*.log
+*.binlog
+
+# ==========================================
+# Visual Studio / Rider / VS Code
+# ==========================================
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.userprefs
+*.rsuser
+*.DotSettings.user
+
+# ==========================================
+# NuGet
+# ==========================================
+*.nupkg
+*.snupkg
+packages/
+!packages/build/
+.nuget/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# ==========================================
+# SQLite adatbázis (generált!)
+# ==========================================
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+*.sqlite-shm
+*.sqlite-wal
+
+# ==========================================
+# Entity Framework
+# ==========================================
+*.edmx.diagram
+__efmigrationshistory
+
+# ==========================================
+# .NET MAUI
+# ==========================================
+# Windows App SDK csomagok (ha unpackaged)
+*.msix
+*.msixbundle
+*.appx
+*.appxbundle
+*.appinstaller
+AppPackages/
+BundleArtifacts/
+!**/Resources/**
+
+# ==========================================
+# Windows
+# ==========================================
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+*.stackdump
+
+# ==========================================
+# macOS (ha valaki Mac-en is dolgozik)
+# ==========================================
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# ==========================================
+# Linux
+# ==========================================
+*~
+
+# ==========================================
+# JetBrains Rider
+# ==========================================
+*.sln.iml
+.idea/
+
+# ==========================================
+# Egyéb
+# ==========================================
+*.tmp
+*.temp
+*.bak
+*.orig
+*.rej
+*.swp
+*.swo
+*~
+*.pid
+*.seed
+*.pid.lock

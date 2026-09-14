@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Hibabejelento.Api": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:53417;http://localhost:53418"
+    }
+  }
+}
