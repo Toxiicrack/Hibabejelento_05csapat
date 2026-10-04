@@ -1,0 +1,220 @@
+\documentclass[12pt, a4paper, twoside]{article}
+
+\usepackage{fancyhdr} % for special numbering
+\fancyhfoffset{0pt}
+\usepackage{pdfpages} % for inserting complete pdf docs
+\usepackage[magyar]{babel} % hungarian language package
+
+% --- FONT CONFIGURATION ---
+\usepackage{titlesec} % package for customize sections
+\usepackage{fontspec} % package for customize sections with fonts
+
+% Global Font
+\setmainfont{Times New Roman}[
+    WordSpace = 1.2 % To make the lenght of the space more like in the Word
+]
+
+% Heading Font
+\newfontfamily\headingFont{Arial}[
+    WordSpace = 1.2
+]
+
+
+% --- SECTION STYLES CONFIGURATION ---
+% Section
+% Font: Arial, 16pt, bold
+% Line spacing: 1.5x (16pt * 1.5 = 24pt)
+% Spacing: 0pt before, 12pt after
+\newcommand{\sectionbreak}{\clearpage} % the new sections will start on a new page
+\titleformat{\section}
+    {\headingFont\bfseries\fontsize{16}{24}\selectfont}
+    {\thesection}
+    {1em}
+    {}
+\titlespacing*{\section}
+    {0pt} % Left indentation
+    {0pt} % Space before
+    {12pt} % Space after
+
+% Subsection
+% Font: Arial, 14pt, bold
+% Line spacing: 1x (14pt * 1 = 14pt)
+% Spacing: 12pt before, 12pt after
+\titleformat{\subsection}
+    {\headingFont\bfseries\fontsize{14}{14}\selectfont}
+    {\thesubsection}
+    {1em}
+    {}
+\titlespacing*{\subsection}
+    {0pt} % Left indentation
+    {12pt} % Space before
+    {12pt} % Space after
+
+% Subsubsection
+% Font: Arial, 12pt, bold
+% Line spacing: 1x (12pt * 1 = 12pt)
+% Spacing: 12pt before, 6pt after
+\titleformat{\subsubsection}
+    {\headingFont\bfseries\fontsize{12}{12}\selectfont}
+    {\thesubsubsection}
+    {1em}
+    {}
+\titlespacing*{\subsection}
+    {0pt} % Left indentation
+    {12pt} % Space before
+    {6pt} % Space after
+
+% --- HEADER AND FOOTER CONFIGURATION ---
+\pagestyle{fancy}
+\fancyhf{} % Clear all default headers and footers
+% Remove the horizontal line from the header and footer
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Set page numbers to the outer edges:
+% EL = Even Left
+% OR = Odd Right
+\fancyfoot[EL,OR]{\thepage}
+
+% --- LAYOUT AND GRAPHICS ---
+\usepackage{multirow} % for the tables
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{amsmath}
+\usepackage{caption}
+\captionsetup{
+    labelfont=bf,      % The label (e.g., Figure 1 - 1. ábra) will be in bold font.
+    labelsep=colon,     % The separator will be a colon (:) instead of a dot (.).
+    font=footnotesize % 10pt
+}
+
+\usepackage{enumitem} % for enumerations
+\setlist[itemize]{label=--}
+
+\usepackage{setspace}
+\setstretch{1.5} % Sets line spacing to 1.5
+% Set the paragraph indentation to 0 globally
+\setlength{\parindent}{0pt}
+% set space between paragraphs
+\usepackage{parskip} 
+\setlength{\parskip}{6pt}
+
+% --- BIBLIOGRAPHY CONFIGURATION ---
+\usepackage[square, numbers]{natbib}
+
+
+\begin{document}
+
+%\includepdf[pages=-]{címoldal.pdf} 
+\begin{titlepage}
+    \centering
+    \vspace*{1cm}
+    
+    {\Huge \bfseries Hibabejelentő és karbantartás-kezelő
+rendszer \par}
+    
+    \vspace{2.5cm}
+    
+    {\Large \textbf{Szerző:}\par}
+    \vspace{0.2cm}
+    {\large Farkas Levente, Horváth Dániel, Kantó József
+ \par}
+    
+    \vspace{2cm}
+    
+    {\Large \textbf{Témavezető:}\par}
+    \vspace{0.2cm}
+    {\large 
+Dr. Tarczali Tünde Tímea, Adjunktus \par}
+    
+    \vfill
+    {\large 2026 \par}
+    
+\end{titlepage}
+\includepdf[pages=-]{blank page.pdf} 
+%\includepdf[pages=-]{blank page.pdf} 
+
+
+\newpage
+\pagenumbering{gobble} % switch off page numbering
+
+% KIVONAT
+\begin{center}
+\noindent
+{\headingFont\bfseries\fontsize{16}{24}\selectfont Kivonat}
+\end{center}
+\addcontentsline{toc}{section}{Kivonat}
+\vspace{12pt}
+
+Féléves munkánk fő céltörekvése a projektlabor tantárgy keretein belül egy olyan program megtervezése, valamint megalkotása volt, mely képes egy elképzelt vállalat informatikai infrastruktúrájának megfelelő hatékony kezelésére, illetve a rendeltetés szerű működéshez támogatást nyújtani. A rendszer feladata lehetőséget biztosítani a felhasználók számára az általuk észlelt hibák rögzítése, valamint a vállalat IT Support csapata számára elérhetővé tenni ezen hibák kezelését, melyet a felhasználók egy könnyen kezelhető asztali alkalmazás kereteiben tehetnek meg. 
+A rendszer fejlesztése során kiemelt feladat volt a felhasználandó technológia kiválasztása, a rendszer architektúrájának felépítése, valamint a projekt technikai megvalósítása. A rendszer jellegéből adódóan munkánk során kiemelt figyelmet kapott a felhasználói igények kielégítése, a rendszer átláthatósága, valamint az esetleges jövőbeli bővítési lehetőségek figyelembe vétele.
+
+Az alkalmazásban a bejelentőknek lehetőségük van megadni a probléma legfontosabb adatait, mint például a probléma leírását, az érintett eszköz azonosítóját és egyéb olyan paramétereket melyek relevánsak lehetnek (például hálózati probléma esetén az ehhez kapcsolódó azonosító jellemzőket).
+
+\textbf{Kulcsszavak:} ticket, MAUI, asztali alkalmazás, WEB API
+\vspace{18pt}
+
+
+\newpage
+\tableofcontents
+
+\newpage
+\pagenumbering{arabic} % Arabic (1, 2, 3...) numbering
+\setcounter{page}{1}   % Ensure it starts with 1
+
+
+\section{Bevezetés}
+Egy vállalat mindennapjaiban nagyon fontos a harmonikus, problémamentes működés. Ez azonban sokszor nem valósulhat meg, mivel a különböző alrendszerek nem mindig tudnak zökkenőmentesen üzemelni, mely rendszerek közül erre a leghajlamosabb az IT infrastruktúra. Számos olyan hibalehetőség van ezekben a modern gépekben, melyek komoly károkat okozhatnak a vállalat életében, legyen az operációs rendszer hiba, hardveres meghibásodás vagy éppen egy-egy program nem megfelelő működése. A gyakorlat szerint emiatt sok cég bérel IT support szolgáltatásokat, vagy nagyobb vállalatok esetében akár saját IT csapatot is fenntartanak a megfelelő támogatás biztosítására. Mindazonáltal az emberi erőforrás semmit nem ér, ha nincs egy rendszer amelyben a felhasználók jelenthetik a felmerülő problémákat és az arra jogosultak a jelentett problémákat orvosolhatják. Csapatunk munkájának célja egy ilyen rendszer felépítése, mely folyamatot a lenti dokumentum részletezi a továbbiakban.
+
+\subsection{A projekt tervezése}
+Célunk elérése a tervezés fázisával kezdődött. A kiadott specifikációk alapján elemeztük az elvárt funkciókat, valamint kiegészítettük saját ötleteinkkel. Felépítettük a funkciók gondolati hálóját, továbbá kialakítottuk a rendszer alapját szolgáló adatbázis térképét is. A rendszer egy vállalati IT-infrastruktúráért felelős szervezet belső hibabejelentő és ticketkezelő alkalmazása. A cél az IT-problémák bejelentése, nyilvántartása, megfelelő karbantartói csoporthoz rendelése, kezelése, kommunikációja, dokumentálása és lezárása.
+\begin{itemize}
+    \item IT problémák és hibák bejelentése.
+    \item  Hibák nyilvántartása és egyedi azonosítóval történő kezelése (például INC123123).
+    \item Ticketek karbantartói csoporthoz rendelése.
+    \item Csoporttagok számára a ticketek megtekintése és magukra vétele.
+    \item Ticketek állapotának követése.
+    \item Tickethez kapcsolódó kommunikáció és bejegyzések kezelése.
+    \item Elvégzett munkák és javítási információk rögzítése.
+    \item Felhasználók, csoportok és kategóriák adminisztrációja.
+    \item Alkalmazáson belüli értesítések használata. 
+\end{itemize}   
+A rendszer központi eleme a ticket. A felhasználó létrehozza, az adminisztrátor szükség esetén kategorizálja/priorizálja és karbantartói csoporthoz rendeli, a csoport tagjai megtekintik és egyikük magára veszi, majd a karbantartó bejegyzésekkel és javítási információkkal kezeli, végül lezárja. A felhasználó a ticketet követi, válaszolhat a karbantartónak, és lezárt ticket esetén indoklással újranyithatja.
+\subsection{Szerepkörök}
+Úgy, ahogy a céges hierarchia felépül úgy egy ilyen rendszer sem maradhat szerepkörök nélkül, melyek fundamentálisan meghatározzák, hogy melyik felhasználó milyen erőforrásokat, milyen funkciókat érhet el. A dokumentáció ezen fejezete ezekkel a szerepkörökkel foglalkozik.
+\subsubsection{Felhasználó/hibabejelentő}
+A rendszerben a legtöbb felhasználó egyben hibabejelentő is lesz. Ez a felhasználótípus rendelkezik a legkevesebb rendszer használati lehetőséggel, azonban egyben a legfontosabb eleme is ennek a gépezetnek, ugyanis ha nincsenek bejelentett hibák a többi szerepkör alkalmazottja tehetetlenek. Azoknak a felhasználóknak akiknek a jogosultsága hibabejelentő szinten van csak a rendszer bizonyos részeihez lesz hozzáférése. Engedélyük van az általuk észlelt hibákat az általunk fejlesztett applikáción keresztül jelenteni, megadva annak legfontosabb jellemzőit, mint a probléma leírását vagy az érintett eszköz azonosítását, továbbá lehetőségük van az általuk leadott ticketek megtekintésére és kezelésére is. Kezelés alatt értendő, hogy a rendszer számára visszajelezhetnek az elvégzett javítási munka minőségéről, továbbá képes egy adott ticketet visszavonni, valamint limitált ideig, ha azt az IT Support csapata már lezárta, de a probléma nem szűnt meg a felhasználó újranyithatja a ticketet.
+\subsubsection{IT Support}
+A rendszerben ezzel a jogkörrel rendelkező felhasználók felelőssek azért, hogy a bejelentett hibák elhárításra kerüljenek. Ennek a csoportnak a tagjai egy külön számukra létrehozott felületen keresztül követhetik a beérkező bejelentéseket, a leírások alapján pedig orvoslhatják azt. Az, hogy ehhez ki kell-e szállniuk a helyszínre a probléma fajtájától függ, mely meghatározható a ticket eszközkategóriájából is. Amennyiben a hiba a munkatárs szerint kijavításra került úgy azt a ticketet lezárhatja, azonban ezellen a hiba bejelentője limitált ideig, de fellebezhet, ezesetben pedig további figyelmet igényel a probléma megoldása.
+\subsubsection{Rendszer adminisztrátor}
+A rendszer adminisztrátora a titulus nevéből is adódóan a teljes rendszer igazgatásáért felelős. Minden szerepkörhöz hozzáférése van és minden szerepkör felett áll. Az összes rendelkezésre álló adatot kezeli, adott esetben bővíti azokat, új hiba kategóriákat, osztályozásokat hoz létre, töröl régi ticketeket.
+\subsection{Választott technológiák}
+\subsubsection{Frontend}
+\subsubsection{Backend}
+\section{Szoftver architektúra}
+\subsection{Rendszer felépítése}
+\subsection{Adatbázis kialakítása}
+\subsection{Asztali alkalmazás}
+\subsubsection{Hibabejelentő GUI}
+\subsubsection{IT Support GUI}
+\subsubsection{Rendszer adminisztrátor GUI}
+\section{Kommunikációs rendszer kialakítása (API)}
+\section{Megvalósítás menete és tesztelés}
+\section{Összegzés}
+
+
+\newpage
+
+\clearpage
+\renewcommand{\bibsection}{} % Delete 'Hivatkozás' word
+\begin{center}
+\noindent
+{\headingFont\bfseries\fontsize{16}{24}\selectfont Irodalomjegyzék}
+\end{center}
+\addcontentsline{toc}{section}{Irodalomjegyzék}
+\vspace{12pt}
+
+\bibliographystyle{apalike}
+\bibliography{references}
+
+\end{document}
