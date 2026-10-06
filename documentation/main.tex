@@ -1,215 +1,642 @@
 \documentclass[12pt, a4paper, twoside]{article}
 
-\usepackage{fancyhdr} % for special numbering
+\usepackage{fancyhdr}
 \fancyhfoffset{0pt}
-\usepackage{pdfpages} % for inserting complete pdf docs
-\usepackage[magyar]{babel} % hungarian language package
+\usepackage{pdfpages}
+\usepackage[magyar]{babel}
+\usepackage{titlesec}
+\usepackage{fontspec}
 
-% --- FONT CONFIGURATION ---
-\usepackage{titlesec} % package for customize sections
-\usepackage{fontspec} % package for customize sections with fonts
-
-% Global Font
+% Betűtípusok
 \setmainfont{Times New Roman}[
-    WordSpace = 1.2 % To make the lenght of the space more like in the Word
+    WordSpace = 1.2
 ]
 
-% Heading Font
 \newfontfamily\headingFont{Arial}[
     WordSpace = 1.2
 ]
 
+% Fejezetcímek
+\newcommand{\sectionbreak}{\clearpage}
 
-% --- SECTION STYLES CONFIGURATION ---
-% Section
-% Font: Arial, 16pt, bold
-% Line spacing: 1.5x (16pt * 1.5 = 24pt)
-% Spacing: 0pt before, 12pt after
-\newcommand{\sectionbreak}{\clearpage} % the new sections will start on a new page
 \titleformat{\section}
     {\headingFont\bfseries\fontsize{16}{24}\selectfont}
     {\thesection}
     {1em}
     {}
-\titlespacing*{\section}
-    {0pt} % Left indentation
-    {0pt} % Space before
-    {12pt} % Space after
 
-% Subsection
-% Font: Arial, 14pt, bold
-% Line spacing: 1x (14pt * 1 = 14pt)
-% Spacing: 12pt before, 12pt after
+\titlespacing*{\section}
+    {0pt}
+    {0pt}
+    {12pt}
+
 \titleformat{\subsection}
     {\headingFont\bfseries\fontsize{14}{14}\selectfont}
     {\thesubsection}
     {1em}
     {}
-\titlespacing*{\subsection}
-    {0pt} % Left indentation
-    {12pt} % Space before
-    {12pt} % Space after
 
-% Subsubsection
-% Font: Arial, 12pt, bold
-% Line spacing: 1x (12pt * 1 = 12pt)
-% Spacing: 12pt before, 6pt after
+\titlespacing*{\subsection}
+    {0pt}
+    {12pt}
+    {12pt}
+
 \titleformat{\subsubsection}
     {\headingFont\bfseries\fontsize{12}{12}\selectfont}
     {\thesubsubsection}
     {1em}
     {}
-\titlespacing*{\subsection}
-    {0pt} % Left indentation
-    {12pt} % Space before
-    {6pt} % Space after
 
-% --- HEADER AND FOOTER CONFIGURATION ---
+\titlespacing*{\subsubsection}
+    {0pt}
+    {12pt}
+    {6pt}
+
+% Élőfej és élőláb
 \pagestyle{fancy}
-\fancyhf{} % Clear all default headers and footers
-% Remove the horizontal line from the header and footer
+\fancyhf{}
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
-
-% Set page numbers to the outer edges:
-% EL = Even Left
-% OR = Odd Right
 \fancyfoot[EL,OR]{\thepage}
 
-% --- LAYOUT AND GRAPHICS ---
-\usepackage{multirow} % for the tables
+% Oldalelrendezés, ábrák, táblázatok
+\usepackage{multirow}
 \usepackage[margin=2.5cm]{geometry}
-\usepackage{graphicx} % Required for inserting images
+\usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{caption}
+
 \captionsetup{
-    labelfont=bf,      % The label (e.g., Figure 1 - 1. ábra) will be in bold font.
-    labelsep=colon,     % The separator will be a colon (:) instead of a dot (.).
-    font=footnotesize % 10pt
+    labelfont=bf,
+    labelsep=colon,
+    font=footnotesize
 }
 
-\usepackage{enumitem} % for enumerations
+% Listák és sortávolság
+\usepackage{enumitem}
 \setlist[itemize]{label=--}
 
 \usepackage{setspace}
-\setstretch{1.5} % Sets line spacing to 1.5
-% Set the paragraph indentation to 0 globally
+\setstretch{1.5}
+
 \setlength{\parindent}{0pt}
-% set space between paragraphs
-\usepackage{parskip} 
+\usepackage{parskip}
 \setlength{\parskip}{6pt}
 
-% --- BIBLIOGRAPHY CONFIGURATION ---
+% Irodalomjegyzék
 \usepackage[square, numbers]{natbib}
-
 
 \begin{document}
 
-%\includepdf[pages=-]{címoldal.pdf} 
+% Címlap
 \begin{titlepage}
     \centering
     \vspace*{1cm}
-    
+
     {\Huge \bfseries Hibabejelentő és karbantartás-kezelő
-rendszer \par}
-    
+    rendszer \par}
+
     \vspace{2.5cm}
-    
-    {\Large \textbf{Szerző:}\par}
+
+    {\Large \textbf{Szerzők:}\par}
     \vspace{0.2cm}
-    {\large Farkas Levente, Horváth Dániel, Kantó József
- \par}
-    
+    {\large Farkas Levente, Horváth Dániel, Kantó József\par}
+
     \vspace{2cm}
-    
+
     {\Large \textbf{Témavezető:}\par}
     \vspace{0.2cm}
-    {\large 
-Dr. Tarczali Tünde Tímea, Adjunktus \par}
-    
-    \vfill
-    {\large 2026 \par}
-    
-\end{titlepage}
-\includepdf[pages=-]{blank page.pdf} 
-%\includepdf[pages=-]{blank page.pdf} 
+    {\large Dr. Tarczali Tünde Tímea, adjunktus\par}
 
+    \vfill
+    {\large 2026\par}
+\end{titlepage}
+
+% Ha szükség van üres hátoldalra, később külön PDF-fájlként
+% feltölthető és itt visszaállítható az includepdf parancs.
 
 \newpage
-\pagenumbering{gobble} % switch off page numbering
+\pagenumbering{gobble}
 
-% KIVONAT
+% Kivonat
 \begin{center}
-\noindent
-{\headingFont\bfseries\fontsize{16}{24}\selectfont Kivonat}
+    \noindent
+    {\headingFont\bfseries\fontsize{16}{24}\selectfont Kivonat}
 \end{center}
 \addcontentsline{toc}{section}{Kivonat}
 \vspace{12pt}
 
-Féléves munkánk fő céltörekvése a projektlabor tantárgy keretein belül egy olyan program megtervezése, valamint megalkotása volt, mely képes egy elképzelt vállalat informatikai infrastruktúrájának megfelelő hatékony kezelésére, illetve a rendeltetés szerű működéshez támogatást nyújtani. A rendszer feladata lehetőséget biztosítani a felhasználók számára az általuk észlelt hibák rögzítése, valamint a vállalat IT Support csapata számára elérhetővé tenni ezen hibák kezelését, melyet a felhasználók egy könnyen kezelhető asztali alkalmazás kereteiben tehetnek meg. 
-A rendszer fejlesztése során kiemelt feladat volt a felhasználandó technológia kiválasztása, a rendszer architektúrájának felépítése, valamint a projekt technikai megvalósítása. A rendszer jellegéből adódóan munkánk során kiemelt figyelmet kapott a felhasználói igények kielégítése, a rendszer átláthatósága, valamint az esetleges jövőbeli bővítési lehetőségek figyelembe vétele.
+A projekt célja egy olyan asztali hibabejelentő és karbantartás-kezelő rendszer megtervezése és fokozatos megvalósítása, amely támogatja egy szervezet műszaki, jelen projektben elsősorban informatikai hibáinak bejelentését és kezelését. A rendszerben a felhasználók bejelentéseket hozhatnak létre, követhetik azok állapotát, a karbantartók pedig a hozzájuk rendelt feladatokat kezelhetik.
 
-Az alkalmazásban a bejelentőknek lehetőségük van megadni a probléma legfontosabb adatait, mint például a probléma leírását, az érintett eszköz azonosítóját és egyéb olyan paramétereket melyek relevánsak lehetnek (például hálózati probléma esetén az ehhez kapcsolódó azonosító jellemzőket).
+A rendszer tervezése során meghatároztuk a fő felhasználói szerepköröket, a bejelentések kezelésének tervezett folyamatát, valamint az alkalmazás alapvető architektúráját. A tervezett megoldás .NET MAUI asztali kliensből, .NET Web API-ból és a szerveroldalon kezelt SQLite-adatbázisból áll. A kliens HTTP-kéréseken keresztül kommunikál a szerverrel, az üzleti logikát és az adatbázis-hozzáférést pedig a Web API kezeli.
 
-\textbf{Kulcsszavak:} ticket, MAUI, asztali alkalmazás, WEB API
-\vspace{18pt}
+A jelenlegi prototípus az API és az adatbázis kapcsolatának ellenőrzésére alkalmas. A felhasználói azonosítás, a hibabejelentések teljes kezelése, a karbantartói munkafolyamat és az adminisztráció a további fejlesztés feladata. A dokumentáció különbséget tesz a már elkészült prototípus és a tervezett funkciók között.
 
+\textbf{Kulcsszavak:} hibabejelentés, ticketkezelés, .NET MAUI, Web API, SQLite
 
 \newpage
 \tableofcontents
 
 \newpage
-\pagenumbering{arabic} % Arabic (1, 2, 3...) numbering
-\setcounter{page}{1}   % Ensure it starts with 1
-
+\pagenumbering{arabic}
+\setcounter{page}{1}
 
 \section{Bevezetés}
-Egy vállalat mindennapjaiban nagyon fontos a harmonikus, problémamentes működés. Ez azonban sokszor nem valósulhat meg, mivel a különböző alrendszerek nem mindig tudnak zökkenőmentesen üzemelni, mely rendszerek közül erre a leghajlamosabb az IT infrastruktúra. Számos olyan hibalehetőség van ezekben a modern gépekben, melyek komoly károkat okozhatnak a vállalat életében, legyen az operációs rendszer hiba, hardveres meghibásodás vagy éppen egy-egy program nem megfelelő működése. A gyakorlat szerint emiatt sok cég bérel IT support szolgáltatásokat, vagy nagyobb vállalatok esetében akár saját IT csapatot is fenntartanak a megfelelő támogatás biztosítására. Mindazonáltal az emberi erőforrás semmit nem ér, ha nincs egy rendszer amelyben a felhasználók jelenthetik a felmerülő problémákat és az arra jogosultak a jelentett problémákat orvosolhatják. Csapatunk munkájának célja egy ilyen rendszer felépítése, mely folyamatot a lenti dokumentum részletezi a továbbiakban.
+
+Egy szervezet mindennapi működését különböző műszaki problémák nehezíthetik. Ezek között lehetnek épülethez, eszközökhöz, hálózathoz vagy informatikai szolgáltatásokhoz kapcsolódó hibák. Ha a problémák bejelentése informális csatornákon, például szóban vagy e-mailben történik, nehezebb nyomon követni, hogy ki foglalkozik velük, milyen állapotban vannak, és milyen intézkedés történt.
+
+A projekt célja egy olyan alkalmazás megtervezése és megvalósítása, amely egységes felületet biztosít a hibák bejelentésére, nyilvántartására és kezelésére. A bejelentő rögzítheti a probléma lényeges adatait, később megtekintheti saját bejelentéseinek állapotát, a karbantartást végző munkatárs pedig kezelheti a hozzá rendelt feladatokat.
+
+A kiadott projektfeladat általános műszaki hibabejelentő rendszert ír le. A projekt jelenlegi terve ezt a feladatot egy szervezet belső, elsősorban informatikai infrastruktúrájához kapcsolódó hibakezelési folyamatára szűkíti. A dokumentációban ezt a szűkített projektkört használjuk.
+
+\subsection{A projekt célja}
+
+A rendszer célja, hogy a hibabejelentések kezelése átlátható, visszakereshető és szerepkörökhöz kötött legyen. A bejelentéseknek egyedi azonosítójuk van, és az életciklusuk során rögzülnek a hozzájuk tartozó állapotváltozások és kommunikációs bejegyzések.
+
+A rendszer tervezett fő funkciói:
+
+\begin{itemize}
+    \item műszaki hibák bejelentése;
+    \item egyedi azonosító rendelése a bejelentésekhez;
+    \item a bejelentések kategorizálása és priorizálása;
+    \item bejelentések karbantartói csoporthoz rendelése;
+    \item a csoporttagok számára a csoporthoz rendelt feladatok megtekintése;
+    \item a feladatok átvétele és kezelése;
+    \item a bejelentés állapotának követése;
+    \item kommunikációs bejegyzések és javítási információk rögzítése;
+    \item alkalmazáson belüli értesítések megjelenítése;
+    \item felhasználók, csoportok és kategóriák adminisztrációja.
+\end{itemize}
+
+\subsection{A projekt hatóköre}
+
+A projekt első változata a bejelentés létrehozására, nyomon követésére és kezelésére összpontosít. A rendszer felhasználói bejelentői, karbantartói és adminisztrátori feladatokat látnak el. A karbantartó nem feltétlenül külön felhasználói típus: a karbantartói feladatokat olyan felhasználó végzi, aki egy karbantartói csoport tagja.
+
+A jelenlegi tervben a keresés az egyedi ticketazonosító alapján történik. A kategória, állapot, prioritás vagy dátum szerinti részletes szűrés későbbi bővítésként kezelhető. E-mailes értesítés nem része az első változat követelményeinek; a rendszer alkalmazáson belüli értesítéseket használ.
 
 \subsection{A projekt tervezése}
-Célunk elérése a tervezés fázisával kezdődött. A kiadott specifikációk alapján elemeztük az elvárt funkciókat, valamint kiegészítettük saját ötleteinkkel. Felépítettük a funkciók gondolati hálóját, továbbá kialakítottuk a rendszer alapját szolgáló adatbázis térképét is. A rendszer egy vállalati IT-infrastruktúráért felelős szervezet belső hibabejelentő és ticketkezelő alkalmazása. A cél az IT-problémák bejelentése, nyilvántartása, megfelelő karbantartói csoporthoz rendelése, kezelése, kommunikációja, dokumentálása és lezárása.
+
+A munka a kiadott specifikáció elemzésével kezdődött. A csapat meghatározta a fő funkciókat, a tervezett felhasználói szerepköröket, valamint a bejelentések kezelésének alapvető folyamatát. A tervezéshez használati eseteket és adatbázistervet készítettünk.
+
+A rendszer központi eleme a hibabejelentés, más néven ticket. A felhasználó létrehozza a bejelentést, az arra jogosult személy szükség esetén kategorizálja és priorizálja, majd karbantartói csoporthoz rendeli. A csoport tagjai megtekintik a feladatot, és egyikük átveheti annak kezelését. A karbantartó bejegyzéseket és javítási információkat rögzíthet, majd lezárhatja a bejelentést. A bejelentő követheti a folyamatot, válaszolhat a karbantartónak, és indoklással újranyithatja a lezárt bejelentést.
+
+\section{Követelmények és szerepkörök}
+
+\subsection{Felhasználói szerepkörök}
+
+A rendszer három fő szerepkört különít el: bejelentő, karbantartó és adminisztrátor. A jogosultságok meghatározzák, hogy az adott felhasználó mely bejelentéseket láthatja, illetve milyen műveleteket hajthat végre.
+
+\subsubsection{Felhasználó és hibabejelentő}
+
+A hibabejelentő a rendszer alapvető felhasználója. Regisztráció és adminisztrátori jóváhagyás után bejelentkezhet az alkalmazásba. Új hibabejelentést hozhat létre, megtekintheti saját bejelentéseit, és egyedi azonosító alapján kereshet közöttük.
+
+A bejelentő kommunikációs bejegyzést írhat a saját ticketjéhez. Lezárt bejelentését indoklással újranyithatja. A felhasználó megtekintheti a számára létrehozott alkalmazáson belüli értesítéseket is.
+
+\subsubsection{Karbantartó}
+
+A karbantartó olyan felhasználó, aki egy karbantartói csoport tagja. A csoporthoz rendelt ticketeket megtekintheti, és a csoport tagjaként magára veheti valamelyik feladatot. A karbantartó kommunikációs bejegyzést írhat, rögzítheti az elvégzett munkával kapcsolatos információkat, frissítheti a bejelentés állapotát, és lezárhatja a feladatot.
+
+A karbantartó a bejelentői funkciókat is használhatja, tehát saját maga is létrehozhat hibabejelentést.
+
+\subsubsection{Rendszeradminisztrátor}
+
+Az adminisztrátor felelős a rendszer alapadatainak és felhasználóinak kezeléséért. Jóváhagyhatja a regisztrációkat, inaktiválhat felhasználókat, csoporthoz rendelheti őket, valamint kezelheti a karbantartói csoportokat és kategóriákat.
+
+Az adminisztrátor a bejelentéseket áttekintheti, karbantartói csoporthoz rendelheti, illetve módosíthatja azok prioritását. Az adminisztrátori fiók külön jogosultsági kategória; az adminisztrátori felhasználó nem kerül automatikusan karbantartói csoportba.
+
+A prioritásértékek és a hozzájuk tartozó határidő-szabályok kódban definiált beállítások; ezeket az adminisztrátor nem módosíthatja az alkalmazásból.
+
+\subsection{Regisztráció és felhasználókezelés}
+
+A regisztrációs folyamat tervezett lépései:
+
+\begin{enumerate}
+    \item A felhasználó regisztrációt kezdeményez.
+    \item A regisztráció adminisztrátori jóváhagyásra vár.
+    \item Az adminisztrátor áttekinti a regisztrációt.
+    \item Jóváhagyás után a felhasználó aktívvá válik.
+    \item Az aktív felhasználó bejelentkezhet az alkalmazásba.
+\end{enumerate}
+
+A regisztráció és a bejelentkezés külön funkció. A regisztráció felhasználói fiókot kezdeményez, a bejelentkezés pedig egy már jóváhagyott fiók használatát teszi lehetővé.
+
+A jelenlegi követelmények szerint a felhasználó manuális létrehozása, általános adatainak módosítása és törlése nem része az adminisztrátori funkcióknak. A felhasználó inaktiválható, jóváhagyható, illetve karbantartói csoporthoz rendelhető. Egy felhasználó legfeljebb egy karbantartói csoport tagja lehet.
+
+\subsection{Bejelentések adatai}
+
+A bejelentés az alábbi adatokat tartalmazza:
+
 \begin{itemize}
-    \item IT problémák és hibák bejelentése.
-    \item  Hibák nyilvántartása és egyedi azonosítóval történő kezelése (például INC123123).
-    \item Ticketek karbantartói csoporthoz rendelése.
-    \item Csoporttagok számára a ticketek megtekintése és magukra vétele.
-    \item Ticketek állapotának követése.
-    \item Tickethez kapcsolódó kommunikáció és bejegyzések kezelése.
-    \item Elvégzett munkák és javítási információk rögzítése.
-    \item Felhasználók, csoportok és kategóriák adminisztrációja.
-    \item Alkalmazáson belüli értesítések használata. 
-\end{itemize}   
-A rendszer központi eleme a ticket. A felhasználó létrehozza, az adminisztrátor szükség esetén kategorizálja/priorizálja és karbantartói csoporthoz rendeli, a csoport tagjai megtekintik és egyikük magára veszi, majd a karbantartó bejegyzésekkel és javítási információkkal kezeli, végül lezárja. A felhasználó a ticketet követi, válaszolhat a karbantartónak, és lezárt ticket esetén indoklással újranyithatja.
-\subsection{Szerepkörök}
-Úgy, ahogy a céges hierarchia felépül úgy egy ilyen rendszer sem maradhat szerepkörök nélkül, melyek fundamentálisan meghatározzák, hogy melyik felhasználó milyen erőforrásokat, milyen funkciókat érhet el. A dokumentáció ezen fejezete ezekkel a szerepkörökkel foglalkozik.
-\subsubsection{Felhasználó/hibabejelentő}
-A rendszerben a legtöbb felhasználó egyben hibabejelentő is lesz. Ez a felhasználótípus rendelkezik a legkevesebb rendszer használati lehetőséggel, azonban egyben a legfontosabb eleme is ennek a gépezetnek, ugyanis ha nincsenek bejelentett hibák a többi szerepkör alkalmazottja tehetetlenek. Azoknak a felhasználóknak akiknek a jogosultsága hibabejelentő szinten van csak a rendszer bizonyos részeihez lesz hozzáférése. Engedélyük van az általuk észlelt hibákat az általunk fejlesztett applikáción keresztül jelenteni, megadva annak legfontosabb jellemzőit, mint a probléma leírását vagy az érintett eszköz azonosítását, továbbá lehetőségük van az általuk leadott ticketek megtekintésére és kezelésére is. Kezelés alatt értendő, hogy a rendszer számára visszajelezhetnek az elvégzett javítási munka minőségéről, továbbá képes egy adott ticketet visszavonni, valamint limitált ideig, ha azt az IT Support csapata már lezárta, de a probléma nem szűnt meg a felhasználó újranyithatja a ticketet.
-\subsubsection{IT Support}
-A rendszerben ezzel a jogkörrel rendelkező felhasználók felelőssek azért, hogy a bejelentett hibák elhárításra kerüljenek. Ennek a csoportnak a tagjai egy külön számukra létrehozott felületen keresztül követhetik a beérkező bejelentéseket, a leírások alapján pedig orvoslhatják azt. Az, hogy ehhez ki kell-e szállniuk a helyszínre a probléma fajtájától függ, mely meghatározható a ticket eszközkategóriájából is. Amennyiben a hiba a munkatárs szerint kijavításra került úgy azt a ticketet lezárhatja, azonban ezellen a hiba bejelentője limitált ideig, de fellebezhet, ezesetben pedig további figyelmet igényel a probléma megoldása.
-\subsubsection{Rendszer adminisztrátor}
-A rendszer adminisztrátora a titulus nevéből is adódóan a teljes rendszer igazgatásáért felelős. Minden szerepkörhöz hozzáférése van és minden szerepkör felett áll. Az összes rendelkezésre álló adatot kezeli, adott esetben bővíti azokat, új hiba kategóriákat, osztályozásokat hoz létre, töröl régi ticketeket.
-\subsection{Választott technológiák}
-\subsubsection{Frontend}
-\subsubsection{Backend}
+    \item egyedi ticketazonosító;
+    \item cím és leírás;
+    \item a probléma jellege;
+    \item kötelező helyszín;
+    \item opcionális eszközazonosító;
+    \item kategória;
+    \item prioritás;
+    \item határidő;
+    \item aktuális állapot;
+    \item bejelentő;
+    \item hozzárendelt karbantartói csoport;
+    \item aktuális kezelő, ha egy karbantartó átvette a feladatot;
+    \item a bejelentéshez tartozó bejegyzések;
+    \item létrehozás, módosítás és lezárás időpontja.
+\end{itemize}
+
+A bejelentés helyszínének megadása kötelező, mert ez segíti a hiba beazonosítását és a szükséges intézkedés megtervezését. Az érintett eszköz azonosítója opcionális, mivel nem minden probléma köthető egy konkrét eszközhöz.
+
+A prioritást a rendszer négy, kódban definiált érték egyikeként kezeli: Alacsony, Normál, Magas vagy Sürgős. Ezeket az adminisztrátor nem módosíthatja az alkalmazásban. A fejlesztők számára a prioritások és a hozzájuk rendelt határidők egy központi kódbeli beállításban módosíthatók.
+
+A határidő munkanapokban számítódik. Az első változatban munkanapnak a hétfőtől péntekig tartó napok számítanak; a munkaszüneti napok külön naptári kezelése nem része a rendszernek. A tervezett alapértékek: Sürgős 1, Magas 3, Normál 5, Alacsony 10 munkanap. A határidő a bejelentés létrehozásakor, a kiválasztott prioritás alapján keletkezik.
+
+A kategóriák adminisztrátori kezelés alatt állnak. A kategória azt jelöli, hogy a probléma melyik kezelési csoportba tartozik, míg a probléma jellege a bejelentő által megadott technikai típust írja le.
+
+\subsection{Állapotok és munkafolyamat}
+
+A jelenlegi tervben a bejelentés lehetséges állapotai:
+
+\begin{itemize}
+    \item Nyitva;
+    \item Folyamatban;
+    \item Válaszra vár;
+    \item Újranyitott;
+    \item Lezárt -- elvégezve;
+    \item Lezárt -- visszavonva;
+    \item Lezárt -- elutasítva;
+    \item Lezárt -- megkerülő megoldással.
+\end{itemize}
+
+Az alapfolyamat tervezett menete:
+
+\begin{center}
+\textit{Nyitva}
+$\rightarrow$
+\textit{Folyamatban}
+$\rightarrow$
+\textit{Válaszra vár}
+$\rightarrow$
+\textit{Folyamatban}
+$\rightarrow$
+\textit{Lezárt állapot}
+\end{center}
+
+A karbantartó a bejelentés kezelése során bejegyzést írhat a tickethez. Ha a bejegyzés a bejelentőtől választ vagy további információt kér, a bejelentés Válaszra vár állapotba kerül, és a bejelentő értesítést kap. A bejelentő válasza után a bejelentés automatikusan Folyamatban állapotú lesz.
+
+A lezárást a karbantartó végzi. A lezárás módját a bejelentővel folytatott kommunikáció és a probléma megoldásának eredménye alapján választja ki. A lezárás módja lehet elvégzett munka, visszavonás, elutasítás vagy megkerülő megoldás.
+
+A bejelentő bármely lezárt állapotból újranyithatja saját bejelentését, de ehhez indoklást kell megadnia. Az újranyitott bejelentés a felhasználó első új bejegyzésekor Folyamatban állapotba kerül.
+
+\subsection{Bejegyzések és értesítések}
+
+Egy bejelentéshez több bejegyzés tartozhat. A bejegyzések a bejelentő, a karbantartó és az adminisztrátor közötti kommunikáció előzményeit rögzítik. A karbantartó az elvégzett munka leírását is ezekben a bejegyzésekben rögzíti; külön javítási tábla nem szükséges.
+
+A tervezett alkalmazáson belüli értesítések címzettjei:
+
+\begin{itemize}
+    \item a bejelentő: állapotváltozás, új bejegyzés vagy újranyitás esetén;
+    \item a karbantartó: csoporthoz rendelt ticket vagy felhasználói válasz esetén;
+    \item az adminisztrátor: új regisztráció esetén.
+\end{itemize}
+
+A rendszer nem törli a bejelentéseket. A lezárás állapotváltozással történik, hogy a bejelentéshez tartozó előzmények megmaradjanak.
+
+\subsection{Nem funkcionális követelmények}
+
+A rendszernek a felhasználói műveleteket átláthatóan kell kezelnie. A kliens jelezze a folyamatban lévő műveleteket, a sikeres eredményt és a hibát is. A hibaüzenetek legyenek a felhasználó számára érthetők, és ne tartalmazzanak belső technikai adatokat.
+
+A szerveroldali ellenőrzésnek minden védett műveletnél érvényesülnie kell. Az adatbázis közvetlenül nem érhető el a kliensből. A jelszavakat nem szabad olvasható formában tárolni.
+
+A rendszernek meg kell őriznie a bejelentésekhez tartozó kommunikációs előzményeket és állapotváltozásokat. A bejelentések törlése helyett lezárás vagy felhasználó-inaktiválás használható, így a korábbi adatok visszakereshetők maradnak.
+
+\section{Használati esetek}
+
+A használati esetek azt mutatják be, hogy az egyes felhasználói szerepkörök milyen funkciókat érhetnek el a rendszerben. A projekt használatieset-diagramja a bejelentő, a karbantartói csoport tagja és az adminisztrátor fő műveleteit foglalja össze.
+
+\begin{figure}[htbp]
+    \centering
+    \IfFileExists{UseCase.png}
+        {\includegraphics[width=0.98\textwidth,height=0.68\textheight,keepaspectratio]{UseCase.png}}
+        {\fbox{\parbox{0.85\textwidth}{\centering
+        A Use Case-ábra helye. Töltsd fel a képet UseCase.png néven az Overleaf-projektbe.}}}
+    \caption{A hibabejelentő rendszer használatieset-diagramja}
+    \label{fig:use-case}
+\end{figure}
+
+\subsection{A bejelentő használati esetei}
+
+A bejelentő regisztrációval kezdeményezheti a rendszer használatát. A regisztráció jóváhagyását követően bejelentkezhet, hibabejelentést hozhat létre, és áttekintheti a saját bejelentéseit. A bejelentés egyedi azonosítója alapján visszakeresheti az adott ticketet.
+
+A bejelentő a tickethez kapcsolódó bejegyzésben válaszolhat a karbantartónak. Ha a bejelentés lezárult, de a probléma továbbra is fennáll, indoklással újranyithatja. A számára létrehozott alkalmazáson belüli értesítéseket szintén megtekintheti.
+
+\subsection{A karbantartó használati esetei}
+
+A karbantartó a saját bejelentésein túl láthatja a karbantartói csoportjához rendelt ticketeket. A csoporthoz rendelt bejelentést magára veheti, ezzel jelezve, hogy ő végzi a kezelését.
+
+A ticket kezelése során bejegyzést írhat, a bejelentővel folytatott kommunikáció alapján állapotváltozást kezdeményezhet, és rögzítheti az elvégzett munka leírását. A bejelentés lezárásakor megadja a lezárás eredményét, például azt, hogy a hiba elhárult, a bejelentést visszavonták vagy elutasították, illetve megkerülő megoldást alkalmaztak.
+
+\subsection{Az adminisztrátor használati esetei}
+
+Az adminisztrátor a regisztrációkat jóváhagyhatja, felhasználókat inaktiválhat és karbantartói csoporthoz rendelhet. Kezeli a csoportokat és a hibakategóriákat, valamint bejelentéseket rendelhet karbantartói csoporthoz és módosíthatja azok prioritását.
+
+A prioritásértékek és a határidő-szabályok nem az adminisztrátori felületen módosíthatók. Ezek a rendszer kódbeli beállításai közé tartoznak.
+
+\section{Választott technológiák}
+
+A rendszer tervezett felépítése egy asztali kliensből, egy HTTP-alapú alkalmazásprogramozási felületből (API) és egy szerveroldali adatbázisból áll. A kliens feladata a felhasználói felület megjelenítése és a felhasználói műveletek kezdeményezése. Az üzleti szabályok ellenőrzése és az adatok kezelése a Web API feladatkörébe tartozik. Az adatbázist a kliens nem éri el közvetlenül.
+
+A jelenlegi prototípusban már létrejött a .NET MAUI kliensprojekt és a .NET Web API projekt. A kliens jelenleg az API, illetve az adatbázis elérhetőségét ellenőrzi. A hibabejelentések teljes kezelése és a jogosultsági rendszer még tervezési, illetve fejlesztési feladat.
+
+\subsection{Frontend}
+
+A kliensalkalmazás .NET MAUI keretrendszerrel, C\# nyelven készül. A MAUI lehetőséget ad arra, hogy a felhasználói felület és az alkalmazás logikájának jelentős része közös projektben készüljön el. A projekt jelenlegi célplatformja a Windows asztali környezet.
+
+A kliens a szerverrel HTTP-kéréseken keresztül kommunikál. A jelenlegi prototípusban egy szolgáltatásosztály végzi az API elérését, és az alkalmazás egy állapotellenőrző végpont válaszát jeleníti meg. A tervezett funkciók megvalósításakor hasonló módon történhet majd a bejelentések létrehozása, listázása, részleteinek megtekintése és módosítása is.
+
+A kliens nem tárolja és nem kezeli közvetlenül az SQLite-adatbázist. Ez a kialakítás elkülöníti a felhasználói felületet az adatkezeléstől, és lehetővé teszi, hogy az üzleti szabályokat a szerver ellenőrizze.
+
+\subsection{Backend}
+
+A szerveroldali alkalmazás ASP.NET Core Web API formájában készül C\# nyelven. A projekt .NET 10 célkeretrendszert használ. A Web API fogadja a kliens kéréseit, ellenőrzi azok érvényességét, végrehajtja az üzleti szabályokat, majd választ küld a kliensnek.
+
+A jelenlegi prototípus tartalmaz egy állapotellenőrző végpontot. Ez megpróbál kapcsolatot létesíteni az adatbázissal, majd visszajelzi a szolgáltatás és az adatbázis elérhetőségét. A fejlesztői környezetben az API OpenAPI-leírást és Swagger felületet is biztosít a végpontok áttekintéséhez.
+
+A projekt jelenlegi adat-hozzáférési rétege az Entity Framework Core SQLite-szolgáltatóját használja. A további fejlesztés során a bejelentkezést, a jogosultság-ellenőrzést, a bejelentések kezelését és az értesítések létrehozását is a szerveroldali rétegben kell megvalósítani.
+
 \section{Szoftver architektúra}
+
 \subsection{Rendszer felépítése}
+
+A rendszer három fő részből áll:
+
+\begin{itemize}
+    \item \textbf{MAUI kliens:} megjeleníti a felhasználói felületet, összegyűjti a felhasználó által megadott adatokat, és kéréseket küld az API-nak.
+    \item \textbf{Web API:} fogadja és feldolgozza a kliens kéréseit, ellenőrzi az üzleti szabályokat, kezeli a jogosultságokat, valamint elvégzi az adatbázis-műveleteket.
+    \item \textbf{SQLite adatbázis:} a szerveroldali alkalmazás által kezelt adatokat tárolja, például a felhasználókat, csoportokat, bejelentéseket és bejegyzéseket.
+\end{itemize}
+
+A fő kommunikációs útvonal:
+
+\begin{center}
+\texttt{.NET MAUI kliens}
+$\rightarrow$
+\texttt{HTTP/REST API}
+$\rightarrow$
+\texttt{.NET Web API}
+$\rightarrow$
+\texttt{SQLite adatbázis}
+\end{center}
+
+A kliens a Web API-n keresztül kezdeményez adatlekérést vagy adatváltoztatást. A szerver ellenőrzi, hogy a kérés megfelel-e a rendszer szabályainak, majd szükség esetén módosítja az adatbázist. A kliens a szerver válasza alapján frissíti a megjelenített adatokat.
+
+Ez az architektúra a felhasználói felületet, az üzleti logikát és az adattárolást különíti el. Ennek eredményeként az adatbázis közvetlenül nem érhető el a kliensből, az adatokat érintő döntések pedig egy helyen, a szerveren kezelhetők.
+
 \subsection{Adatbázis kialakítása}
+
+A rendszer adatbázisa a Web API által kezelt SQLite-adatbázis. Az adatmodell relációs felépítésű: a bejelentések a felhasználókhoz, csoportokhoz, kategóriákhoz és állapotokhoz kapcsolódnak. A kommunikációs bejegyzéseket, az újranyitási indoklásokat és az állapotváltozások előzményeit külön táblák tárolják.
+
+\begin{figure}[htbp]
+    \centering
+    \IfFileExists{AdatbazisTerv.png}
+        {\includegraphics[width=0.98\textwidth,height=0.68\textheight,keepaspectratio]{AdatbazisTerv.png}}
+        {\fbox{\parbox{0.85\textwidth}{\centering
+        Az adatbázisterv ábrájának helye. Töltsd fel a képet AdatbazisTerv.png néven az Overleaf-projektbe.}}}
+    \caption{A hibabejelentő rendszer tervezett adatmodellje}
+    \label{fig:database}
+\end{figure}
+
+\subsubsection{Felhasználók és karbantartói csoportok}
+
+A \texttt{Users} tábla tárolja a felhasználó nevét, e-mail-címét, jelszóhash-ét, aktív állapotát és regisztrációs állapotát. Az e-mail-cím egyedi. Az adminisztrátori jogosultságot az \texttt{IsAdmin} mező jelzi.
+
+A karbantartói csoporttagságot a felhasználó \texttt{GroupId} mezője rögzíti. Egy csoporthoz több felhasználó tartozhat, egy felhasználó viszont legfeljebb egy csoport tagja lehet. A \texttt{Groups} tábla a csoport nevét, leírását és aktív állapotát tárolja. A csoportokat az adminisztrátor kezeli.
+
+A felhasználók törlése helyett az inaktiválás használható. Ez megőrzi a korábbi bejelentésekhez és bejegyzésekhez fűződő kapcsolatokat.
+
+\subsubsection{Bejelentések és kategóriák}
+
+A \texttt{Tickets} tábla tartalmazza a bejelentés egyedi azonosítóját, címét, leírását, a hiba jellegét, kötelező helyszínét és opcionális eszközazonosítóját. Emellett rögzíti a bejelentőt, a kategóriát, a prioritást, az aktuális állapotot, a hozzárendelt csoportot és az aktuális kezelőt.
+
+A \texttt{TicketNumber} mező egyedi, felhasználók számára megjeleníthető azonosítót tárol, például \texttt{INC123123} formában. A \texttt{ReporterId} jelöli a bejelentőt. A \texttt{GroupId} az illetékes karbantartói csoportot, az \texttt{AssignedUserId} pedig az adott ticketet magára vevő karbantartót jelöli.
+
+A \texttt{Location} mező kötelező, mert a hiba helyének ismerete szükséges lehet a probléma kivizsgálásához. Az \texttt{AssetIdentifier} opcionális, mivel nem minden hiba köthető egy konkrét eszközhöz.
+
+A \texttt{Categories} tábla az adminisztrátor által kezelt hibakategóriákat tartalmazza. Egy kategóriához több bejelentés is tartozhat. A már használt kategóriát célszerű inaktiválni, nem törölni, hogy a korábbi bejelentések hivatkozásai megmaradjanak.
+
+\subsubsection{Prioritás és határidő}
+
+A prioritás négy rögzített értéke: Alacsony, Normál, Magas és Sürgős. Ezek C\# enumként szerepelnek a programban, az adatbázis pedig a kiválasztott érték egész számú azonosítóját tárolja. A prioritásoknak nincs külön adatbázistáblájuk, és az adminisztrátor nem módosíthatja őket az alkalmazásból.
+
+A prioritáshoz tartozó határidő-beállításokat a program egy központi helyen tartalmazza. A tervezett kezdőértékek:
+
+\begin{itemize}
+    \item Sürgős: 1 munkanap;
+    \item Magas: 3 munkanap;
+    \item Normál: 5 munkanap;
+    \item Alacsony: 10 munkanap.
+\end{itemize}
+
+A határidő számításakor a hétfőtől péntekig tartó napok számítanak munkanapnak. Az első változat nem használ külön munkaszüneti-naptárat. A ticket létrehozásakor a rendszer a prioritás alapján kiszámítja és elmenti a \texttt{DueDate} értékét.
+
+A kódbeli prioritásértékek szemléltető példája:
+
+\begin{verbatim}
+public enum TicketPriority
+{
+    Alacsony = 1,
+    Normal = 2,
+    Magas = 3,
+    Surgos = 4
+}
+\end{verbatim}
+
+A megjelenített feliratok magyar ékezetes formában jelennek meg. A \texttt{Surgos} azonosító kódbeli név; a felhasználói felületen „Sürgős” felirat tartozik hozzá.
+
+\subsubsection{Állapotok és állapotváltozási előzmények}
+
+A \texttt{Statuses} tábla tartalmazza a bejelentések lehetséges állapotait és azt, hogy az állapot lezártnak számít-e. Egy állapothoz több ticket tartozhat.
+
+A \texttt{Tickets.StatusId} mező az aktuális állapotot jelöli. Ez önmagában nem őrzi meg, hogy korábban milyen állapotokon ment át a bejelentés. Ezért a \texttt{TicketStatusHistory} tábla minden állapotváltásról külön rekordot tárol.
+
+Az előzményrekord tartalmazza a ticket azonosítóját, az előző és az új állapotot, a változás időpontját, valamint a változást kiváltó felhasználót, ha van ilyen. A ticket létrehozásakor az első állapotbejegyzésnél az előző állapot üres. Automatikus állapotváltás esetén a módosítást kiváltó felhasználó azonosítója lehet üres; a változás ettől függetlenül rögzül az előzményekben.
+
+\subsubsection{Bejegyzések, újranyitások és értesítések}
+
+A \texttt{TicketNotes} tábla tárolja a tickethez kapcsolódó kommunikációs bejegyzéseket. Egy bejegyzés egy tickethez és egy szerző felhasználóhoz tartozik. A bejegyzésekben a kommunikáció mellett az elvégzett munka leírása is rögzíthető; külön javítási tábla ezért nem szükséges.
+
+A \texttt{TicketReopenings} tábla az újranyitás indoklását és időpontját őrzi meg. Egy ticket többször is újranyitható, ezért egy bejelentéshez több újranyitási rekord tartozhat.
+
+A \texttt{Notifications} tábla tárolja az értesítés címzettjét, típusát, üzenetét, létrehozásának idejét és olvasottságát. Az értesítéshez ticket is kapcsolható; a \texttt{TicketId} üres lehet például olyan értesítésnél, amely nem egy konkrét bejelentéshez kapcsolódik.
+
+\subsubsection{A fő táblák és kapcsolataik összefoglalása}
+
+\begin{itemize}
+    \item Egy csoporthoz több felhasználó tartozhat; egy felhasználó legfeljebb egy csoporthoz rendelhető.
+    \item Egy felhasználó több bejelentést hozhat létre.
+    \item Egy felhasználó több ticket aktuális kezelője lehet.
+    \item Egy csoport több bejelentést kaphat.
+    \item Egy kategóriához több bejelentés tartozhat.
+    \item Egy tickethez több kommunikációs bejegyzés, újranyitási rekord és állapotváltozás tartozhat.
+    \item Egy felhasználó több bejegyzést írhat, újranyitást kezdeményezhet és értesítést kaphat.
+\end{itemize}
+
+A kapcsolatok alapján az adatbázis megőrzi, ki hozta létre és ki kezelte a bejelentést, melyik csoport felelős érte, milyen kommunikáció történt, és hogyan változott az állapota.
+
 \subsection{Asztali alkalmazás}
+
+Az asztali alkalmazás a felhasználói szerepköröknek megfelelő funkciókat jelenít meg. A bejelentői, karbantartói és adminisztrátori felületek eltérő műveleteket tesznek elérhetővé, miközben ugyanahhoz a Web API-hoz kapcsolódnak.
+
+A jelenlegi prototípus egy állapotoldalt tartalmaz, amely megjeleníti a backend és az adatbázis elérhetőségét, valamint lehetőséget ad az ellenőrzés megismétlésére. A lent leírt szerepkör-specifikus képernyők a rendszer tervezett funkciói; ezek teljes megvalósítása még hátravan.
+
 \subsubsection{Hibabejelentő GUI}
+
+A hibabejelentő felület célja, hogy a felhasználó gyorsan és érthetően rögzíthesse a tapasztalt problémát. A tervezett bejelentési folyamatban a felhasználó megadja a bejelentés címét, leírását, jellegét, kötelező helyszínét és -- ha releváns -- az érintett eszköz azonosítóját. A rendszer a bejelentés létrehozásakor egyedi azonosítót rendel hozzá.
+
+A felhasználó megtekintheti saját bejelentéseinek listáját, megnyithatja azok részleteit, és követheti az aktuális állapotot. A bejelentéshez kapcsolódó kommunikációs előzményben új bejegyzést írhat. Lezárt bejelentés újranyitásakor indoklást kell megadnia.
+
 \subsubsection{IT Support GUI}
-\subsubsection{Rendszer adminisztrátor GUI}
+
+A karbantartói felület a csoporthoz rendelt bejelentések áttekintését és kezelését támogatja. A karbantartó megnyithat egy bejelentést, részleteket olvashat róla, majd a csoport tagjaként magára veheti valamelyik feladatot.
+
+A kezelés során a karbantartó bejegyzéseket fűzhet a bejelentéshez, rögzítheti az elvégzett munka leírását, és módosíthatja az állapotot. A feladat lezárásakor meg kell adni a lezárás módját, például azt, hogy a hiba elhárult, a bejelentést visszavonták, elutasították, vagy átmeneti megoldás született.
+
+\subsubsection{Rendszeradminisztrátor GUI}
+
+Az adminisztrátori felület a felhasználók, csoportok, kategóriák és bejelentések felügyeletét támogatja. A tervezett funkciók közé tartozik a regisztrációk jóváhagyása, a felhasználók inaktiválása, csoporttagságok kezelése, valamint a bejelentések karbantartói csoporthoz rendelése.
+
+Az adminisztrátor a rendszer működéséhez szükséges kategóriákat és karbantartói csoportokat kezeli. A prioritások rögzített, kódban definiált értékek; ezek alkalmazásbeli módosítása nem adminisztrátori funkció.
+
 \section{Kommunikációs rendszer kialakítása (API)}
+
+\subsection{Az API szerepe}
+
+Az alkalmazás kliens- és szerveroldali része HTTP-alapú API-n keresztül kommunikál. Az API fogadja a kliens kéréseit, ellenőrzi az adatokat és a jogosultságokat, meghívja a szükséges üzleti logikát, majd szabványos formátumú választ küld vissza. A kommunikáció tervezett adatformátuma a JSON.
+
+A kliens nem kapcsolódik közvetlenül az adatbázishoz. A bejelentések lekérése, létrehozása vagy módosítása a Web API-n keresztül történik. Ez lehetővé teszi, hogy az üzleti szabályok ellenőrzése központilag, a szerveren valósuljon meg.
+
+A jelenlegi prototípus már tartalmaz egy állapotellenőrző végpontot. A \texttt{GET /api/health} kérés azt ellenőrzi, hogy az API elérhető-e, és az adatbázissal létrehozható-e kapcsolat. A hibabejelentésekhez és felhasználói műveletekhez tartozó végpontok a további fejlesztés során valósítandók meg.
+
+\subsection{Tervezett végpontok}
+
+Az alábbi útvonalak példaként mutatják be a tervezett API-műveleteket. Nem teljes végpontjegyzék, és nem jelenti azt, hogy mindegyik szerepel a jelenlegi prototípusban. A végleges útvonalakat a megvalósított API alapján kell dokumentálni.
+
+\begin{itemize}
+    \item \texttt{POST /api/auth/register} -- új felhasználói regisztráció kezdeményezése.
+    \item \texttt{POST /api/auth/login} -- jóváhagyott felhasználó bejelentkezése.
+    \item \texttt{GET /api/tickets} -- a bejelentkezett felhasználó jogosultságának megfelelő bejelentések lekérése.
+    \item \texttt{POST /api/tickets} -- új hibabejelentés létrehozása.
+    \item \texttt{GET /api/tickets/\{id\}} -- egy bejelentés részleteinek lekérése.
+    \item \texttt{GET /api/tickets/by-number/\{ticketNumber\}} -- bejelentés keresése egyedi azonosító alapján.
+    \item \texttt{POST /api/tickets/\{id\}/notes} -- kommunikációs vagy munkavégzési bejegyzés hozzáadása.
+    \item \texttt{POST /api/tickets/\{id\}/reopen} -- lezárt bejelentés újranyitása indoklással.
+    \item \texttt{POST /api/tickets/\{id\}/assign-group} -- bejelentés karbantartói csoporthoz rendelése.
+    \item \texttt{POST /api/tickets/\{id\}/take} -- csoporthoz rendelt bejelentés átvétele.
+    \item \texttt{POST /api/tickets/\{id\}/close} -- bejelentés lezárása a lezárás módjának megadásával.
+    \item \texttt{GET /api/notifications} -- a bejelentkezett felhasználó értesítéseinek lekérése.
+    \item \texttt{PATCH /api/notifications/\{id\}/read} -- értesítés olvasottként jelölése.
+    \item \texttt{GET /api/admin/registrations} -- jóváhagyásra váró regisztrációk megtekintése.
+    \item \texttt{POST /api/admin/registrations/\{id\}/approve} -- regisztráció jóváhagyása.
+\end{itemize}
+
+\subsection{Kérések és válaszok}
+
+A kliens a végpontoknak JSON-formátumú adatokat küldhet. Egy új bejelentés létrehozásakor a kérés törzse például a címet, a leírást, a hiba jellegét, a helyszínt, az opcionális eszközazonosítót és a kategória azonosítóját tartalmazhatja. A szerver ellenőrzi, hogy a szükséges adatok meg vannak-e adva, és a kapott azonosítók létező kategóriára hivatkoznak-e.
+
+Sikeres létrehozás esetén a válasz tartalmazhatja a létrejött bejelentés belső azonosítóját, egyedi ticketazonosítóját, kezdeti állapotát és létrehozási idejét. A kliens ezt az információt felhasználva megnyithatja a bejelentés részleteit.
+
+A válaszoknál célszerű a HTTP-státuszkódokat következetesen használni. Sikeres lekérés esetén például \texttt{200 OK}, sikeres létrehozás esetén \texttt{201 Created}, hibás bemenet esetén \texttt{400 Bad Request}, hiányzó vagy érvénytelen hitelesítésnél \texttt{401 Unauthorized}, elégtelen jogosultságnál \texttt{403 Forbidden}, nem létező erőforrásnál pedig \texttt{404 Not Found} adható vissza.
+
+A hibaválaszoknak a kliens számára feldolgozható, egyértelmű hibaüzenetet kell tartalmazniuk. A belső adatbázis-lekérdezéseket, jelszavakat vagy részletes technikai kivételinformációkat nem szabad a felhasználónak megjelenített válaszba tenni.
+
+\subsection{Hitelesítés és jogosultság-ellenőrzés}
+
+A tervezett rendszerben a felhasználó regisztrációja adminisztrátori jóváhagyáshoz kötött. A még nem jóváhagyott vagy inaktivált felhasználó nem használhatja a bejelentkezést igénylő funkciókat. Az API-nak minden védett műveletnél ellenőriznie kell a kéréshez tartozó felhasználói azonosítót és a felhasználó jogosultságát.
+
+A hozzáférés szabályait a szerepkör és a felhasználó adatai együtt határozzák meg. A bejelentő a saját bejelentéseit tekintheti meg. A karbantartó a saját bejelentései mellett a csoportjához rendelt bejelentéseket is elérheti. Az adminisztrátor a rendszer felügyeletéhez szükséges adatokhoz fér hozzá, és adminisztratív műveleteket végezhet.
+
+A felhasználói felület szerepkörönként elrejthet vagy megjeleníthet műveleteket, de ez önmagában nem biztonsági ellenőrzés. A szervernek kell eldöntenie, hogy a kérő felhasználó ténylegesen végrehajthatja-e a műveletet. Ezzel elkerülhető, hogy valaki a kliens közvetlen módosításával olyan adatot érjen el, amelyre nincs jogosultsága.
+
+A jelszavakat nem szabad olvasható formában tárolni. A megvalósítás során jelszóhash-elést kell használni, a hitelesítési adatok kezelését pedig a Web API feladatkörében kell megoldani. A konkrét hitelesítési megoldás és a munkamenet lejárati szabályai a fejlesztési terv további részletei.
+
+\subsection{A bejelentés életciklusa}
+
+A bejelentés létrehozásakor a rendszer egyedi azonosítót rendel hozzá, rögzíti a bejelentőt és a létrehozás idejét, valamint kezdeti állapotot és alapértelmezett prioritást állít be. A határidőt a kiválasztott prioritáshoz rendelt, kódban konfigurált munkanapszám alapján kell kiszámítani.
+
+A bejelentést az adminisztrátor vagy az erre jogosult felhasználó karbantartói csoporthoz rendelheti. A csoport tagjai látják a hozzájuk rendelt feladatot; egyikük átveheti, és ettől kezdve ő jelenik meg a bejelentés aktuális kezelőjeként.
+
+A kezelés során a karbantartó bejegyzéseket fűzhet a bejelentéshez. Ha a karbantartó választ vagy kérdést küld a bejelentőnek, a bejelentés a terv szerint Válaszra vár állapotba kerül. Amikor a bejelentő válaszol, a bejelentés ismét Folyamatban állapotú lesz.
+
+A karbantartó a feladat elvégzése után lezárja a bejelentést, és megadja a lezárás módját. A bejelentő a lezárást követően is megtekintheti a saját bejelentésének előzményeit. Ha a probléma nem szűnt meg, indoklással újranyithatja a bejelentést.
+
+Az állapotváltozások minden esetben bekerülnek a státuszelőzmény-táblába. Így az adatbázis az aktuális állapot mellett azt is megőrzi, hogy a bejelentés korábban milyen állapotokon ment keresztül.
+
+\subsection{Értesítések kezelése}
+
+Az értesítések célja, hogy a felhasználók észrevegyék a számukra fontos változásokat. A tervezett rendszer alkalmazáson belüli értesítéseket használ; e-mailes értesítés jelenleg nem része a követelményeknek.
+
+A bejelentő értesítést kaphat a saját bejelentésének állapotváltozásáról, új bejegyzésről és újranyitásról. A karbantartó értesítést kaphat a csoportjához rendelt új bejelentésről és a bejelentő válaszáról. Az adminisztrátor értesítést kaphat új regisztrációról.
+
+Az értesítéshez legalább a címzett felhasználót, az esemény típusát, a kapcsolódó bejelentést, az üzenetet, a létrehozás idejét és az olvasottság állapotát kell tárolni. A konkrét értesítési szövegek és az olvasottként jelölés működése a kliens és az API megvalósításakor pontosítható.
+
 \section{Megvalósítás menete és tesztelés}
+
+\subsection{A jelenlegi prototípus állapota}
+
+A projekt jelenlegi állapotában elkészült a .NET Web API és a .NET MAUI kliens alapváza. A Web API SQLite-adatbázishoz kapcsolódik, és rendelkezik egy állapotellenőrző végponttal. A végpont ellenőrzi az adatbázis-kapcsolatot, és a szolgáltatás állapotáról választ ad.
+
+A MAUI-kliens az API állapotát HTTP-kérés segítségével lekéri, majd megjeleníti, hogy a backend és az adatbázis elérhető-e. A felületen az ellenőrzés ismételt indítására is van lehetőség.
+
+A jelenlegi prototípus még nem tartalmazza a teljes felhasználói folyamatot. A bejelentkezés, a regisztráció-jóváhagyás, a ticketek kezelése, a csoportos kiosztás, az értesítések és a szerepkörök szerinti jogosultság-ellenőrzés további fejlesztést igényel. Ezeket a funkciókat a dokumentáció tervezett működésként mutatja be.
+
+\subsection{Javasolt fejlesztési sorrend}
+
+A fejlesztés egymásra épülő szakaszokban végezhető el. Elsőként az adatbázis entitásait és kapcsolatait kell véglegesíteni, majd a szerveroldali adatkezelési alapokat kialakítani. Ezután érdemes megvalósítani a felhasználói azonosítást és a jogosultságok ellenőrzését.
+
+A bejelentés létrehozása, listázása és részleteinek megtekintése adja az első teljes felhasználói folyamatot. Ezt követheti a karbantartói csoporthoz rendelés, az átvétel, a bejegyzések kezelése, majd a lezárás és újranyitás. Az értesítések és az adminisztrátori funkciók a fő folyamatok stabil működése után építhetők be.
+
+A kliensoldali képernyők fejlesztése során minden funkciót össze kell kapcsolni a megfelelő API-végponttal. A képernyőknek kezelniük kell a betöltési állapotot, az üres eredményt, a sikertelen kérést és a szerver által visszaküldött validációs hibát is.
+
+\subsection{Tesztelési terv}
+
+A tesztelés célja annak ellenőrzése, hogy az egyes funkciók a meghatározott követelmények szerint működnek, és hogy a jogosulatlan vagy hibás műveleteket a rendszer megfelelően kezeli. A teszteseteket szerepkörönként és felhasználói folyamatonként célszerű összeállítani.
+
+A tervezett tesztelési területek a következők:
+
+\begin{itemize}
+    \item \textbf{API elérhetősége:} az állapotellenőrző végpont elérhető, és helyesen jelzi az adatbázis-kapcsolat eredményét.
+    \item \textbf{Regisztráció és jóváhagyás:} a jóváhagyásra váró felhasználó nem fér hozzá védett funkciókhoz, a jóváhagyott felhasználó pedig be tud jelentkezni.
+    \item \textbf{Jogosultságok:} a bejelentő nem tekintheti meg más felhasználó privát bejelentéseit; a karbantartó csak a saját csoportjához tartozó feladatokat kezelheti; adminisztratív műveletet csak adminisztrátor végezhet.
+    \item \textbf{Bejelentés létrehozása:} a kötelező mezők ellenőrzése, az azonosító létrehozása és az alapértelmezett értékek beállítása.
+    \item \textbf{Állapotváltások:} csak a megengedett műveletek hajthatók végre, a lezárás és újranyitás pedig megőrzi a korábbi adatokat és a státuszelőzményeket.
+    \item \textbf{Kommunikációs bejegyzések:} a bejegyzés a megfelelő felhasználóhoz és bejelentéshez kapcsolódik, az esemény pedig a meghatározott állapotváltozást eredményezi.
+    \item \textbf{Értesítések:} az előírt események értesítést hoznak létre a megfelelő címzett számára.
+    \item \textbf{Határidő számítása:} a rendszer a prioritáshoz rendelt munkanapszám alapján számítja ki a határidőt.
+    \item \textbf{Hibás bemenet:} üres vagy hibás adatok esetén a rendszer visszautasítja a műveletet, és érthető hibaüzenetet ad.
+\end{itemize}
+
+A tesztelés során rögzíteni kell a teszt lépéseit, a várt eredményt és a tényleges eredményt. A dokumentációban csak ténylegesen lefuttatott tesztek eredménye szerepelhet kész eredményként; a még le nem futtatott eseteket tesztelési tervként kell megjelölni.
+
+\subsection{Ismert korlátok és továbbfejlesztési lehetőségek}
+
+A prototípus jelenlegi korlátja, hogy még csak az API és az adatbázis kapcsolatának ellenőrzését mutatja be. A teljes bejelentési folyamat és a hozzá tartozó szerepkörök megvalósítása még szükséges. A felhasználói felület egyelőre nem tartalmazza a végleges bejelentői, karbantartói és adminisztrátori nézeteket.
+
+A további fejlesztés során megvalósítható a részletesebb keresés, például állapot, kategória, prioritás és dátum alapján. Későbbi bővítés lehet a csatolmányok kezelése, részletesebb statisztikák vagy külső értesítési csatorna bevezetése. Ezek nem részei az első változat minimális funkcióinak, ezért csak a fő folyamatok elkészülte után érdemes velük foglalkozni.
+
 \section{Összegzés}
 
+A projekt célja egy olyan asztali hibabejelentő és karbantartás-kezelő rendszer megtervezése és megvalósítása, amelyben a felhasználók rögzíthetik a problémákat, a karbantartók kezelhetik azokat, az adminisztrátor pedig felügyelheti a rendszer működését. A csapat a kiírás általános műszaki hibakezelési feladatát vállalati IT-infrastruktúrára szűkíti.
+
+A rendszer tervezett architektúrája .NET MAUI kliensből, .NET Web API-ból és szerveroldali SQLite-adatbázisból áll. A prioritások kódban definiált enumértékek, a határidőket a rendszer munkanapok alapján számítja. A bejelentések állapotváltozásai külön előzménytáblában rögzülnek.
+
+A jelenlegi prototípusban már működik az API és az adatbázis kapcsolatának ellenőrzésére szolgáló alap, de a teljes felhasználói és ticketkezelési folyamat további fejlesztést igényel. A következő fejlesztési szakasz feladata az adatmodell véglegesítése, majd a hitelesítés és az alapvető bejelentéskezelés megvalósítása. A dokumentáció a projekt előrehaladtával frissítendő, hogy a tervezett megoldások és a ténylegesen elkészült funkciók egyértelműen elkülönüljenek.
 
 \newpage
-
 \clearpage
-\renewcommand{\bibsection}{} % Delete 'Hivatkozás' word
+
+\renewcommand{\bibsection}{}
+
 \begin{center}
-\noindent
-{\headingFont\bfseries\fontsize{16}{24}\selectfont Irodalomjegyzék}
+    \noindent
+    {\headingFont\bfseries\fontsize{16}{24}\selectfont Irodalomjegyzék}
 \end{center}
 \addcontentsline{toc}{section}{Irodalomjegyzék}
 \vspace{12pt}
