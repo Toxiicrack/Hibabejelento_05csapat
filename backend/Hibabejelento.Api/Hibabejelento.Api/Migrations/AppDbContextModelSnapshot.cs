@@ -17,6 +17,37 @@ namespace Hibabejelento.Api.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.12");
 
+            modelBuilder.Entity("Hibabejelento.Api.Middleware.Entities.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Categories", (string)null);
+                });
+
             modelBuilder.Entity("Hibabejelento.Api.Middleware.Entities.Group", b =>
                 {
                     b.Property<int>("Id")
@@ -46,6 +77,129 @@ namespace Hibabejelento.Api.Migrations
                         .IsUnique();
 
                     b.ToTable("Groups", (string)null);
+                });
+
+            modelBuilder.Entity("Hibabejelento.Api.Middleware.Entities.Ticket", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AssetIdentifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("AssignedUserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("ClosedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DueDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("GroupId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Priority")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ReporterId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TicketNumber")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssignedUserId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("ReporterId");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("TicketNumber")
+                        .IsUnique();
+
+                    b.ToTable("Tickets", (string)null);
+                });
+
+            modelBuilder.Entity("Hibabejelento.Api.Middleware.Entities.TicketStatusHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ChangedByUserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NewStatus")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OldStatus")
+                        .HasMaxLength(30)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("TicketId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChangedByUserId");
+
+                    b.HasIndex("TicketId", "CreatedAt");
+
+                    b.ToTable("TicketStatusHistory", (string)null);
                 });
 
             modelBuilder.Entity("Hibabejelento.Api.Middleware.Entities.User", b =>
@@ -106,6 +260,58 @@ namespace Hibabejelento.Api.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
+            modelBuilder.Entity("Hibabejelento.Api.Middleware.Entities.Ticket", b =>
+                {
+                    b.HasOne("Hibabejelento.Api.Middleware.Entities.User", "AssignedUser")
+                        .WithMany()
+                        .HasForeignKey("AssignedUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Hibabejelento.Api.Middleware.Entities.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Hibabejelento.Api.Middleware.Entities.Group", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Hibabejelento.Api.Middleware.Entities.User", "Reporter")
+                        .WithMany()
+                        .HasForeignKey("ReporterId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AssignedUser");
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Group");
+
+                    b.Navigation("Reporter");
+                });
+
+            modelBuilder.Entity("Hibabejelento.Api.Middleware.Entities.TicketStatusHistory", b =>
+                {
+                    b.HasOne("Hibabejelento.Api.Middleware.Entities.User", "ChangedByUser")
+                        .WithMany()
+                        .HasForeignKey("ChangedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Hibabejelento.Api.Middleware.Entities.Ticket", "Ticket")
+                        .WithMany("StatusHistory")
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ChangedByUser");
+
+                    b.Navigation("Ticket");
+                });
+
             modelBuilder.Entity("Hibabejelento.Api.Middleware.Entities.User", b =>
                 {
                     b.HasOne("Hibabejelento.Api.Middleware.Entities.Group", "Group")
@@ -119,6 +325,11 @@ namespace Hibabejelento.Api.Migrations
             modelBuilder.Entity("Hibabejelento.Api.Middleware.Entities.Group", b =>
                 {
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Hibabejelento.Api.Middleware.Entities.Ticket", b =>
+                {
+                    b.Navigation("StatusHistory");
                 });
 #pragma warning restore 612, 618
         }
