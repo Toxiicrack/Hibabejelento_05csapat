@@ -2,25 +2,215 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Hibabejelento.Maui.Views.MainPage"
-             Title="Hibabejelentő – Állapot">
-    <ScrollView>
-        <VerticalStackLayout Padding="24" Spacing="16">
-            <Label Text="Backend állapot"
-                   FontSize="24" FontAttributes="Bold" />
+             Title=""
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="White">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.1*"/>
+            <ColumnDefinition Width="10*"/>
+            <ColumnDefinition Width="0.1*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="10*"/>
+        </Grid.RowDefinitions>
+        <VerticalStackLayout Grid.Row="1" Grid.Column="1" Spacing="10" Margin="0,20,0,0">
+            <Border
+                HorizontalOptions="Fill"
+                VerticalOptions="Center"
+                BackgroundColor="White"
+                StrokeShape="RoundRectangle 10"
+                Grid.Row="1"
+                Grid.Column="1"
+                HeightRequest="50">
 
-            <HorizontalStackLayout Spacing="12">
-                <Ellipse Fill="{Binding StatusColor}"
-                         WidthRequest="20" HeightRequest="20" />
-                <Label Text="{Binding Status}" FontSize="20" />
-            </HorizontalStackLayout>
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroup x:Name="CardStates">
+                        <VisualState x:Name="Portrait">
+                            <VisualState.StateTriggers>
+                                <AdaptiveTrigger MinWindowWidth="0"/>
+                            </VisualState.StateTriggers>
+                            <VisualState.Setters>
+                                <Setter TargetName="FS" Property="VisualElement.IsVisible" Value="False" />
+                                <Setter TargetName="SS" Property="VisualElement.IsVisible" Value="False" />
+                                <Setter TargetName="TS" Property="VisualElement.IsVisible" Value="True" />
+                            </VisualState.Setters>
+                        </VisualState>
+                        <VisualState x:Name="Square">
+                            <VisualState.StateTriggers>
+                                <AdaptiveTrigger MinWindowWidth="700"/>
+                            </VisualState.StateTriggers>
+                            <VisualState.Setters>
+                                <Setter TargetName="FS" Property="VisualElement.IsVisible" Value="False" />
+                                <Setter TargetName="SS" Property="VisualElement.IsVisible" Value="True" />
+                                <Setter TargetName="TS" Property="VisualElement.IsVisible" Value="False" />
+                            </VisualState.Setters>
+                        </VisualState>
+                        <VisualState x:Name="Landscape">
+                            <VisualState.StateTriggers>
+                                <AdaptiveTrigger MinWindowWidth="1000"/>
+                            </VisualState.StateTriggers>
+                            <VisualState.Setters>
+                                <Setter TargetName="FS" Property="VisualElement.IsVisible" Value="True" />
+                                <Setter TargetName="SS" Property="VisualElement.IsVisible" Value="False" />
+                                <Setter TargetName="TS" Property="VisualElement.IsVisible" Value="False" />
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateManager.VisualStateGroups>
+                <Grid>
+                    <CollectionView ItemsLayout="HorizontalList" x:Name="FS"  IsVisible="True">
+                        <CollectionView.ItemsSource>
+                            <x:Array Type="{x:Type x:String}">
+                                <x:String>INC0001</x:String>
+                                <x:String>URGENT</x:String>
+                                <x:String>Sanyi</x:String>
+                                <x:String>IT GUY</x:String>
+                                <x:String>Windows hiba</x:String>
+                                <x:String>Ez a tetves mocskos csillagszórós winfos megint lefagyott</x:String>
+                                <x:String>STATUS</x:String>
+                                <x:String>2026.10.11</x:String>
+                                <x:String>2026.10.16</x:String>
+                            </x:Array>
+                        </CollectionView.ItemsSource>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <FlexLayout Padding="5" Margin="5" JustifyContent="Center" HorizontalOptions="Center">
+                                    <Label Text="{Binding .}" TextColor="Black" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                </FlexLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                    <CollectionView ItemsLayout="HorizontalList" x:Name="SS"  IsVisible="True">
+                        <CollectionView.ItemsSource>
+                            <x:Array Type="{x:Type x:String}">
+                                <x:String>INC0001</x:String>
+                                <x:String>URGENT</x:String>
+                                <x:String>Sanyi</x:String>
+                                <x:String>IT GUY</x:String>
+                                <x:String>Windows hiba</x:String>
+                                <x:String>STATUS</x:String>
+                                <x:String>2026.10.16</x:String>
+                            </x:Array>
+                        </CollectionView.ItemsSource>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <FlexLayout Padding="5" Margin="5" JustifyContent="Center" HorizontalOptions="Center">
+                                    <Label Text="{Binding .}" TextColor="Black" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                </FlexLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                    <CollectionView ItemsLayout="HorizontalList" x:Name="TS"  IsVisible="True">
+                        <CollectionView.ItemsSource>
+                            <x:Array Type="{x:Type x:String}">
+                                <x:String>Sanyi</x:String>
+                                <x:String>IT GUY</x:String>
+                                <x:String>Windows hiba</x:String>
+                                <x:String>STATUS</x:String>
+                                <x:String>2026.10.16</x:String>
+                            </x:Array>
+                        </CollectionView.ItemsSource>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <FlexLayout Padding="5" Margin="5" JustifyContent="Center" HorizontalOptions="Center">
+                                    <Label Text="{Binding .}" TextColor="Black" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                </FlexLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
 
-            <Label Text="{Binding Database, StringFormat='Adatbázis: {0}'}" />
-            <Label Text="{Binding Version, StringFormat='Verzió: {0}'}" />
-            <Label Text="{Binding LastCheck, StringFormat='Utolsó ellenőrzés: {0:HH:mm:ss}'}" />
-
-            <Button Text="Újraellenőrzés" Command="{Binding CheckHealthCommand}" />
-            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
-            <Label Text="{Binding ErrorMessage}" TextColor="Red" />
+                </Grid>
+            </Border>
         </VerticalStackLayout>
-    </ScrollView>
+        
+        <Grid Grid.Row="0" Grid.Column="1" ColumnSpacing="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="30"/>
+                <ColumnDefinition Width="30"/>
+            </Grid.ColumnDefinitions>
+            <Border x:Name="ResponsiveSearchBar"
+               WidthRequest="360"
+               HeightRequest="30"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"
+               BackgroundColor="Gray"
+               StrokeShape="RoundRectangle 10"               
+               Grid.Column="1">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="{Binding GlobalSearchCommand}"/>
+                </Border.GestureRecognizers>
+
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroup x:Name="CardStates">
+                        <VisualState x:Name="Portrait">
+                            <VisualState.StateTriggers>
+                                <AdaptiveTrigger MinWindowWidth="0"/>
+                            </VisualState.StateTriggers>
+                            <VisualState.Setters>
+                                <Setter Property="HorizontalOptions" Value="Center"/>
+                                <Setter Property="WidthRequest" Value="120"/>
+                            </VisualState.Setters>
+                        </VisualState>
+
+
+                        <VisualState x:Name="Square">
+                            <VisualState.StateTriggers>
+                                <AdaptiveTrigger MinWindowWidth="700"/>
+                            </VisualState.StateTriggers>
+                            <VisualState.Setters>
+                                <Setter Property="HorizontalOptions" Value="Center"/>
+                                <Setter Property="WidthRequest" Value="240"/>
+                            </VisualState.Setters>
+                        </VisualState>
+
+                        <VisualState x:Name="Landscape">
+                            <VisualState.StateTriggers>
+                                <AdaptiveTrigger MinWindowWidth="1000"/>
+                            </VisualState.StateTriggers>
+                            <VisualState.Setters>
+                                <Setter Property="HorizontalOptions" Value="End"/>
+                            </VisualState.Setters>
+                        </VisualState>
+
+                    </VisualStateGroup>
+                </VisualStateManager.VisualStateGroups>
+
+                <Label
+                   Text="Search"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center" />
+            </Border>
+            <Border x:Name="FilterBorder"
+                    WidthRequest="30"
+                    HeightRequest="30"
+                    HorizontalOptions="End"
+                    VerticalOptions="Center"
+                    BackgroundColor="Gray"
+                    StrokeShape="RoundRectangle 15"                    
+                    Grid.Column="2">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="{Binding FilterCommand}"/>
+                </Border.GestureRecognizers>
+                <Label Text="F" HorizontalOptions="Center" VerticalOptions="Center"></Label>
+            </Border>
+            <Border x:Name="CreateIncidentBorder"
+    WidthRequest="30"
+    HeightRequest="30"
+    HorizontalOptions="End"
+    VerticalOptions="Center"
+    BackgroundColor="Gray"
+    StrokeShape="RoundRectangle 15"    
+    Grid.Column="3">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="{Binding CreateTicketCommand}"/>
+                </Border.GestureRecognizers>
+                <Label Text="C" HorizontalOptions="Center" VerticalOptions="Center"></Label>
+            </Border>
+        </Grid>
+
+    </Grid>
 </ContentPage>

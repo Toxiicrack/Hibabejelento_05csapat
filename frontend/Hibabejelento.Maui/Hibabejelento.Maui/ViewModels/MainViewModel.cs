@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Hibabejelento.Maui.Helpers;
 using Hibabejelento.Maui.Services;
+using Hibabejelento.Maui.Views;
 
 namespace Hibabejelento.Maui.ViewModels;
 
@@ -19,6 +20,30 @@ public partial class MainViewModel : BaseViewModel
     {
         _api = api;
     }
+
+    [RelayCommand]
+    private async Task CreateTicket()
+    {
+
+    }
+
+    [RelayCommand]
+    private async Task Filter()
+    {
+
+    }
+
+    [RelayCommand]
+    private async Task GlobalSearch()
+    {
+
+    }
+    //[RelayCommand]
+    //private async Task NewPage()
+    //{
+    //    Console.WriteLine("alma");
+    //    await Shell.Current.GoToAsync(nameof(NewPage1));
+    //}
 
     [RelayCommand]
     private async Task CheckHealthAsync()
