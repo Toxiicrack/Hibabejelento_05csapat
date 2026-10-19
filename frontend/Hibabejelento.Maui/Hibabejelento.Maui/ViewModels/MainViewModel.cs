@@ -1,8 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Hibabejelento.Maui.Helpers;
+using Hibabejelento.Maui.Models;
 using Hibabejelento.Maui.Services;
 using Hibabejelento.Maui.Views;
+using Hibabejelento.Maui.WinUI;
 
 namespace Hibabejelento.Maui.ViewModels;
 
@@ -16,15 +18,18 @@ public partial class MainViewModel : BaseViewModel
     [ObservableProperty] private DateTime lastCheck;
     [ObservableProperty] private Color statusColor = Colors.Gray;
 
+    [ObservableProperty] private List<Ticket> tickets;
+
     public MainViewModel(IApiService api)
     {
         _api = api;
+        GetTickets();
     }
 
-    [RelayCommand]
-    private async Task CreateTicket()
+    private async void GetTickets()
     {
-
+        tickets = (await _api.GetTicketsAsync()).ToList();
+        Console.WriteLine("alma");
     }
 
     [RelayCommand]
@@ -38,12 +43,17 @@ public partial class MainViewModel : BaseViewModel
     {
 
     }
-    //[RelayCommand]
-    //private async Task NewPage()
-    //{
-    //    Console.WriteLine("alma");
-    //    await Shell.Current.GoToAsync(nameof(NewPage1));
-    //}
+    [RelayCommand]
+    private async Task CreateTicket()
+    {        
+        await Shell.Current.GoToAsync(nameof(TicketCreationPage));
+    }
+
+    [RelayCommand]
+    private async Task Login()
+    {
+        await Shell.Current.GoToAsync(nameof(LoginPage));
+    }
 
     [RelayCommand]
     private async Task CheckHealthAsync()

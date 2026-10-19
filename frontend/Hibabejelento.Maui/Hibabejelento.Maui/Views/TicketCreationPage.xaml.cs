@@ -1,9 +1,14 @@
+using Hibabejelento.Maui.ViewModels;
+
 namespace Hibabejelento.Maui.Views;
 
 public partial class TicketCreationPage : ContentPage
 {
-	public TicketCreationPage()
+	private TicketCreationViewModel _vm;
+	public TicketCreationPage(TicketCreationViewModel vm)
 	{
 		InitializeComponent();
+		_vm = vm;
+		BindingContext = _vm;
 	}
 }

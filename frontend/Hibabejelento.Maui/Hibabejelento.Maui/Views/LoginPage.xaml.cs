@@ -1,9 +1,14 @@
+using Hibabejelento.Maui.ViewModels;
+
 namespace Hibabejelento.Maui.Views;
 
 public partial class LoginPage : ContentPage
 {
-	public LoginPage()
+	private LoginViewModel _vm;
+	public LoginPage(LoginViewModel vm)
 	{
 		InitializeComponent();
+		_vm = vm;
+		Content.BindingContext = _vm;
 	}
 }

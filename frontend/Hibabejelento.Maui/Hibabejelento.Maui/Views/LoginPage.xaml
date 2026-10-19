@@ -4,9 +4,9 @@
              x:Class="Hibabejelento.Maui.Views.LoginPage"
              Title="LoginPage">
     <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+        <Entry Text="{Binding UserEmail}" Placeholder="Email cím"/>
+        <Entry Text="{Binding UserPwd}" Placeholder="Jelszó"/>
+        <Button Command="{Binding LoginCommand}" Text="Bejelentkezés"/>
+        <Label Text="{Binding UserError}" TextColor="Red" HorizontalOptions="Center"/>
     </VerticalStackLayout>
 </ContentPage>

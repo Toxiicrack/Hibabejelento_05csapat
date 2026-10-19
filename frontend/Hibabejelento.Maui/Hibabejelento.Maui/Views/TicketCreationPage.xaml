@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"             
              x:Class="Hibabejelento.Maui.Views.TicketCreationPage"
-             Title="TicketCreationPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             Title="TicketCreationPage"
+             WidthRequest="800"
+             HeightRequest="600">
+    <ScrollView>
+        <VerticalStackLayout>
+            <Entry Text="{Binding TicketTitle}" Placeholder="Hibajegy cím"/>
+            <Entry Text="{Binding TicketDescription}" Placeholder="Hibajegy leírás"/>
+            <Entry Text="{Binding TicketLocation}" Placeholder="Hibajegy terület"/>
+            <Entry Text="{Binding TicketAssetIdentifier}" Placeholder="Hibajegy asset"/>
+            <Button Command="{Binding CreateTicketCommand}" Text="ticket létrehozása"/>
+            <Label Text="{Binding TicketError}" TextColor="Red" HorizontalOptions="Center"/>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

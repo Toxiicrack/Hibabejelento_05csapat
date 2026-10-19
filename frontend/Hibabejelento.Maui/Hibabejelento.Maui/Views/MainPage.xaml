@@ -60,25 +60,19 @@
                     </VisualStateGroup>
                 </VisualStateManager.VisualStateGroups>
                 <Grid>
-                    <CollectionView ItemsLayout="HorizontalList" x:Name="FS"  IsVisible="True">
-                        <CollectionView.ItemsSource>
-                            <x:Array Type="{x:Type x:String}">
-                                <x:String>INC0001</x:String>
-                                <x:String>URGENT</x:String>
-                                <x:String>Sanyi</x:String>
-                                <x:String>IT GUY</x:String>
-                                <x:String>Windows hiba</x:String>
-                                <x:String>Ez a tetves mocskos csillagszórós winfos megint lefagyott</x:String>
-                                <x:String>STATUS</x:String>
-                                <x:String>2026.10.11</x:String>
-                                <x:String>2026.10.16</x:String>
-                            </x:Array>
-                        </CollectionView.ItemsSource>
+                    <CollectionView ItemsLayout="HorizontalList" x:Name="FS"  IsVisible="True" ItemsSource="{Binding Tickets}">
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <FlexLayout Padding="5" Margin="5" JustifyContent="Center" HorizontalOptions="Center">
-                                    <Label Text="{Binding .}" TextColor="Black" HorizontalOptions="Center" VerticalOptions="Center"/>
-                                </FlexLayout>
+                                <Grid ColumnDefinitions="*,*,*,*,*,*,*">
+                                    <Label Text="{Binding TicketNumber}" Grid.Column="0"/>
+                                    <Label Text="{Binding Priority}" Grid.Column="1"/>
+                                    <Label Text="{Binding ReporterId}" Grid.Column="2"/>
+                                    <Label Text="{Binding Title}" Grid.Column="3"/>
+                                    <Label Text="{Binding AssignedUserId}" Grid.Column="4"/>
+                                    <Label Text="{Binding Description}" Grid.Column="5"/>
+                                    <Label Text="{Binding DueDate}" Grid.Column="6"/>
+
+                                </Grid>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
@@ -141,7 +135,7 @@
                StrokeShape="RoundRectangle 10"               
                Grid.Column="1">
                 <Border.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="{Binding GlobalSearchCommand}"/>
+                    <TapGestureRecognizer Command="{Binding GlobalSearchCommand}"/>
                 </Border.GestureRecognizers>
 
                 <VisualStateManager.VisualStateGroups>
@@ -193,9 +187,9 @@
                     StrokeShape="RoundRectangle 15"                    
                     Grid.Column="2">
                 <Border.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="{Binding FilterCommand}"/>
+                    <TapGestureRecognizer Command="{Binding LoginCommand}"/>
                 </Border.GestureRecognizers>
-                <Label Text="F" HorizontalOptions="Center" VerticalOptions="Center"></Label>
+                <Label Text="L" HorizontalOptions="Center" VerticalOptions="Center"></Label>
             </Border>
             <Border x:Name="CreateIncidentBorder"
     WidthRequest="30"
@@ -206,7 +200,7 @@
     StrokeShape="RoundRectangle 15"    
     Grid.Column="3">
                 <Border.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="{Binding CreateTicketCommand}"/>
+                    <TapGestureRecognizer Command="{Binding CreateTicketCommand}"/>
                 </Border.GestureRecognizers>
                 <Label Text="C" HorizontalOptions="Center" VerticalOptions="Center"></Label>
             </Border>
