@@ -1,7 +1,8 @@
-﻿namespace Hibabejelento.Maui.Helpers;
+namespace Hibabejelento.Maui.Helpers;
 
 public static class ApiConfig
 {
-    // Ha a VS más portot ad, itt kell átírni.
-    public static string BaseUrl => "http://localhost:53418";
+    // Állítsd a backend tényleges, a Windows alkalmazásból elérhető címére.
+    // Ha a backend ugyanazon a gépen fut, a localhost megfelelő lehet.
+    public static string BaseUrl => "https://localhost:53417";
 }

@@ -13,7 +13,8 @@ namespace Hibabejelento.Maui
             Routing.RegisterRoute(nameof(TicketEditPage), typeof(TicketEditPage));
             Routing.RegisterRoute(nameof(SearchPage), typeof(SearchPage));
             Routing.RegisterRoute(nameof(FilterPage), typeof(FilterPage));
-            Routing.RegisterRoute(nameof(ProfilePage), typeof(ProfilePage));            
+            Routing.RegisterRoute(nameof(ProfilePage), typeof(ProfilePage));
+            Routing.RegisterRoute(nameof(MainPage), typeof(MainPage));
         }
     }
 }

@@ -1,209 +1,406 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Hibabejelento.Maui.Views.MainPage"
-             Title=""
-             Shell.NavBarIsVisible="False"
-             BackgroundColor="White">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.1*"/>
-            <ColumnDefinition Width="10*"/>
-            <ColumnDefinition Width="0.1*"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="10*"/>
-        </Grid.RowDefinitions>
-        <VerticalStackLayout Grid.Row="1" Grid.Column="1" Spacing="10" Margin="0,20,0,0">
-            <Border
-                HorizontalOptions="Fill"
-                VerticalOptions="Center"
-                BackgroundColor="White"
-                StrokeShape="RoundRectangle 10"
-                Grid.Row="1"
-                Grid.Column="1"
-                HeightRequest="50">
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="Hibabejelento.Maui.Views.MainPage"
+    Title=""
+    Shell.NavBarIsVisible="False"
+    BackgroundColor="#F5F6FA">
 
-                <VisualStateManager.VisualStateGroups>
-                    <VisualStateGroup x:Name="CardStates">
-                        <VisualState x:Name="Portrait">
-                            <VisualState.StateTriggers>
-                                <AdaptiveTrigger MinWindowWidth="0"/>
-                            </VisualState.StateTriggers>
-                            <VisualState.Setters>
-                                <Setter TargetName="FS" Property="VisualElement.IsVisible" Value="False" />
-                                <Setter TargetName="SS" Property="VisualElement.IsVisible" Value="False" />
-                                <Setter TargetName="TS" Property="VisualElement.IsVisible" Value="True" />
-                            </VisualState.Setters>
-                        </VisualState>
-                        <VisualState x:Name="Square">
-                            <VisualState.StateTriggers>
-                                <AdaptiveTrigger MinWindowWidth="700"/>
-                            </VisualState.StateTriggers>
-                            <VisualState.Setters>
-                                <Setter TargetName="FS" Property="VisualElement.IsVisible" Value="False" />
-                                <Setter TargetName="SS" Property="VisualElement.IsVisible" Value="True" />
-                                <Setter TargetName="TS" Property="VisualElement.IsVisible" Value="False" />
-                            </VisualState.Setters>
-                        </VisualState>
-                        <VisualState x:Name="Landscape">
-                            <VisualState.StateTriggers>
-                                <AdaptiveTrigger MinWindowWidth="1000"/>
-                            </VisualState.StateTriggers>
-                            <VisualState.Setters>
-                                <Setter TargetName="FS" Property="VisualElement.IsVisible" Value="True" />
-                                <Setter TargetName="SS" Property="VisualElement.IsVisible" Value="False" />
-                                <Setter TargetName="TS" Property="VisualElement.IsVisible" Value="False" />
-                            </VisualState.Setters>
-                        </VisualState>
-                    </VisualStateGroup>
-                </VisualStateManager.VisualStateGroups>
-                <Grid>
-                    <CollectionView ItemsLayout="HorizontalList" x:Name="FS"  IsVisible="True" ItemsSource="{Binding Tickets}">
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid ColumnDefinitions="*,*,*,*,*,*,*">
-                                    <Label Text="{Binding TicketNumber}" Grid.Column="0"/>
-                                    <Label Text="{Binding Priority}" Grid.Column="1"/>
-                                    <Label Text="{Binding ReporterId}" Grid.Column="2"/>
-                                    <Label Text="{Binding Title}" Grid.Column="3"/>
-                                    <Label Text="{Binding AssignedUserId}" Grid.Column="4"/>
-                                    <Label Text="{Binding Description}" Grid.Column="5"/>
-                                    <Label Text="{Binding DueDate}" Grid.Column="6"/>
+    <Grid Padding="15"
+          RowDefinitions="Auto,*"
+          RowSpacing="15">
 
-                                </Grid>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
-                    <CollectionView ItemsLayout="HorizontalList" x:Name="SS"  IsVisible="True">
-                        <CollectionView.ItemsSource>
-                            <x:Array Type="{x:Type x:String}">
-                                <x:String>INC0001</x:String>
-                                <x:String>URGENT</x:String>
-                                <x:String>Sanyi</x:String>
-                                <x:String>IT GUY</x:String>
-                                <x:String>Windows hiba</x:String>
-                                <x:String>STATUS</x:String>
-                                <x:String>2026.10.16</x:String>
-                            </x:Array>
-                        </CollectionView.ItemsSource>
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <FlexLayout Padding="5" Margin="5" JustifyContent="Center" HorizontalOptions="Center">
-                                    <Label Text="{Binding .}" TextColor="Black" HorizontalOptions="Center" VerticalOptions="Center"/>
-                                </FlexLayout>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
-                    <CollectionView ItemsLayout="HorizontalList" x:Name="TS"  IsVisible="True">
-                        <CollectionView.ItemsSource>
-                            <x:Array Type="{x:Type x:String}">
-                                <x:String>Sanyi</x:String>
-                                <x:String>IT GUY</x:String>
-                                <x:String>Windows hiba</x:String>
-                                <x:String>STATUS</x:String>
-                                <x:String>2026.10.16</x:String>
-                            </x:Array>
-                        </CollectionView.ItemsSource>
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <FlexLayout Padding="5" Margin="5" JustifyContent="Center" HorizontalOptions="Center">
-                                    <Label Text="{Binding .}" TextColor="Black" HorizontalOptions="Center" VerticalOptions="Center"/>
-                                </FlexLayout>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
+        <!-- RESPONSIVE ÁLLAPOTOK -->
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="ResponsiveStates">
 
+                <VisualState x:Name="Portrait">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter TargetName="PortraitView"
+                                Property="IsVisible"
+                                Value="True"/>
+                        <Setter TargetName="SquareView"
+                                Property="IsVisible"
+                                Value="False"/>
+                        <Setter TargetName="LandscapeView"
+                                Property="IsVisible"
+                                Value="False"/>
+                    </VisualState.Setters>
+                </VisualState>
+
+                <VisualState x:Name="Square">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="700"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter TargetName="PortraitView"
+                                Property="IsVisible"
+                                Value="False"/>
+                        <Setter TargetName="SquareView"
+                                Property="IsVisible"
+                                Value="True"/>
+                        <Setter TargetName="LandscapeView"
+                                Property="IsVisible"
+                                Value="False"/>
+                    </VisualState.Setters>
+                </VisualState>
+
+                <VisualState x:Name="Landscape">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1000"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter TargetName="PortraitView"
+                                Property="IsVisible"
+                                Value="False"/>
+                        <Setter TargetName="SquareView"
+                                Property="IsVisible"
+                                Value="False"/>
+                        <Setter TargetName="LandscapeView"
+                                Property="IsVisible"
+                                Value="True"/>
+                    </VisualState.Setters>
+                </VisualState>
+
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <!-- FEJLÉC -->
+        <Grid Grid.Row="0"
+              ColumnDefinitions="*,Auto,Auto"
+              ColumnSpacing="10">
+
+            <Border Grid.Column="0"
+                    HeightRequest="42"
+                    BackgroundColor="White"
+                    Stroke="#E0E3EA"
+                    StrokeShape="RoundRectangle 10">
+
+                <Grid Padding="12"
+                      ColumnDefinitions="Auto,*">
+
+                    <Label Text="⌕"
+                           FontSize="22"
+                           TextColor="Gray"
+                           VerticalOptions="Center"/>
+
+                    <Label Grid.Column="1"
+                           Text="Hibajegyek keresése..."
+                           TextColor="Gray"
+                           VerticalOptions="Center"
+                           Margin="8,0,0,0"/>
                 </Grid>
-            </Border>
-        </VerticalStackLayout>
-        
-        <Grid Grid.Row="0" Grid.Column="1" ColumnSpacing="5">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="60"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="30"/>
-                <ColumnDefinition Width="30"/>
-            </Grid.ColumnDefinitions>
-            <Border x:Name="ResponsiveSearchBar"
-               WidthRequest="360"
-               HeightRequest="30"
-               HorizontalOptions="Center"
-               VerticalOptions="Center"
-               BackgroundColor="Gray"
-               StrokeShape="RoundRectangle 10"               
-               Grid.Column="1">
+
                 <Border.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding GlobalSearchCommand}"/>
+                    <TapGestureRecognizer
+                        Command="{Binding GlobalSearchCommand}"/>
                 </Border.GestureRecognizers>
-
-                <VisualStateManager.VisualStateGroups>
-                    <VisualStateGroup x:Name="CardStates">
-                        <VisualState x:Name="Portrait">
-                            <VisualState.StateTriggers>
-                                <AdaptiveTrigger MinWindowWidth="0"/>
-                            </VisualState.StateTriggers>
-                            <VisualState.Setters>
-                                <Setter Property="HorizontalOptions" Value="Center"/>
-                                <Setter Property="WidthRequest" Value="120"/>
-                            </VisualState.Setters>
-                        </VisualState>
-
-
-                        <VisualState x:Name="Square">
-                            <VisualState.StateTriggers>
-                                <AdaptiveTrigger MinWindowWidth="700"/>
-                            </VisualState.StateTriggers>
-                            <VisualState.Setters>
-                                <Setter Property="HorizontalOptions" Value="Center"/>
-                                <Setter Property="WidthRequest" Value="240"/>
-                            </VisualState.Setters>
-                        </VisualState>
-
-                        <VisualState x:Name="Landscape">
-                            <VisualState.StateTriggers>
-                                <AdaptiveTrigger MinWindowWidth="1000"/>
-                            </VisualState.StateTriggers>
-                            <VisualState.Setters>
-                                <Setter Property="HorizontalOptions" Value="End"/>
-                            </VisualState.Setters>
-                        </VisualState>
-
-                    </VisualStateGroup>
-                </VisualStateManager.VisualStateGroups>
-
-                <Label
-                   Text="Search"
-                   HorizontalOptions="Center"
-                   VerticalOptions="Center" />
             </Border>
-            <Border x:Name="FilterBorder"
-                    WidthRequest="30"
-                    HeightRequest="30"
-                    HorizontalOptions="End"
-                    VerticalOptions="Center"
-                    BackgroundColor="Gray"
-                    StrokeShape="RoundRectangle 15"                    
-                    Grid.Column="2">
-                <Border.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding LoginCommand}"/>
-                </Border.GestureRecognizers>
-                <Label Text="L" HorizontalOptions="Center" VerticalOptions="Center"></Label>
-            </Border>
-            <Border x:Name="CreateIncidentBorder"
-    WidthRequest="30"
-    HeightRequest="30"
-    HorizontalOptions="End"
-    VerticalOptions="Center"
-    BackgroundColor="Gray"
-    StrokeShape="RoundRectangle 15"    
-    Grid.Column="3">
-                <Border.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding CreateTicketCommand}"/>
-                </Border.GestureRecognizers>
-                <Label Text="C" HorizontalOptions="Center" VerticalOptions="Center"></Label>
-            </Border>
+
+            <Button Grid.Column="1"
+                    Text="Bejelentkezés"
+                    FontSize="12"
+                    Padding="10,0"
+                    HeightRequest="42"
+                    Command="{Binding LoginCommand}"/>
+
+            <Button Grid.Column="2"
+                    Text="+ Új"
+                    FontSize="12"
+                    Padding="12,0"
+                    HeightRequest="42"
+                    BackgroundColor="#2563EB"
+                    TextColor="White"
+                    Command="{Binding CreateTicketCommand}"/>
+
+        </Grid>
+
+        <!-- HIBAJEGYEK -->
+        <Grid Grid.Row="1">
+
+            <!-- PORTRÉ: KÁRTYÁS NÉZET -->
+            <CollectionView
+                x:Name="PortraitView"
+                IsVisible="True"
+                ItemsSource="{Binding Tickets}"
+                SelectionMode="None"
+                ItemSizingStrategy="MeasureAllItems">
+
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout
+                        Padding="30"
+                        Spacing="10"
+                        VerticalOptions="Center"
+                        HorizontalOptions="Center">
+
+                        <Label Text="Nincsenek hibajegyek"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="#374151"
+                               HorizontalTextAlignment="Center"/>
+
+                        <Label Text="A bejelentett hibajegyek itt fognak megjelenni."
+                               FontSize="13"
+                               TextColor="Gray"
+                               HorizontalTextAlignment="Center"/>
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+
+                        <Border BackgroundColor="White"
+                                Stroke="#E1E5EC"
+                                StrokeShape="RoundRectangle 12"
+                                Padding="15"
+                                Margin="0,0,0,12">
+
+                            <VerticalStackLayout Spacing="9">
+
+                                <Grid ColumnDefinitions="*,Auto">
+
+                                    <Label Text="{Binding TicketNumber}"
+                                           FontSize="13"
+                                           FontAttributes="Bold"
+                                           TextColor="#2563EB"/>
+
+                                    <Label Grid.Column="1"
+                                           Text="{Binding Priority}"
+                                           FontSize="12"
+                                           FontAttributes="Bold"
+                                           TextColor="#DC2626"/>
+                                </Grid>
+
+                                <Label Text="{Binding Title}"
+                                       FontSize="17"
+                                       FontAttributes="Bold"
+                                       TextColor="#1F2937"/>
+
+                                <Label Text="{Binding Description}"
+                                       FontSize="13"
+                                       TextColor="#6B7280"
+                                       LineBreakMode="TailTruncation"
+                                       MaxLines="2"/>
+
+                                <Grid ColumnDefinitions="*,*"
+                                      RowDefinitions="Auto,Auto"
+                                      RowSpacing="8">
+
+                                    <Label Text="{Binding CategoryName,
+                                        StringFormat='Kategória: {0}'}"
+                                           FontSize="12"
+                                           TextColor="#4B5563"/>
+
+                                    <Label Grid.Column="1"
+                                           Text="{Binding Status}"
+                                           FontSize="12"
+                                           TextColor="#2563EB"/>
+
+                                    <Label Grid.Row="1"
+                                           Text="{Binding ReporterId,
+                                           StringFormat='Bejelentő ID: {0}'}"
+                                           FontSize="12"
+                                           TextColor="#6B7280"/>
+
+                                    <Label Grid.Row="1"
+                                           Grid.Column="1"
+                                           Text="{Binding DueDate,
+                                           StringFormat='Határidő: {0:yyyy.MM.dd}'}"
+                                           FontSize="12"
+                                           TextColor="#6B7280"/>
+                                </Grid>
+
+                                <Label Text="{Binding Location,
+                                       StringFormat='Helyszín: {0}'}"
+                                       FontSize="12"
+                                       TextColor="#6B7280"/>
+
+                            </VerticalStackLayout>
+
+                        </Border>
+
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+
+            <!-- NÉGYZETES: TÖMÖR LISTA -->
+            <CollectionView
+                x:Name="SquareView"
+                IsVisible="False"
+                ItemsSource="{Binding Tickets}"
+                SelectionMode="None"
+                ItemSizingStrategy="MeasureAllItems">
+
+                <CollectionView.EmptyView>
+                    <Label Text="Nincsenek hibajegyek."
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           TextColor="Gray"/>
+                </CollectionView.EmptyView>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+
+                        <Border BackgroundColor="White"
+                                Stroke="#E1E5EC"
+                                StrokeShape="RoundRectangle 8"
+                                Padding="12"
+                                Margin="0,0,0,8">
+
+                            <Grid ColumnDefinitions="*,Auto"
+                                  RowDefinitions="Auto,Auto,Auto"
+                                  RowSpacing="6">
+
+                                <Label Text="{Binding TicketNumber}"
+                                       FontAttributes="Bold"
+                                       FontSize="13"
+                                       TextColor="#2563EB"/>
+
+                                <Label Grid.Column="1"
+                                       Text="{Binding Priority}"
+                                       FontSize="12"
+                                       TextColor="#DC2626"/>
+
+                                <Label Grid.Row="1"
+                                       Text="{Binding Title}"
+                                       FontSize="15"
+                                       FontAttributes="Bold"
+                                       TextColor="#1F2937"/>
+
+                                <Label Grid.Row="2"
+                                       Text="{Binding Status}"
+                                       FontSize="12"
+                                       TextColor="#2563EB"/>
+
+                                <Label Grid.Row="2"
+                                       Grid.Column="1"
+                                       Text="{Binding CreatedAt,
+                                       StringFormat='{0:yyyy.MM.dd}'}"
+                                       FontSize="12"
+                                       TextColor="Gray"/>
+
+                            </Grid>
+
+                        </Border>
+
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+
+            <!-- FEKVŐ: TÁBLÁZATOS NÉZET -->
+            <CollectionView
+                x:Name="LandscapeView"
+                IsVisible="False"
+                ItemsSource="{Binding Tickets}"
+                SelectionMode="None"
+                ItemSizingStrategy="MeasureAllItems">
+
+                <CollectionView.EmptyView>
+                    <Label Text="Nincsenek hibajegyek."
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           TextColor="Gray"/>
+                </CollectionView.EmptyView>
+
+                <CollectionView.Header>
+                    <Border BackgroundColor="#E9EDF5"
+                            Stroke="#D5DAE4"
+                            Padding="8">
+
+                        <Grid ColumnDefinitions="2*,2*,2*,1.2*,1.2*,1.5*">
+
+                            <Label Text="Azonosító"
+                                   FontAttributes="Bold"
+                                   FontSize="12"/>
+
+                            <Label Grid.Column="1"
+                                   Text="Megnevezés"
+                                   FontAttributes="Bold"
+                                   FontSize="12"/>
+
+                            <Label Grid.Column="2"
+                                   Text="Prioritás"
+                                   FontAttributes="Bold"
+                                   FontSize="12"/>
+
+                            <Label Grid.Column="3"
+                                   Text="Státusz"
+                                   FontAttributes="Bold"
+                                   FontSize="12"/>
+
+                            <Label Grid.Column="4"
+                                   Text="Bejelentő"
+                                   FontAttributes="Bold"
+                                   FontSize="12"/>
+
+                            <Label Grid.Column="5"
+                                   Text="Határidő"
+                                   FontAttributes="Bold"
+                                   FontSize="12"/>
+
+                        </Grid>
+                    </Border>
+                </CollectionView.Header>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+
+                        <Border BackgroundColor="White"
+                                Stroke="#E1E5EC"
+                                Padding="8">
+
+                            <Grid ColumnDefinitions="2*,2*,2*,1.2*,1.2*,1.5*">
+
+                                <Label Text="{Binding TicketNumber}"
+                                       FontSize="12"
+                                       TextColor="#2563EB"
+                                       VerticalOptions="Center"/>
+
+                                <Label Grid.Column="1"
+                                       Text="{Binding Title}"
+                                       FontSize="12"
+                                       TextColor="#1F2937"
+                                       VerticalOptions="Center"/>
+
+                                <Label Grid.Column="2"
+                                       Text="{Binding Priority}"
+                                       FontSize="12"
+                                       TextColor="#DC2626"
+                                       VerticalOptions="Center"/>
+
+                                <Label Grid.Column="3"
+                                       Text="{Binding Status}"
+                                       FontSize="12"
+                                       TextColor="#2563EB"
+                                       VerticalOptions="Center"/>
+
+                                <Label Grid.Column="4"
+                                       Text="{Binding ReporterId}"
+                                       FontSize="12"
+                                       TextColor="#4B5563"
+                                       VerticalOptions="Center"/>
+
+                                <Label Grid.Column="5"
+                                       Text="{Binding DueDate,
+                                       StringFormat='{0:yyyy.MM.dd}'}"
+                                       FontSize="12"
+                                       TextColor="#4B5563"
+                                       VerticalOptions="Center"/>
+
+                            </Grid>
+
+                        </Border>
+
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
         </Grid>
 
     </Grid>

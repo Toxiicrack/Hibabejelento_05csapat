@@ -1,10 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Hibabejelento.Maui.Helpers;
 using Hibabejelento.Maui.Models;
 using Hibabejelento.Maui.Services;
 using Hibabejelento.Maui.Views;
-using Hibabejelento.Maui.WinUI;
 
 namespace Hibabejelento.Maui.ViewModels;
 
@@ -17,35 +16,34 @@ public partial class MainViewModel : BaseViewModel
     [ObservableProperty] private string version = "-";
     [ObservableProperty] private DateTime lastCheck;
     [ObservableProperty] private Color statusColor = Colors.Gray;
+    [ObservableProperty] private List<Ticket> tickets = new();
 
-    [ObservableProperty] private List<Ticket> tickets;
+    public MainViewModel(IApiService api) => _api = api;
 
-    public MainViewModel(IApiService api)
+    [RelayCommand]
+    private async Task LoadTicketsAsync()
     {
-        _api = api;
-        GetTickets();
-    }
-
-    private async void GetTickets()
-    {
-        tickets = (await _api.GetTicketsAsync()).ToList();
-        Console.WriteLine("alma");
+        if (IsBusy) return;
+        IsBusy = true;
+        try
+        {
+            Tickets = (await _api.GetTicketsAsync()).ToList();
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     [RelayCommand]
-    private async Task Filter()
-    {
-
-    }
+    private Task Filter() => Task.CompletedTask;
 
     [RelayCommand]
-    private async Task GlobalSearch()
-    {
+    private Task GlobalSearch() => Task.CompletedTask;
 
-    }
     [RelayCommand]
     private async Task CreateTicket()
-    {        
+    {
         await Shell.Current.GoToAsync(nameof(TicketCreationPage));
     }
 
@@ -78,7 +76,8 @@ public partial class MainViewModel : BaseViewModel
                 Status = result.Status;
                 Database = result.Database;
                 Version = result.Version;
-                StatusColor = result.Status == "Healthy" ? Colors.Green : Colors.Orange;
+                StatusColor = string.Equals(result.Status, "Healthy",
+                    StringComparison.OrdinalIgnoreCase) ? Colors.Green : Colors.Orange;
             }
 
             LastCheck = DateTime.Now;

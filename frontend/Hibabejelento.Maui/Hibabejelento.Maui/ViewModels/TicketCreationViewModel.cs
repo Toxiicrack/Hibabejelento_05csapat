@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Hibabejelento.Maui.Services;
 using Hibabejelento.Maui.Views;
@@ -72,11 +72,11 @@ namespace Hibabejelento.Maui.ViewModels
                 Location = TicketLocation
             });
             if (success){
-                await Shell.Current.GoToAsync(nameof(MainPage));
+                await Shell.Current.GoToAsync("..");
             }
             else
             {
-                ticketError = "sikertelen létrehozás..";
+                TicketError = "Sikertelen hibajegy-létrehozás. Ellenőrizze a kapcsolatot és próbálja újra.";
             }
         }
     }

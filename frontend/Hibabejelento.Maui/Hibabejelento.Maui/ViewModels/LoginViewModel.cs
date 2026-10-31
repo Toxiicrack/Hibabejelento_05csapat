@@ -37,7 +37,7 @@ namespace Hibabejelento.Maui.ViewModels
             string success = await _api.Login(userEmail,userPwd);
             if (string.IsNullOrEmpty(success))
             {
-                await Shell.Current.GoToAsync("///MainPage");
+                await Shell.Current.GoToAsync(nameof(MainPage));
             }
             else
             {
