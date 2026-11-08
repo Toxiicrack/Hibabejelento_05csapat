@@ -178,18 +178,9 @@ public sealed class TicketsController : ControllerBase
             return Unauthorized();
         }
 
-        var access = await _db.Users
-            .AsNoTracking()
-            .Where(user =>
-                user.Id == userId &&
-                user.IsActive &&
-                user.RegistrationStatus == RegistrationStatus.Approved)
-            .Select(user => new
-            {
-                user.GroupId,
-                GroupIsActive = user.Group != null && user.Group.IsActive
-            })
-            .SingleOrDefaultAsync(cancellationToken);
+        var access = await GetCurrentUserAccessAsync(
+            userId,
+            cancellationToken);
 
         if (access is null)
         {
@@ -219,19 +210,16 @@ public sealed class TicketsController : ControllerBase
             return Unauthorized();
         }
 
-        var groupId = await _db.Users
-            .AsNoTracking()
-            .Where(user =>
-                user.Id == userId &&
-                user.IsActive &&
-                user.RegistrationStatus == RegistrationStatus.Approved)
-            .Select(user =>
-                user.Group != null && user.Group.IsActive
-                    ? user.GroupId
-                    : null)
-            .SingleOrDefaultAsync(cancellationToken);
+        var access = await GetCurrentUserAccessAsync(
+            userId,
+            cancellationToken);
 
-        if (groupId is null)
+        if (access is null)
+        {
+            return Unauthorized();
+        }
+
+        if (access.GroupId is null || !access.GroupIsActive)
         {
             return Forbid();
         }
@@ -241,7 +229,7 @@ public sealed class TicketsController : ControllerBase
             .SingleOrDefaultAsync(
                 candidate =>
                     candidate.Id == id &&
-                    candidate.GroupId == groupId,
+                    candidate.GroupId == access.GroupId,
                 cancellationToken);
 
         if (ticket is null)
@@ -271,7 +259,7 @@ public sealed class TicketsController : ControllerBase
         var updatedRows = await _db.Tickets
             .Where(candidate =>
                 candidate.Id == id &&
-                candidate.GroupId == groupId &&
+                candidate.GroupId == access.GroupId &&
                 candidate.IsActive &&
                 candidate.Status == TicketStatus.Folyamatban &&
                 candidate.AssignedUserId == null)
@@ -311,7 +299,7 @@ public sealed class TicketsController : ControllerBase
             return Unauthorized();
         }
 
-        var access = await GetCurrentUserNoteAccessAsync(
+        var access = await GetCurrentUserAccessAsync(
             userId,
             cancellationToken);
 
@@ -351,7 +339,6 @@ public sealed class TicketsController : ControllerBase
         var notes = await _db.TicketNotes
             .AsNoTracking()
             .Where(note => note.TicketId == id)
-            .Include(note => note.User)
             .OrderBy(note => note.CreatedAt)
             .ThenBy(note => note.Id)
             .Select(note => new TicketNoteResponse(
@@ -360,7 +347,8 @@ public sealed class TicketsController : ControllerBase
                 note.UserId,
                 note.User.Name,
                 note.Message,
-                note.CreatedAt))
+                note.CreatedAt,
+                note.ClosureTypeId))
             .ToListAsync(cancellationToken);
 
         return Ok(notes);
@@ -377,7 +365,7 @@ public sealed class TicketsController : ControllerBase
             return Unauthorized();
         }
 
-        var access = await GetCurrentUserNoteAccessAsync(
+        var access = await GetCurrentUserAccessAsync(
             userId,
             cancellationToken);
 
@@ -386,31 +374,25 @@ public sealed class TicketsController : ControllerBase
             return Unauthorized();
         }
 
-        var ticketAccess = await _db.Tickets
-            .AsNoTracking()
-            .Where(ticket => ticket.Id == id)
-            .Select(ticket => new
-            {
-                ticket.ReporterId,
-                ticket.AssignedUserId,
-                ticket.Status
-            })
-            .SingleOrDefaultAsync(cancellationToken);
+        var ticket = await _db.Tickets
+            .SingleOrDefaultAsync(
+                candidate => candidate.Id == id,
+                cancellationToken);
 
-        if (ticketAccess is null)
+        if (ticket is null)
         {
             return NotFound();
         }
 
-        var isReporter = ticketAccess.ReporterId == userId;
-        var isAssignedUser = ticketAccess.AssignedUserId == userId;
+        var isReporter = ticket.ReporterId == userId;
+        var isAssignedUser = ticket.AssignedUserId == userId;
 
         if (!isReporter && !isAssignedUser)
         {
             return NotFound();
         }
 
-        if (ticketAccess.Status is TicketStatus.Le\u007A\u00E1rt or TicketStatus.Visszavonva)
+        if (ticket.Status is TicketStatus.Lezárt or TicketStatus.Visszavonva)
         {
             return Conflict(new
             {
@@ -436,15 +418,45 @@ public sealed class TicketsController : ControllerBase
             });
         }
 
+        var now = DateTime.UtcNow;
+        var oldStatus = ticket.Status;
+
+        // Az Új ticketen a bejelentő még adminisztrátori elfogadás előtt is
+        // írhat; ettől a státusz Új marad.
+        if (ticket.Status != TicketStatus.Új)
+        {
+            ticket.Status = isReporter
+                ? TicketStatus.Folyamatban
+                : TicketStatus.VálaszraVár;
+        }
+
+        ticket.UpdatedAt = now;
+
         var note = new TicketNote
         {
-            TicketId = id,
+            TicketId = ticket.Id,
             UserId = userId,
             Message = message,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = now
         };
 
         _db.TicketNotes.Add(note);
+
+        if (ticket.Status != oldStatus)
+        {
+            _db.TicketStatusHistory.Add(new TicketStatusHistory
+            {
+                TicketId = ticket.Id,
+                OldStatus = oldStatus,
+                NewStatus = ticket.Status,
+                ChangedByUserId = userId,
+                Reason = isReporter
+                    ? "A bejelentő új bejegyzést írt."
+                    : "A ticketet felvevő karbantartó új bejegyzést írt.",
+                CreatedAt = now
+            });
+        }
+
         await _db.SaveChangesAsync(cancellationToken);
 
         var response = await _db.TicketNotes
@@ -456,13 +468,290 @@ public sealed class TicketsController : ControllerBase
                 candidate.UserId,
                 candidate.User.Name,
                 candidate.Message,
-                candidate.CreatedAt))
+                candidate.CreatedAt,
+                candidate.ClosureTypeId))
             .SingleAsync(cancellationToken);
 
         return CreatedAtAction(
             nameof(GetTicketNotes),
             new { id },
             response);
+    }
+
+    [HttpPost("{id:int}/close")]
+    public async Task<IActionResult> CloseTicket(
+        int id,
+        CloseTicketRequest request,
+        CancellationToken cancellationToken)
+    {
+        if (!TryGetCurrentUserId(out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var access = await GetCurrentUserAccessAsync(
+            userId,
+            cancellationToken);
+
+        if (access is null)
+        {
+            return Unauthorized();
+        }
+
+        var ticket = await _db.Tickets
+            .SingleOrDefaultAsync(
+                candidate => candidate.Id == id,
+                cancellationToken);
+
+        if (ticket is null)
+        {
+            return NotFound();
+        }
+
+        if (ticket.AssignedUserId != userId)
+        {
+            return Forbid();
+        }
+
+        if (!ticket.IsActive ||
+            ticket.Status is not TicketStatus.Folyamatban
+                and not TicketStatus.VálaszraVár
+                and not TicketStatus.Újranyitva)
+        {
+            return Conflict(new
+            {
+                message = "Ez a ticket jelenlegi állapotában nem zárható le."
+            });
+        }
+
+        if (!Enum.IsDefined(
+                typeof(TicketClosureType),
+                request.ClosureTypeId))
+        {
+            return BadRequest(new
+            {
+                message = "Érvénytelen lezárási típus."
+            });
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Resolution))
+        {
+            return BadRequest(new
+            {
+                message = "A lezáró bejegyzés nem lehet üres."
+            });
+        }
+
+        var resolution = request.Resolution.Trim();
+
+        if (resolution.Length > 5000)
+        {
+            return BadRequest(new
+            {
+                message = "A lezáró bejegyzés legfeljebb 5000 karakter lehet."
+            });
+        }
+
+        var now = DateTime.UtcNow;
+        var oldStatus = ticket.Status;
+
+        ticket.Status = TicketStatus.Lezárt;
+        ticket.ClosedAt = now;
+        ticket.UpdatedAt = now;
+
+        _db.TicketNotes.Add(new TicketNote
+        {
+            TicketId = ticket.Id,
+            UserId = userId,
+            Message = resolution,
+            ClosureTypeId = request.ClosureTypeId,
+            CreatedAt = now
+        });
+
+        _db.TicketStatusHistory.Add(new TicketStatusHistory
+        {
+            TicketId = ticket.Id,
+            OldStatus = oldStatus,
+            NewStatus = TicketStatus.Lezárt,
+            ChangedByUserId = userId,
+            Reason = $"Lezárás típusa: {GetClosureTypeName(request.ClosureTypeId)}",
+            CreatedAt = now
+        });
+
+        await _db.SaveChangesAsync(cancellationToken);
+
+        return Ok(new
+        {
+            ticket.Id,
+            ticket.Status,
+            ticket.ClosedAt,
+            request.ClosureTypeId
+        });
+    }
+
+    [HttpPost("{id:int}/reopen")]
+    public async Task<IActionResult> ReopenTicket(
+        int id,
+        ReopenTicketRequest request,
+        CancellationToken cancellationToken)
+    {
+        if (!TryGetCurrentUserId(out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var access = await GetCurrentUserAccessAsync(
+            userId,
+            cancellationToken);
+
+        if (access is null)
+        {
+            return Unauthorized();
+        }
+
+        var ticket = await _db.Tickets
+            .SingleOrDefaultAsync(
+                candidate => candidate.Id == id,
+                cancellationToken);
+
+        if (ticket is null)
+        {
+            return NotFound();
+        }
+
+        if (ticket.ReporterId != userId)
+        {
+            return Forbid();
+        }
+
+        if (!ticket.IsActive || ticket.Status != TicketStatus.Lezárt)
+        {
+            return Conflict(new
+            {
+                message = "Csak aktív, lezárt ticket nyitható újra."
+            });
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Reason))
+        {
+            return BadRequest(new
+            {
+                message = "Az újranyitás indoklása nem lehet üres."
+            });
+        }
+
+        var reason = request.Reason.Trim();
+
+        if (reason.Length > 5000)
+        {
+            return BadRequest(new
+            {
+                message = "Az indoklás legfeljebb 5000 karakter lehet."
+            });
+        }
+
+        var now = DateTime.UtcNow;
+        var oldStatus = ticket.Status;
+
+        ticket.Status = TicketStatus.Újranyitva;
+        ticket.ClosedAt = null;
+        ticket.UpdatedAt = now;
+
+        _db.TicketNotes.Add(new TicketNote
+        {
+            TicketId = ticket.Id,
+            UserId = userId,
+            Message = $"Újranyitás indoklása: {reason}",
+            CreatedAt = now
+        });
+
+        _db.TicketStatusHistory.Add(new TicketStatusHistory
+        {
+            TicketId = ticket.Id,
+            OldStatus = oldStatus,
+            NewStatus = TicketStatus.Újranyitva,
+            ChangedByUserId = userId,
+            Reason = reason,
+            CreatedAt = now
+        });
+
+        await _db.SaveChangesAsync(cancellationToken);
+
+        return Ok(new
+        {
+            ticket.Id,
+            ticket.Status,
+            ticket.UpdatedAt
+        });
+    }
+
+    [HttpGet("{id:int}/status-history")]
+    public async Task<IActionResult> GetStatusHistory(
+        int id,
+        CancellationToken cancellationToken)
+    {
+        if (!TryGetCurrentUserId(out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var access = await GetCurrentUserAccessAsync(
+            userId,
+            cancellationToken);
+
+        if (access is null)
+        {
+            return Unauthorized();
+        }
+
+        var ticketAccess = await _db.Tickets
+            .AsNoTracking()
+            .Where(ticket => ticket.Id == id)
+            .Select(ticket => new
+            {
+                ticket.ReporterId,
+                ticket.GroupId,
+                ticket.AssignedUserId
+            })
+            .SingleOrDefaultAsync(cancellationToken);
+
+        if (ticketAccess is null)
+        {
+            return NotFound();
+        }
+
+        var isReporter = ticketAccess.ReporterId == userId;
+        var isAssignedUser = ticketAccess.AssignedUserId == userId;
+        var isGroupMember =
+            access.GroupId is not null &&
+            access.GroupIsActive &&
+            ticketAccess.GroupId == access.GroupId;
+
+        if (!access.IsAdmin &&
+            !isReporter &&
+            !isAssignedUser &&
+            !isGroupMember)
+        {
+            return NotFound();
+        }
+
+        var history = await _db.TicketStatusHistory
+            .AsNoTracking()
+            .Where(entry => entry.TicketId == id)
+            .OrderBy(entry => entry.CreatedAt)
+            .ThenBy(entry => entry.Id)
+            .Select(entry => new TicketStatusHistoryResponse(
+                entry.Id,
+                entry.TicketId,
+                entry.OldStatus,
+                entry.NewStatus,
+                entry.ChangedByUserId,
+                entry.ChangedByUser.Name,
+                entry.Reason,
+                entry.CreatedAt))
+            .ToListAsync(cancellationToken);
+
+        return Ok(history);
     }
 
     [HttpGet("{ticketNumber}")]
@@ -564,7 +853,7 @@ public sealed class TicketsController : ControllerBase
         return NoContent();
     }
 
-    private async Task<NoteAccess?> GetCurrentUserNoteAccessAsync(
+    private async Task<UserAccess?> GetCurrentUserAccessAsync(
         int userId,
         CancellationToken cancellationToken)
     {
@@ -574,7 +863,8 @@ public sealed class TicketsController : ControllerBase
                 user.Id == userId &&
                 user.IsActive &&
                 user.RegistrationStatus == RegistrationStatus.Approved)
-            .Select(user => new NoteAccess(
+            .Select(user => new UserAccess(
+                user.IsAdmin,
                 user.GroupId,
                 user.Group != null && user.Group.IsActive))
             .SingleOrDefaultAsync(cancellationToken);
@@ -616,6 +906,29 @@ public sealed class TicketsController : ControllerBase
             ticket.AssignedUser == null ? null : ticket.AssignedUser.Name);
     }
 
+    private static string GetClosureTypeName(int closureTypeId)
+    {
+        return (TicketClosureType)closureTypeId switch
+        {
+            TicketClosureType.Megoldva =>
+                "Megoldva",
+
+            TicketClosureType.MegoldvaKerulomegoldassal =>
+                "Megoldva kerülőmegoldással",
+
+            TicketClosureType.NemReprodukalhato =>
+                "Nem reprodukálható",
+
+            TicketClosureType.Duplikalt =>
+                "Duplikált",
+
+            TicketClosureType.NemJavithato =>
+                "Nem javítható",
+
+            _ => "Ismeretlen lezárási típus"
+        };
+    }
+
     private static DateTime AddWorkdays(
         DateTime start,
         int workdays)
@@ -642,7 +955,8 @@ public sealed class TicketsController : ControllerBase
         return int.TryParse(subject, out userId);
     }
 
-    private sealed record NoteAccess(
+    private sealed record UserAccess(
+        bool IsAdmin,
         int? GroupId,
         bool GroupIsActive);
 }

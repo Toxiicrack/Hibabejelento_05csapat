@@ -14,5 +14,9 @@ public sealed class TicketNote
 
     public string Message { get; set; } = string.Empty;
 
+    // Csak a lezáráskor létrehozott végső bejegyzéshez tartozik.
+    // Null, ha a bejegyzés nem ticketlezárás.
+    public int? ClosureTypeId { get; set; }
+
     public DateTime CreatedAt { get; set; }
 }

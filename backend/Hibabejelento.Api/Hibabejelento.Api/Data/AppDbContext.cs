@@ -253,6 +253,9 @@ public sealed class AppDbContext : DbContext
                 .HasMaxLength(5000)
                 .IsRequired();
 
+            entity.Property(note => note.ClosureTypeId)
+                .IsRequired(false);
+
             entity.Property(note => note.CreatedAt)
                 .IsRequired();
 
