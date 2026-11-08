@@ -1,12 +1,179 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Hibabejelento.Maui.Views.LoginPage"
-             Title="LoginPage">
-    <VerticalStackLayout>
-        <Entry Text="{Binding UserEmail}" Placeholder="Email cím"/>
-        <Entry Text="{Binding UserPwd}" Placeholder="Jelszó"/>
-        <Button Command="{Binding LoginCommand}" Text="Bejelentkezés"/>
-        <Label Text="{Binding UserError}" TextColor="Red" HorizontalOptions="Center"/>
-    </VerticalStackLayout>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="Hibabejelento.Maui.Views.LoginPage"
+    Title="Bejelentkezés"
+    Shell.NavBarIsVisible="False"
+    BackgroundColor="#F5F6FA">
+
+    <Grid Padding="20"
+          VerticalOptions="Center"
+          HorizontalOptions="Center">
+
+        <!-- RESPONSIVE ÁLLAPOTOK A BEJELENTKEZÉSHEZ -->
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="ResponsiveLoginStates">
+
+                <!-- 1. PORTRÉ (Mobil / Keskeny) -->
+                <VisualState x:Name="Portrait">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter TargetName="PortraitLoginView" Property="IsVisible" Value="True"/>
+                        <Setter TargetName="SquareLoginView" Property="IsVisible" Value="False"/>
+                        <Setter TargetName="LandscapeLoginView" Property="IsVisible" Value="False"/>
+                    </VisualState.Setters>
+                </VisualState>
+
+                <!-- 2. NÉGYZETES (Tablet / Közepes) -->
+                <VisualState x:Name="Square">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="700"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter TargetName="PortraitLoginView" Property="IsVisible" Value="False"/>
+                        <Setter TargetName="SquareLoginView" Property="IsVisible" Value="True"/>
+                        <Setter TargetName="LandscapeLoginView" Property="IsVisible" Value="False"/>
+                    </VisualState.Setters>
+                </VisualState>
+
+                <!-- 3. FEKVŐ (Asztali / Széles) -->
+                <VisualState x:Name="Landscape">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1000"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter TargetName="PortraitLoginView" Property="IsVisible" Value="False"/>
+                        <Setter TargetName="SquareLoginView" Property="IsVisible" Value="False"/>
+                        <Setter TargetName="LandscapeLoginView" Property="IsVisible" Value="True"/>
+                    </VisualState.Setters>
+                </VisualState>
+
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <!-- 1. PORTRÉ NÉZET -->
+        <Border x:Name="PortraitLoginView"
+                IsVisible="True"
+                BackgroundColor="White"
+                Stroke="#E1E5EC"
+                StrokeShape="RoundRectangle 16"
+                Padding="25"
+                WidthRequest="350">
+            <VerticalStackLayout Spacing="16">
+                <Label Text="Hibabejelentő" FontSize="22" FontAttributes="Bold" TextColor="#2563EB" HorizontalTextAlignment="Center"/>
+                <Label Text="Jelentkezz be a folytatáshoz" FontSize="13" TextColor="#6B7280" HorizontalTextAlignment="Center" Margin="0,0,0,10"/>
+
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="Email cím" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
+                    <Entry Text="{Binding UserEmail}" Placeholder="admin@hibabejelento.local" HeightRequest="42" BackgroundColor="#F9FAFB"/>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="Jelszó" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
+                    <Entry Text="{Binding UserPwd}" Placeholder="••••••••" IsPassword="True" HeightRequest="42" BackgroundColor="#F9FAFB"/>
+                </VerticalStackLayout>
+
+                <Button Text="Bejelentkezés" 
+                        Command="{Binding LoginCommand}"
+                        BackgroundColor="#2563EB" 
+                        TextColor="White" 
+                        CornerRadius="8" 
+                        HeightRequest="45" 
+                        Margin="0,5,0,0"/>
+
+                <Label Text="{Binding UserError}" TextColor="#DC2626" FontSize="12" HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- 2. NÉGYZETES NÉZET -->
+        <Border x:Name="SquareLoginView"
+                IsVisible="False"
+                BackgroundColor="White"
+                Stroke="#E1E5EC"
+                StrokeShape="RoundRectangle 16"
+                Padding="35"
+                WidthRequest="450">
+            <VerticalStackLayout Spacing="20">
+                <Label Text="Üdvözöl a Hibabejelentő" FontSize="24" FontAttributes="Bold" TextColor="#2563EB" HorizontalTextAlignment="Center"/>
+                <Label Text="Add meg a belépési adataidat" FontSize="14" TextColor="#6B7280" HorizontalTextAlignment="Center"/>
+
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Email cím" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
+                    <Entry Text="{Binding UserEmail}" Placeholder="admin@hibabejelento.local" HeightRequest="45" BackgroundColor="#F9FAFB"/>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Jelszó" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
+                    <Entry Text="{Binding UserPwd}" Placeholder="••••••••" IsPassword="True" HeightRequest="45" BackgroundColor="#F9FAFB"/>
+                </VerticalStackLayout>
+
+                <Button Text="Bejelentkezés" 
+                        Command="{Binding LoginCommand}"
+                        BackgroundColor="#2563EB" 
+                        TextColor="White" 
+                        CornerRadius="8" 
+                        HeightRequest="45" 
+                        Margin="0,5,0,0"/>
+
+                <Label Text="{Binding UserError}" TextColor="#DC2626" FontSize="12" HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- 3. FEKVŐ NÉZET (Kétoszlopos asztali elrendezés) -->
+        <Border x:Name="LandscapeLoginView"
+                IsVisible="False"
+                BackgroundColor="White"
+                Stroke="#E1E5EC"
+                StrokeShape="RoundRectangle 16"
+                Padding="0"
+                WidthRequest="700"
+                HeightRequest="420">
+            <Grid ColumnDefinitions="1.2*, 1.8*">
+
+                <!-- Bal oldali dekoratív sáv -->
+                <VerticalStackLayout Grid.Column="0" 
+                                     BackgroundColor="#EEF2FF" 
+                                     Padding="30" 
+                                     VerticalOptions="Center" 
+                                     Spacing="12">
+                    <Label Text="🔧" FontSize="36"/>
+                    <Label Text="Hibabejelentő Rendszer" FontSize="18" FontAttributes="Bold" TextColor="#1E3A8A"/>
+                    <Label Text="Kezeld a hibákat hatékonyan és átláthatóan asztali környezetben is." FontSize="12" TextColor="#4B5563"/>
+                </VerticalStackLayout>
+
+                <!-- Jobb oldali űrlap -->
+                <VerticalStackLayout Grid.Column="1" 
+                                     Padding="40" 
+                                     VerticalOptions="Center" 
+                                     Spacing="12">
+                    <Label Text="Bejelentkezés" FontSize="20" FontAttributes="Bold" TextColor="#1F2937"/>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Email cím" FontSize="11" TextColor="#4B5563" FontAttributes="Bold"/>
+                        <Entry Text="{Binding UserEmail}" Placeholder="pelda.bela@hibabejelento.hu" HeightRequest="38" BackgroundColor="#F9FAFB" TextColor="#4B5563"/>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Jelszó" FontSize="11" TextColor="#4B5563" FontAttributes="Bold"/>
+                        <Entry Text="{Binding UserPwd}" Placeholder="••••••••" IsPassword="True" HeightRequest="38" BackgroundColor="#F9FAFB"  TextColor="#4B5563"/>
+                    </VerticalStackLayout>
+
+                    <Button Text="Bejelentkezés" 
+                            Command="{Binding LoginCommand}"
+                            BackgroundColor="#2563EB" 
+                            TextColor="White" 
+                            CornerRadius="6" 
+                            HeightRequest="40" 
+                            Margin="0,5,0,0"/>
+
+                    <Label Text="{Binding UserError}" TextColor="#DC2626" FontSize="11" HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
+                </VerticalStackLayout>
+
+            </Grid>
+        </Border>
+
+    </Grid>
 </ContentPage>

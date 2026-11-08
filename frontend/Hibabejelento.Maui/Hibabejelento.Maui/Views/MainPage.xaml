@@ -87,6 +87,7 @@
                     <Label Grid.Column="1"
                            Text="Hibajegyek keresése..."
                            TextColor="Gray"
+                           FontSize="10"
                            VerticalOptions="Center"
                            Margin="8,0,0,0"/>
                 </Grid>
@@ -106,7 +107,7 @@
                         Text="Kijelentkezés"
                         FontSize="12"
                         HeightRequest="42"
-                        Command="{Binding LoginCommand}"/>
+                        Command="{Binding LogoutCommand}"/>
             </Grid>
             <Button Grid.Column="2"
                     Text="Bejelentkezés"
@@ -325,32 +326,38 @@
 
                             <Label Text="Azonosító"
                                    FontAttributes="Bold"
-                                   FontSize="12"/>
+                                   FontSize="12"
+                                   TextColor="Black"/>
 
                             <Label Grid.Column="1"
                                    Text="Megnevezés"
                                    FontAttributes="Bold"
-                                   FontSize="12"/>
+                                   FontSize="12"
+                                   TextColor="Black"/>
 
                             <Label Grid.Column="2"
                                    Text="Prioritás"
                                    FontAttributes="Bold"
-                                   FontSize="12"/>
+                                   FontSize="12"
+                                   TextColor="Black"/>
 
                             <Label Grid.Column="3"
                                    Text="Státusz"
                                    FontAttributes="Bold"
-                                   FontSize="12"/>
+                                   FontSize="12"
+                                   TextColor="Black"/>
 
                             <Label Grid.Column="4"
                                    Text="Bejelentő"
                                    FontAttributes="Bold"
-                                   FontSize="12"/>
+                                   FontSize="12"
+                                   TextColor="Black"/>
 
                             <Label Grid.Column="5"
                                    Text="Határidő"
                                    FontAttributes="Bold"
-                                   FontSize="12"/>
+                                   FontSize="12"
+                                   TextColor="Black"/>
 
                         </Grid>
                     </Border>

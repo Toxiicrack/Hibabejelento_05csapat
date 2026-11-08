@@ -2,17 +2,140 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"             
              x:Class="Hibabejelento.Maui.Views.TicketCreationPage"
-             Title="TicketCreationPage"
-             WidthRequest="800"
-             HeightRequest="600">
-    <ScrollView>
-        <VerticalStackLayout>
-            <Entry Text="{Binding TicketTitle}" Placeholder="Hibajegy cím"/>
-            <Entry Text="{Binding TicketDescription}" Placeholder="Hibajegy leírás"/>
-            <Entry Text="{Binding TicketLocation}" Placeholder="Hibajegy terület"/>
-            <Entry Text="{Binding TicketAssetIdentifier}" Placeholder="Hibajegy asset"/>
-            <Button Command="{Binding CreateTicketCommand}" Text="ticket létrehozása"/>
-            <Label Text="{Binding TicketError}" TextColor="Red" HorizontalOptions="Center"/>
-        </VerticalStackLayout>
-    </ScrollView>
+             Title="Új hibajegy létrehozása"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="#F5F6FA">
+
+    <Grid Padding="20"
+          VerticalOptions="Center"
+          HorizontalOptions="Center">
+
+        <!-- RESZPONZÍV ÁLLAPOTOK A LÉTREHOZÁSI OLDALHOZ -->
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="ResponsiveCreationStates">
+
+                <!-- 1. PORTRÉ (Mobil / Keskeny) -->
+                <VisualState x:Name="Portrait">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter TargetName="PortraitCreationView" Property="IsVisible" Value="True"/>
+                        <Setter TargetName="LandscapeCreationView" Property="IsVisible" Value="False"/>
+                    </VisualState.Setters>
+                </VisualState>
+
+                <!-- 2. FEKVŐ (Asztali / Szélesebb - igazodva a megadott 800x600-as méretekhez is) -->
+                <VisualState x:Name="Landscape">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="700"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter TargetName="PortraitCreationView" Property="IsVisible" Value="False"/>
+                        <Setter TargetName="LandscapeCreationView" Property="IsVisible" Value="True"/>
+                    </VisualState.Setters>
+                </VisualState>
+
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <!-- 1. PORTRÉ NÉZET -->
+        <Border x:Name="PortraitCreationView"
+                IsVisible="True"
+                BackgroundColor="White"
+                Stroke="#E1E5EC"
+                StrokeShape="RoundRectangle 16"
+                Padding="25"
+                WidthRequest="400">
+            <ScrollView>
+                <VerticalStackLayout Spacing="14">
+                    <Label Text="Új hibajegy felvétele" FontSize="20" FontAttributes="Bold" TextColor="#2563EB" HorizontalTextAlignment="Center"/>
+                    <Label Text="Add meg a hiba részleteit" FontSize="13" TextColor="#6B7280" HorizontalTextAlignment="Center" Margin="0,0,0,10"/>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Hibajegy cím" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
+                        <Entry Text="{Binding TicketTitle}" Placeholder="Pl. Hálózati hiba" TextColor="#1F2937" PlaceholderColor="#9CA3AF" HeightRequest="40" BackgroundColor="#F9FAFB"/>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Hibajegy leírás" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
+                        <Entry Text="{Binding TicketDescription}" Placeholder="Részletek..." TextColor="#1F2937" PlaceholderColor="#9CA3AF" HeightRequest="40" BackgroundColor="#F9FAFB"/>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Hibajegy terület" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
+                        <Entry Text="{Binding TicketLocation}" Placeholder="Pl. Iroda / Szerverterem" TextColor="#1F2937" PlaceholderColor="#9CA3AF" HeightRequest="40" BackgroundColor="#F9FAFB"/>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Hibajegy asset" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
+                        <Entry Text="{Binding TicketAssetIdentifier}" Placeholder="Eszköz azonosító" TextColor="#1F2937" PlaceholderColor="#9CA3AF" HeightRequest="40" BackgroundColor="#F9FAFB"/>
+                    </VerticalStackLayout>
+
+                    <Button Text="Ticket létrehozása" 
+                            Command="{Binding CreateTicketCommand}"
+                            BackgroundColor="#2563EB" 
+                            TextColor="White" 
+                            CornerRadius="8" 
+                            HeightRequest="42" 
+                            Margin="0,10,0,0"/>
+
+                    <Label Text="{Binding TicketError}" TextColor="#DC2626" FontSize="12" HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
+                </VerticalStackLayout>
+            </ScrollView>
+        </Border>
+
+        <!-- 2. FEKVŐ / ASZTALI NÉZET (Szélesebb, kényelmes mező elrendezéssel) -->
+        <Border x:Name="LandscapeCreationView"
+                IsVisible="False"
+                BackgroundColor="White"
+                Stroke="#E1E5EC"
+                StrokeShape="RoundRectangle 16"
+                Padding="30"
+                WidthRequest="750"
+                HeightRequest="520">
+            <ScrollView>
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Új hibajegy létrehozása" FontSize="22" FontAttributes="Bold" TextColor="#2563EB"/>
+                    <Label Text="Töltsd ki az alábbi mezőket a hiba rögzítéséhez." FontSize="13" TextColor="#6B7280" Margin="0,0,0,5"/>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="15" RowDefinitions="Auto,Auto" RowSpacing="12">
+
+                        <VerticalStackLayout Grid.Row="0" Grid.Column="0" Spacing="4">
+                            <Label Text="Hibajegy cím" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
+                            <Entry Text="{Binding TicketTitle}" Placeholder="Pl. Hálózati hiba" TextColor="#1F2937" PlaceholderColor="#9CA3AF" HeightRequest="40" BackgroundColor="#F9FAFB"/>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Grid.Row="0" Grid.Column="1" Spacing="4">
+                            <Label Text="Hibajegy terület" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
+                            <Entry Text="{Binding TicketLocation}" Placeholder="Pl. Iroda / Szerverterem" TextColor="#1F2937" PlaceholderColor="#9CA3AF" HeightRequest="40" BackgroundColor="#F9FAFB"/>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Grid.Row="1" Grid.Column="0" Spacing="4">
+                            <Label Text="Hibajegy leírás" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
+                            <Entry Text="{Binding TicketDescription}" Placeholder="Részletek..." TextColor="#1F2937" PlaceholderColor="#9CA3AF" HeightRequest="40" BackgroundColor="#F9FAFB"/>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Grid.Row="1" Grid.Column="1" Spacing="4">
+                            <Label Text="Hibajegy asset" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
+                            <Entry Text="{Binding TicketAssetIdentifier}" Placeholder="Eszköz azonosító" TextColor="#1F2937" PlaceholderColor="#9CA3AF" HeightRequest="40" BackgroundColor="#F9FAFB"/>
+                        </VerticalStackLayout>
+
+                    </Grid>
+
+                    <Button Text="Ticket létrehozása" 
+                            Command="{Binding CreateTicketCommand}"
+                            BackgroundColor="#2563EB" 
+                            TextColor="White" 
+                            CornerRadius="8" 
+                            HeightRequest="42" 
+                            HorizontalOptions="Fill"
+                            Margin="0,10,0,0"/>
+
+                    <Label Text="{Binding TicketError}" TextColor="#DC2626" FontSize="12" HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
+                </VerticalStackLayout>
+            </ScrollView>
+        </Border>
+
+    </Grid>
 </ContentPage>

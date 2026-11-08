@@ -52,6 +52,17 @@ public partial class MainViewModel : BaseViewModel
     [RelayCommand]
     private async Task Login()
     {
+        //await Shell.Current.GoToAsync(nameof(LoginPage));
+    }
+
+    [RelayCommand]
+    private async Task Logout()
+    {
+
+        SecureStorage.Remove("userName");
+        SecureStorage.Remove("userEmail");
+        SecureStorage.Remove("userToken");
+        SecureStorage.Remove("userExp");
         await Shell.Current.GoToAsync(nameof(LoginPage));
     }
 
