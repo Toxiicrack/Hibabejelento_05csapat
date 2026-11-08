@@ -11,11 +11,11 @@
           VerticalOptions="Center"
           HorizontalOptions="Center">
 
-        <!-- RESPONSIVE ÁLLAPOTOK A BEJELENTKEZÉSHEZ -->
+        
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="ResponsiveLoginStates">
 
-                <!-- 1. PORTRÉ (Mobil / Keskeny) -->
+        
                 <VisualState x:Name="Portrait">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="0"/>
@@ -27,7 +27,7 @@
                     </VisualState.Setters>
                 </VisualState>
 
-                <!-- 2. NÉGYZETES (Tablet / Közepes) -->
+        
                 <VisualState x:Name="Square">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="700"/>
@@ -39,7 +39,7 @@
                     </VisualState.Setters>
                 </VisualState>
 
-                <!-- 3. FEKVŐ (Asztali / Széles) -->
+        
                 <VisualState x:Name="Landscape">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="1000"/>

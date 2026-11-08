@@ -55,6 +55,20 @@ public partial class MainViewModel : BaseViewModel
         //await Shell.Current.GoToAsync(nameof(LoginPage));
     }
 
+    [ObservableProperty]
+    private Ticket? selectedTicket;  
+    partial void OnSelectedTicketChanged(Ticket? value)
+    {
+        if (value == null) return;
+
+        var parameters = new Dictionary<string, object>
+        {
+            { "SelectedTicket", value }
+        };
+        
+        Shell.Current.GoToAsync(nameof(TicketDetailsPage), parameters);        
+    }
+
     [RelayCommand]
     private async Task Logout()
     {

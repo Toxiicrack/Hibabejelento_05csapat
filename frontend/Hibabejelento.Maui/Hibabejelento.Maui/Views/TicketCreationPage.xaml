@@ -10,11 +10,11 @@
           VerticalOptions="Center"
           HorizontalOptions="Center">
 
-        <!-- RESZPONZÍV ÁLLAPOTOK A LÉTREHOZÁSI OLDALHOZ -->
+
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="ResponsiveCreationStates">
 
-                <!-- 1. PORTRÉ (Mobil / Keskeny) -->
+
                 <VisualState x:Name="Portrait">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="0"/>
@@ -25,7 +25,7 @@
                     </VisualState.Setters>
                 </VisualState>
 
-                <!-- 2. FEKVŐ (Asztali / Szélesebb - igazodva a megadott 800x600-as méretekhez is) -->
+
                 <VisualState x:Name="Landscape">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="700"/>
@@ -39,7 +39,7 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <!-- 1. PORTRÉ NÉZET -->
+
         <Border x:Name="PortraitCreationView"
                 IsVisible="True"
                 BackgroundColor="White"
@@ -84,8 +84,7 @@
                 </VerticalStackLayout>
             </ScrollView>
         </Border>
-
-        <!-- 2. FEKVŐ / ASZTALI NÉZET (Szélesebb, kényelmes mező elrendezéssel) -->
+        
         <Border x:Name="LandscapeCreationView"
                 IsVisible="False"
                 BackgroundColor="White"

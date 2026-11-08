@@ -10,8 +10,7 @@
     <Grid Padding="15"
           RowDefinitions="Auto,*"
           RowSpacing="15">
-
-        <!-- RESPONSIVE ÁLLAPOTOK -->
+        
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="ResponsiveStates">
 
@@ -69,7 +68,7 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <!-- FEJLÉC -->
+
         <Grid Grid.Row="0"
               ColumnDefinitions="*,Auto,Auto,Auto"
               ColumnSpacing="10">
@@ -128,15 +127,16 @@
 
         </Grid>
 
-        <!-- HIBAJEGYEK -->
+
         <Grid Grid.Row="1">
 
-            <!-- PORTRÉ: KÁRTYÁS NÉZET -->
+
             <CollectionView
                 x:Name="PortraitView"
                 IsVisible="True"
                 ItemsSource="{Binding Tickets}"
-                SelectionMode="None"
+                SelectionMode="Single"
+                SelectedItem="{Binding SelectedTicket, Mode=TwoWay}"                
                 ItemSizingStrategy="MeasureAllItems">
 
                 <CollectionView.EmptyView>
@@ -237,12 +237,13 @@
             </CollectionView>
 
 
-            <!-- NÉGYZETES: TÖMÖR LISTA -->
+
             <CollectionView
                 x:Name="SquareView"
                 IsVisible="False"
                 ItemsSource="{Binding Tickets}"
-                SelectionMode="None"
+                SelectionMode="Single"
+                SelectedItem="{Binding SelectedTicket, Mode=TwoWay}"
                 ItemSizingStrategy="MeasureAllItems">
 
                 <CollectionView.EmptyView>
@@ -302,12 +303,13 @@
             </CollectionView>
 
 
-            <!-- FEKVŐ: TÁBLÁZATOS NÉZET -->
+
             <CollectionView
                 x:Name="LandscapeView"
                 IsVisible="False"
                 ItemsSource="{Binding Tickets}"
-                SelectionMode="None"
+                SelectionMode="Single"
+                SelectedItem="{Binding SelectedTicket, Mode=TwoWay}"
                 ItemSizingStrategy="MeasureAllItems">
 
                 <CollectionView.EmptyView>
