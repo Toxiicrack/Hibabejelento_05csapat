@@ -87,7 +87,6 @@ public sealed class TicketsController : ControllerBase
             Title = request.Title.Trim(),
             Description = request.Description.Trim(),
 
-            // A felhasználó LocationId-t küld; a nevet a backend tölti ki.
             LocationId = location.Id,
             LocationData = location,
             Location = location.Name,
@@ -99,7 +98,6 @@ public sealed class TicketsController : ControllerBase
             CategoryId = category.Id,
             Category = category,
 
-            // Az új, adatbázisban kezelt prioritást használjuk.
             PriorityId = defaultPriority.Id,
             PriorityData = defaultPriority,
             Priority = defaultPriority.Name,
@@ -141,8 +139,40 @@ public sealed class TicketsController : ControllerBase
             ToResponse(savedTicket));
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetVisibleTickets(
+    // Saját bejelentések, beleértve a korábbi és visszavont jegyeket is.
+    [HttpGet("mine")]
+    public async Task<IActionResult> GetMyTickets(
+        CancellationToken cancellationToken)
+    {
+        if (!TryGetCurrentUserId(out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var userExists = await _db.Users
+            .AnyAsync(
+                user =>
+                    user.Id == userId &&
+                    user.IsActive &&
+                    user.RegistrationStatus == RegistrationStatus.Approved,
+                cancellationToken);
+
+        if (!userExists)
+        {
+            return Unauthorized();
+        }
+
+        var tickets = await GetTicketResponseQuery()
+            .Where(ticket => ticket.ReporterId == userId)
+            .OrderByDescending(ticket => ticket.CreatedAt)
+            .ToListAsync(cancellationToken);
+
+        return Ok(tickets.Select(ToResponse));
+    }
+
+    // A bejelentkezett felhasználó karbantartói csoportjához rendelt jegyek.
+    [HttpGet("maintenance")]
+    public async Task<IActionResult> GetMaintenanceTickets(
         CancellationToken cancellationToken)
     {
         if (!TryGetCurrentUserId(out var userId))
@@ -152,11 +182,14 @@ public sealed class TicketsController : ControllerBase
 
         var access = await _db.Users
             .AsNoTracking()
-            .Where(user => user.Id == userId)
+            .Where(user =>
+                user.Id == userId &&
+                user.IsActive &&
+                user.RegistrationStatus == RegistrationStatus.Approved)
             .Select(user => new
             {
-                user.IsAdmin,
-                user.GroupId
+                user.GroupId,
+                GroupIsActive = user.Group != null && user.Group.IsActive
             })
             .SingleOrDefaultAsync(cancellationToken);
 
@@ -165,19 +198,13 @@ public sealed class TicketsController : ControllerBase
             return Unauthorized();
         }
 
-        var query = GetTicketResponseQuery();
-
-        if (!access.IsAdmin)
+        if (access.GroupId is null || !access.GroupIsActive)
         {
-            // A saját és a felhasználó csoportjához rendelt ticketek
-            // ugyanabban a listában jelennek meg.
-            query = query.Where(ticket =>
-                ticket.ReporterId == userId ||
-                (access.GroupId != null &&
-                 ticket.GroupId == access.GroupId));
+            return Forbid();
         }
 
-        var tickets = await query
+        var tickets = await GetTicketResponseQuery()
+            .Where(ticket => ticket.GroupId == access.GroupId)
             .OrderByDescending(ticket => ticket.CreatedAt)
             .ToListAsync(cancellationToken);
 
@@ -196,7 +223,10 @@ public sealed class TicketsController : ControllerBase
 
         var access = await _db.Users
             .AsNoTracking()
-            .Where(user => user.Id == userId)
+            .Where(user =>
+                user.Id == userId &&
+                user.IsActive &&
+                user.RegistrationStatus == RegistrationStatus.Approved)
             .Select(user => new
             {
                 user.IsAdmin,
