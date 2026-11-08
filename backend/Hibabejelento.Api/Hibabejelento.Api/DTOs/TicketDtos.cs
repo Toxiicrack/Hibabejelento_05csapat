@@ -35,6 +35,21 @@ public sealed class AcceptTicketRequest
     public int PriorityId { get; init; }
 }
 
+public sealed class CreateTicketNoteRequest
+{
+    [Required]
+    [StringLength(5000)]
+    public string Message { get; init; } = string.Empty;
+}
+
+public sealed record TicketNoteResponse(
+    int Id,
+    int TicketId,
+    int UserId,
+    string UserName,
+    string Message,
+    DateTime CreatedAt);
+
 public sealed record TicketResponse(
     int Id,
     string TicketNumber,

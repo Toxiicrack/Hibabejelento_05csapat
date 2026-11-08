@@ -22,6 +22,8 @@ public sealed class AppDbContext : DbContext
 
     public DbSet<Ticket> Tickets => Set<Ticket>();
 
+    public DbSet<TicketNote> TicketNotes => Set<TicketNote>();
+
     public DbSet<TicketStatusHistory> TicketStatusHistory =>
         Set<TicketStatusHistory>();
 
@@ -238,6 +240,36 @@ public sealed class AppDbContext : DbContext
             entity.HasOne(ticket => ticket.AssignedUser)
                 .WithMany()
                 .HasForeignKey(ticket => ticket.AssignedUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<TicketNote>(entity =>
+        {
+            entity.ToTable("TicketNotes");
+
+            entity.HasKey(note => note.Id);
+
+            entity.Property(note => note.Message)
+                .HasMaxLength(5000)
+                .IsRequired();
+
+            entity.Property(note => note.CreatedAt)
+                .IsRequired();
+
+            entity.HasIndex(note => new
+            {
+                note.TicketId,
+                note.CreatedAt
+            });
+
+            entity.HasOne(note => note.Ticket)
+                .WithMany()
+                .HasForeignKey(note => note.TicketId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(note => note.User)
+                .WithMany()
+                .HasForeignKey(note => note.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
 

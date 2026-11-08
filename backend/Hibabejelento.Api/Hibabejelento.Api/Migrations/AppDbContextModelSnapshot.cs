@@ -241,6 +241,35 @@ namespace Hibabejelento.Api.Migrations
                     b.ToTable("Tickets", (string)null);
                 });
 
+            modelBuilder.Entity("Hibabejelento.Api.Middleware.Entities.TicketNote", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(5000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("TicketId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("TicketId", "CreatedAt");
+
+                    b.ToTable("TicketNotes", (string)null);
+                });
+
             modelBuilder.Entity("Hibabejelento.Api.Middleware.Entities.TicketStatusHistory", b =>
                 {
                     b.Property<int>("Id")
@@ -383,6 +412,25 @@ namespace Hibabejelento.Api.Migrations
                     b.Navigation("PriorityData");
 
                     b.Navigation("Reporter");
+                });
+
+            modelBuilder.Entity("Hibabejelento.Api.Middleware.Entities.TicketNote", b =>
+                {
+                    b.HasOne("Hibabejelento.Api.Middleware.Entities.Ticket", "Ticket")
+                        .WithMany()
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Hibabejelento.Api.Middleware.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Ticket");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Hibabejelento.Api.Middleware.Entities.TicketStatusHistory", b =>

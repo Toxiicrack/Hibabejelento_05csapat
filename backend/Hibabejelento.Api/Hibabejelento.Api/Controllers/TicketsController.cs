@@ -268,8 +268,6 @@ public sealed class TicketsController : ControllerBase
 
         var now = DateTime.UtcNow;
 
-        // Az adatbázisban végrehajtott feltételes módosítás miatt
-        // párhuzamos kéréseknél csak az egyik felhasználó veheti fel.
         var updatedRows = await _db.Tickets
             .Where(candidate =>
                 candidate.Id == id &&
@@ -301,6 +299,170 @@ public sealed class TicketsController : ControllerBase
                 cancellationToken);
 
         return Ok(ToResponse(updatedTicket));
+    }
+
+    [HttpGet("{id:int}/notes")]
+    public async Task<IActionResult> GetTicketNotes(
+        int id,
+        CancellationToken cancellationToken)
+    {
+        if (!TryGetCurrentUserId(out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var access = await GetCurrentUserNoteAccessAsync(
+            userId,
+            cancellationToken);
+
+        if (access is null)
+        {
+            return Unauthorized();
+        }
+
+        var ticketAccess = await _db.Tickets
+            .AsNoTracking()
+            .Where(ticket => ticket.Id == id)
+            .Select(ticket => new
+            {
+                ticket.ReporterId,
+                ticket.GroupId,
+                ticket.AssignedUserId
+            })
+            .SingleOrDefaultAsync(cancellationToken);
+
+        if (ticketAccess is null)
+        {
+            return NotFound();
+        }
+
+        var isReporter = ticketAccess.ReporterId == userId;
+        var isAssignedUser = ticketAccess.AssignedUserId == userId;
+        var isGroupMember =
+            access.GroupId is not null &&
+            access.GroupIsActive &&
+            ticketAccess.GroupId == access.GroupId;
+
+        if (!isReporter && !isAssignedUser && !isGroupMember)
+        {
+            return NotFound();
+        }
+
+        var notes = await _db.TicketNotes
+            .AsNoTracking()
+            .Where(note => note.TicketId == id)
+            .Include(note => note.User)
+            .OrderBy(note => note.CreatedAt)
+            .ThenBy(note => note.Id)
+            .Select(note => new TicketNoteResponse(
+                note.Id,
+                note.TicketId,
+                note.UserId,
+                note.User.Name,
+                note.Message,
+                note.CreatedAt))
+            .ToListAsync(cancellationToken);
+
+        return Ok(notes);
+    }
+
+    [HttpPost("{id:int}/notes")]
+    public async Task<IActionResult> CreateTicketNote(
+        int id,
+        CreateTicketNoteRequest request,
+        CancellationToken cancellationToken)
+    {
+        if (!TryGetCurrentUserId(out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var access = await GetCurrentUserNoteAccessAsync(
+            userId,
+            cancellationToken);
+
+        if (access is null)
+        {
+            return Unauthorized();
+        }
+
+        var ticketAccess = await _db.Tickets
+            .AsNoTracking()
+            .Where(ticket => ticket.Id == id)
+            .Select(ticket => new
+            {
+                ticket.ReporterId,
+                ticket.AssignedUserId,
+                ticket.Status
+            })
+            .SingleOrDefaultAsync(cancellationToken);
+
+        if (ticketAccess is null)
+        {
+            return NotFound();
+        }
+
+        var isReporter = ticketAccess.ReporterId == userId;
+        var isAssignedUser = ticketAccess.AssignedUserId == userId;
+
+        if (!isReporter && !isAssignedUser)
+        {
+            return NotFound();
+        }
+
+        if (ticketAccess.Status is TicketStatus.Le\u007A\u00E1rt or TicketStatus.Visszavonva)
+        {
+            return Conflict(new
+            {
+                message = "Lezárt vagy visszavont tickethez nem lehet bejegyzést írni."
+            });
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Message))
+        {
+            return BadRequest(new
+            {
+                message = "A bejegyzés szövege nem lehet üres."
+            });
+        }
+
+        var message = request.Message.Trim();
+
+        if (message.Length > 5000)
+        {
+            return BadRequest(new
+            {
+                message = "A bejegyzés legfeljebb 5000 karakter lehet."
+            });
+        }
+
+        var note = new TicketNote
+        {
+            TicketId = id,
+            UserId = userId,
+            Message = message,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        _db.TicketNotes.Add(note);
+        await _db.SaveChangesAsync(cancellationToken);
+
+        var response = await _db.TicketNotes
+            .AsNoTracking()
+            .Where(candidate => candidate.Id == note.Id)
+            .Select(candidate => new TicketNoteResponse(
+                candidate.Id,
+                candidate.TicketId,
+                candidate.UserId,
+                candidate.User.Name,
+                candidate.Message,
+                candidate.CreatedAt))
+            .SingleAsync(cancellationToken);
+
+        return CreatedAtAction(
+            nameof(GetTicketNotes),
+            new { id },
+            response);
     }
 
     [HttpGet("{ticketNumber}")]
@@ -402,6 +564,22 @@ public sealed class TicketsController : ControllerBase
         return NoContent();
     }
 
+    private async Task<NoteAccess?> GetCurrentUserNoteAccessAsync(
+        int userId,
+        CancellationToken cancellationToken)
+    {
+        return await _db.Users
+            .AsNoTracking()
+            .Where(user =>
+                user.Id == userId &&
+                user.IsActive &&
+                user.RegistrationStatus == RegistrationStatus.Approved)
+            .Select(user => new NoteAccess(
+                user.GroupId,
+                user.Group != null && user.Group.IsActive))
+            .SingleOrDefaultAsync(cancellationToken);
+    }
+
     private IQueryable<Ticket> GetTicketResponseQuery()
     {
         return _db.Tickets
@@ -463,4 +641,8 @@ public sealed class TicketsController : ControllerBase
         var subject = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
         return int.TryParse(subject, out userId);
     }
+
+    private sealed record NoteAccess(
+        int? GroupId,
+        bool GroupIsActive);
 }
