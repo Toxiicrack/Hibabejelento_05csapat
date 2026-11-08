@@ -158,7 +158,8 @@ public sealed class AdminTicketsController : ControllerBase
         return _db.Tickets
             .AsNoTracking()
             .Include(ticket => ticket.Category)
-            .Include(ticket => ticket.Group);
+            .Include(ticket => ticket.Group)
+            .Include(ticket => ticket.AssignedUser);
     }
 
     private static TicketResponse ToResponse(Ticket ticket)
@@ -183,7 +184,9 @@ public sealed class AdminTicketsController : ControllerBase
             ticket.IsActive,
             ticket.CreatedAt,
             ticket.UpdatedAt,
-            ticket.ClosedAt);
+            ticket.ClosedAt,
+            ticket.AssignedUserId,
+            ticket.AssignedUser == null ? null : ticket.AssignedUser.Name);
     }
 
     private static DateTime AddWorkdays(

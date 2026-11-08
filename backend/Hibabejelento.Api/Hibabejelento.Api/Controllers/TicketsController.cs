@@ -139,7 +139,6 @@ public sealed class TicketsController : ControllerBase
             ToResponse(savedTicket));
     }
 
-    // Saját bejelentések, beleértve a korábbi és visszavont jegyeket is.
     [HttpGet("mine")]
     public async Task<IActionResult> GetMyTickets(
         CancellationToken cancellationToken)
@@ -170,7 +169,6 @@ public sealed class TicketsController : ControllerBase
         return Ok(tickets.Select(ToResponse));
     }
 
-    // A bejelentkezett felhasználó karbantartói csoportjához rendelt jegyek.
     [HttpGet("maintenance")]
     public async Task<IActionResult> GetMaintenanceTickets(
         CancellationToken cancellationToken)
@@ -209,6 +207,100 @@ public sealed class TicketsController : ControllerBase
             .ToListAsync(cancellationToken);
 
         return Ok(tickets.Select(ToResponse));
+    }
+
+    [HttpPost("{id:int}/take")]
+    public async Task<IActionResult> TakeTicket(
+        int id,
+        CancellationToken cancellationToken)
+    {
+        if (!TryGetCurrentUserId(out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var groupId = await _db.Users
+            .AsNoTracking()
+            .Where(user =>
+                user.Id == userId &&
+                user.IsActive &&
+                user.RegistrationStatus == RegistrationStatus.Approved)
+            .Select(user =>
+                user.Group != null && user.Group.IsActive
+                    ? user.GroupId
+                    : null)
+            .SingleOrDefaultAsync(cancellationToken);
+
+        if (groupId is null)
+        {
+            return Forbid();
+        }
+
+        var ticket = await _db.Tickets
+            .AsNoTracking()
+            .SingleOrDefaultAsync(
+                candidate =>
+                    candidate.Id == id &&
+                    candidate.GroupId == groupId,
+                cancellationToken);
+
+        if (ticket is null)
+        {
+            return NotFound();
+        }
+
+        if (!ticket.IsActive ||
+            ticket.Status != TicketStatus.Folyamatban)
+        {
+            return Conflict(new
+            {
+                message = "Csak aktív, folyamatban lévő ticket vehető fel."
+            });
+        }
+
+        if (ticket.AssignedUserId is not null)
+        {
+            return Conflict(new
+            {
+                message = "Ezt a ticketet már felvette egy karbantartó."
+            });
+        }
+
+        var now = DateTime.UtcNow;
+
+        // Az adatbázisban végrehajtott feltételes módosítás miatt
+        // párhuzamos kéréseknél csak az egyik felhasználó veheti fel.
+        var updatedRows = await _db.Tickets
+            .Where(candidate =>
+                candidate.Id == id &&
+                candidate.GroupId == groupId &&
+                candidate.IsActive &&
+                candidate.Status == TicketStatus.Folyamatban &&
+                candidate.AssignedUserId == null)
+            .ExecuteUpdateAsync(
+                setters => setters
+                    .SetProperty(
+                        candidate => candidate.AssignedUserId,
+                        (int?)userId)
+                    .SetProperty(
+                        candidate => candidate.UpdatedAt,
+                        now),
+                cancellationToken);
+
+        if (updatedRows == 0)
+        {
+            return Conflict(new
+            {
+                message = "Ezt a ticketet időközben már felvette valaki, vagy már nem vehető fel."
+            });
+        }
+
+        var updatedTicket = await GetTicketResponseQuery()
+            .SingleAsync(
+                candidate => candidate.Id == id,
+                cancellationToken);
+
+        return Ok(ToResponse(updatedTicket));
     }
 
     [HttpGet("{ticketNumber}")]
@@ -270,7 +362,6 @@ public sealed class TicketsController : ControllerBase
             return Unauthorized();
         }
 
-        // Csak a bejelentő vonhatja vissza a saját ticketjét.
         var ticket = await _db.Tickets
             .SingleOrDefaultAsync(
                 candidate =>
@@ -316,7 +407,8 @@ public sealed class TicketsController : ControllerBase
         return _db.Tickets
             .AsNoTracking()
             .Include(ticket => ticket.Category)
-            .Include(ticket => ticket.Group);
+            .Include(ticket => ticket.Group)
+            .Include(ticket => ticket.AssignedUser);
     }
 
     private static TicketResponse ToResponse(Ticket ticket)
@@ -341,7 +433,9 @@ public sealed class TicketsController : ControllerBase
             ticket.IsActive,
             ticket.CreatedAt,
             ticket.UpdatedAt,
-            ticket.ClosedAt);
+            ticket.ClosedAt,
+            ticket.AssignedUserId,
+            ticket.AssignedUser == null ? null : ticket.AssignedUser.Name);
     }
 
     private static DateTime AddWorkdays(

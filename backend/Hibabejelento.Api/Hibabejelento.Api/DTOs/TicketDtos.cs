@@ -55,4 +55,6 @@ public sealed record TicketResponse(
     bool IsActive,
     DateTime CreatedAt,
     DateTime UpdatedAt,
-    DateTime? ClosedAt);
+    DateTime? ClosedAt,
+    int? AssignedUserId,
+    string? AssignedUserName);
