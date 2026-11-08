@@ -17,12 +17,14 @@ public partial class MainViewModel : BaseViewModel
     [ObservableProperty] private DateTime lastCheck;
     [ObservableProperty] private Color statusColor = Colors.Gray;
     [ObservableProperty] private List<Ticket> tickets = new();
+    [ObservableProperty] private string userName = "";
 
     public MainViewModel(IApiService api) => _api = api;
 
     [RelayCommand]
     private async Task LoadTicketsAsync()
     {
+        userName = await SecureStorage.GetAsync("userName");
         if (IsBusy) return;
         IsBusy = true;
         try

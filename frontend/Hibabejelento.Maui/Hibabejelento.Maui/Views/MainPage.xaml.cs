@@ -23,14 +23,15 @@ public partial class MainPage : ContentPage
 
         try
         {
-            var token = await SecureStorage.GetAsync("userToken");
-            if (string.IsNullOrWhiteSpace(token))
+            DateTime check = Convert.ToDateTime(await SecureStorage.GetAsync("userExp"));
+            if (DateTime.UtcNow > check)
             {
                 _redirecting = true;
                 await Shell.Current.GoToAsync($"//home");
                 return;
             }
-
+            LoginButton.IsVisible = false;
+            LoggedInGrid.IsVisible = true;            
             await _vm.CheckHealthCommand.ExecuteAsync(null);
             await _vm.LoadTicketsCommand.ExecuteAsync(null);
         }

@@ -57,6 +57,7 @@ public sealed class ApiService : IApiService
             await SecureStorage.SetAsync("userName", result.User.Name ?? string.Empty);
             await SecureStorage.SetAsync("userEmail", result.User.Email ?? email);
             await SecureStorage.SetAsync("userToken", result.AccessToken);
+            await SecureStorage.SetAsync("userExp", result.ExpiresAtUtc.ToString());
             return string.Empty;
         }
         catch (HttpRequestException)

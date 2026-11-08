@@ -71,22 +71,18 @@
 
         <!-- FEJLÉC -->
         <Grid Grid.Row="0"
-              ColumnDefinitions="*,Auto,Auto"
+              ColumnDefinitions="*,Auto,Auto,Auto"
               ColumnSpacing="10">
 
             <Border Grid.Column="0"
                     HeightRequest="42"
                     BackgroundColor="White"
                     Stroke="#E0E3EA"
-                    StrokeShape="RoundRectangle 10">
+                    StrokeShape="RoundRectangle 10"
+                    x:Name="SearchBorder">
 
                 <Grid Padding="12"
                       ColumnDefinitions="Auto,*">
-
-                    <Label Text="⌕"
-                           FontSize="22"
-                           TextColor="Gray"
-                           VerticalOptions="Center"/>
 
                     <Label Grid.Column="1"
                            Text="Hibajegyek keresése..."
@@ -100,15 +96,27 @@
                         Command="{Binding GlobalSearchCommand}"/>
                 </Border.GestureRecognizers>
             </Border>
-
-            <Button Grid.Column="1"
+            <Grid x:Name="LoggedInGrid"
+                    Grid.Column="1"
+                    Padding="10,0"
+                    HeightRequest="42"
+                    IsVisible="False" ColumnDefinitions="*,*">
+                <Label Text="{Binding UserName}" Grid.Column="0" FontSize="12" TextColor="Black"/>
+                <Button Grid.Column="1"
+                        Text="Kijelentkezés"
+                        FontSize="12"
+                        HeightRequest="42"
+                        Command="{Binding LoginCommand}"/>
+            </Grid>
+            <Button Grid.Column="2"
                     Text="Bejelentkezés"
                     FontSize="12"
                     Padding="10,0"
                     HeightRequest="42"
+                    x:Name="LoginButton"
                     Command="{Binding LoginCommand}"/>
 
-            <Button Grid.Column="2"
+            <Button Grid.Column="3"
                     Text="+ Új"
                     FontSize="12"
                     Padding="12,0"
