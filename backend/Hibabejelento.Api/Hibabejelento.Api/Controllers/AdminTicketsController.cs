@@ -76,11 +76,14 @@ public sealed class AdminTicketsController : ControllerBase
             });
         }
 
-        var groupIsActive = await _db.Groups.AnyAsync(
-            group => group.Id == request.GroupId && group.IsActive,
-            cancellationToken);
+        var group = await _db.Groups
+            .SingleOrDefaultAsync(
+                candidate =>
+                    candidate.Id == request.GroupId &&
+                    candidate.IsActive,
+                cancellationToken);
 
-        if (!groupIsActive)
+        if (group is null)
         {
             return BadRequest(new
             {
@@ -88,13 +91,14 @@ public sealed class AdminTicketsController : ControllerBase
             });
         }
 
-        var categoryIsActive = await _db.Categories.AnyAsync(
-            category =>
-                category.Id == request.CategoryId &&
-                category.IsActive,
-            cancellationToken);
+        var category = await _db.Categories
+            .SingleOrDefaultAsync(
+                candidate =>
+                    candidate.Id == request.CategoryId &&
+                    candidate.IsActive,
+                cancellationToken);
 
-        if (!categoryIsActive)
+        if (category is null)
         {
             return BadRequest(new
             {
@@ -102,16 +106,36 @@ public sealed class AdminTicketsController : ControllerBase
             });
         }
 
+        var priority = await _db.Priorities
+            .SingleOrDefaultAsync(
+                candidate =>
+                    candidate.Id == request.PriorityId &&
+                    candidate.IsActive,
+                cancellationToken);
+
+        if (priority is null)
+        {
+            return BadRequest(new
+            {
+                message = "A prioritás nem létezik vagy inaktív."
+            });
+        }
+
         var now = DateTime.UtcNow;
         var oldStatus = ticket.Status;
 
-        ticket.GroupId = request.GroupId;
-        ticket.CategoryId = request.CategoryId;
-        ticket.Priority = request.Priority;
+        ticket.GroupId = group.Id;
+        ticket.Group = group;
+
+        ticket.CategoryId = category.Id;
+        ticket.Category = category;
+
+        ticket.PriorityId = priority.Id;
+        ticket.PriorityData = priority;
+        ticket.Priority = priority.Name;
+
         ticket.Status = TicketStatus.Folyamatban;
-        ticket.DueDate = AddWorkdays(
-            now,
-            GetDueWorkdays(request.Priority));
+        ticket.DueDate = AddWorkdays(now, priority.DefaultDueDays);
         ticket.UpdatedAt = now;
 
         _db.TicketStatusHistory.Add(new TicketStatusHistory
@@ -144,10 +168,12 @@ public sealed class AdminTicketsController : ControllerBase
             ticket.TicketNumber,
             ticket.Title,
             ticket.Description,
+            ticket.LocationId,
             ticket.Location,
             ticket.AssetIdentifier,
             ticket.CategoryId,
             ticket.Category.Name,
+            ticket.PriorityId,
             ticket.Priority,
             ticket.Status,
             ticket.ReporterId,
@@ -160,19 +186,9 @@ public sealed class AdminTicketsController : ControllerBase
             ticket.ClosedAt);
     }
 
-    private static int GetDueWorkdays(TicketPriority priority)
-    {
-        return priority switch
-        {
-            TicketPriority.Sürgős => 1,
-            TicketPriority.Magas => 3,
-            TicketPriority.Normál => 5,
-            TicketPriority.Alacsony => 10,
-            _ => 5
-        };
-    }
-
-    private static DateTime AddWorkdays(DateTime start, int workdays)
+    private static DateTime AddWorkdays(
+        DateTime start,
+        int workdays)
     {
         var result = start;
 

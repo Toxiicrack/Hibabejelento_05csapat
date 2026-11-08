@@ -16,6 +16,10 @@ public sealed class AppDbContext : DbContext
 
     public DbSet<Category> Categories => Set<Category>();
 
+    public DbSet<Location> Locations => Set<Location>();
+
+    public DbSet<Priority> Priorities => Set<Priority>();
+
     public DbSet<Ticket> Tickets => Set<Ticket>();
 
     public DbSet<TicketStatusHistory> TicketStatusHistory =>
@@ -112,6 +116,55 @@ public sealed class AppDbContext : DbContext
                 .IsRequired();
         });
 
+        modelBuilder.Entity<Location>(entity =>
+        {
+            entity.ToTable("Locations");
+
+            entity.HasKey(location => location.Id);
+
+            entity.Property(location => location.Name)
+                .HasMaxLength(300)
+                .IsRequired();
+
+            entity.HasIndex(location => location.Name)
+                .IsUnique();
+
+            entity.Property(location => location.Description)
+                .HasMaxLength(500);
+
+            entity.Property(location => location.IsActive)
+                .HasDefaultValue(true);
+
+            entity.Property(location => location.CreatedAt)
+                .IsRequired();
+        });
+
+        modelBuilder.Entity<Priority>(entity =>
+        {
+            entity.ToTable("Priorities");
+
+            entity.HasKey(priority => priority.Id);
+
+            entity.Property(priority => priority.Name)
+                .HasMaxLength(20)
+                .IsRequired();
+
+            entity.HasIndex(priority => priority.Name)
+                .IsUnique();
+
+            entity.Property(priority => priority.DefaultDueDays)
+                .IsRequired();
+
+            entity.Property(priority => priority.IsDefault)
+                .HasDefaultValue(false);
+
+            entity.Property(priority => priority.IsActive)
+                .HasDefaultValue(true);
+
+            entity.Property(priority => priority.CreatedAt)
+                .IsRequired();
+        });
+
         modelBuilder.Entity<Ticket>(entity =>
         {
             entity.ToTable("Tickets");
@@ -136,13 +189,12 @@ public sealed class AppDbContext : DbContext
                 .HasMaxLength(300)
                 .IsRequired();
 
-            entity.Property(ticket => ticket.AssetIdentifier)
-                .HasMaxLength(100);
-
             entity.Property(ticket => ticket.Priority)
-                .HasConversion<string>()
                 .HasMaxLength(20)
                 .IsRequired();
+
+            entity.Property(ticket => ticket.AssetIdentifier)
+                .HasMaxLength(100);
 
             entity.Property(ticket => ticket.Status)
                 .HasConversion<string>()
@@ -152,9 +204,21 @@ public sealed class AppDbContext : DbContext
             entity.Property(ticket => ticket.IsActive)
                 .HasDefaultValue(true);
 
+            entity.HasIndex(ticket => ticket.LocationId);
+            entity.HasIndex(ticket => ticket.PriorityId);
             entity.HasIndex(ticket => ticket.ReporterId);
             entity.HasIndex(ticket => ticket.GroupId);
             entity.HasIndex(ticket => ticket.Status);
+
+            entity.HasOne(ticket => ticket.LocationData)
+                .WithMany(location => location.Tickets)
+                .HasForeignKey(ticket => ticket.LocationId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(ticket => ticket.PriorityData)
+                .WithMany(priority => priority.Tickets)
+                .HasForeignKey(ticket => ticket.PriorityId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             entity.HasOne(ticket => ticket.Category)
                 .WithMany()

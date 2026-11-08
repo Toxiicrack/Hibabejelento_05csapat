@@ -13,9 +13,8 @@ public sealed class CreateTicketRequest
     [MinLength(10)]
     public string Description { get; init; } = string.Empty;
 
-    [Required]
-    [StringLength(300, MinimumLength = 2)]
-    public string Location { get; init; } = string.Empty;
+    [Range(1, int.MaxValue)]
+    public int LocationId { get; init; }
 
     [StringLength(100)]
     public string? AssetIdentifier { get; init; }
@@ -32,7 +31,8 @@ public sealed class AcceptTicketRequest
     [Range(1, int.MaxValue)]
     public int CategoryId { get; init; }
 
-    public TicketPriority Priority { get; init; } = TicketPriority.Normál;
+    [Range(1, int.MaxValue)]
+    public int PriorityId { get; init; }
 }
 
 public sealed record TicketResponse(
@@ -40,11 +40,13 @@ public sealed record TicketResponse(
     string TicketNumber,
     string Title,
     string Description,
+    int LocationId,
     string Location,
     string? AssetIdentifier,
     int CategoryId,
     string CategoryName,
-    TicketPriority Priority,
+    int PriorityId,
+    string Priority,
     TicketStatus Status,
     int ReporterId,
     int? GroupId,

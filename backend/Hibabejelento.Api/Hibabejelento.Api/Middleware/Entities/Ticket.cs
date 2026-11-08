@@ -12,7 +12,12 @@ public sealed class Ticket
 
     public string Description { get; set; } = string.Empty;
 
+    // Megjelenítési pillanatkép; az új bejelentések helyszínét LocationId választja ki.
     public string Location { get; set; } = string.Empty;
+
+    public int LocationId { get; set; }
+
+    public Location LocationData { get; set; } = null!;
 
     public string? AssetIdentifier { get; set; }
 
@@ -20,7 +25,12 @@ public sealed class Ticket
 
     public Category Category { get; set; } = null!;
 
-    public TicketPriority Priority { get; set; } = TicketPriority.Normál;
+    // Megjelenítési pillanatkép; az aktuális prioritás a PriorityId-hoz kapcsolódik.
+    public string Priority { get; set; } = string.Empty;
+
+    public int PriorityId { get; set; }
+
+    public Priority PriorityData { get; set; } = null!;
 
     public TicketStatus Status { get; set; } = TicketStatus.Új;
 

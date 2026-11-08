@@ -47,25 +47,70 @@ public sealed class TicketsController : ControllerBase
             });
         }
 
+        var location = await _db.Locations
+            .SingleOrDefaultAsync(
+                candidate =>
+                    candidate.Id == request.LocationId &&
+                    candidate.IsActive,
+                cancellationToken);
+
+        if (location is null)
+        {
+            return BadRequest(new
+            {
+                message = "A helyszín nem létezik vagy inaktív."
+            });
+        }
+
+        var defaultPriority = await _db.Priorities
+            .SingleOrDefaultAsync(
+                candidate =>
+                    candidate.IsDefault &&
+                    candidate.IsActive,
+                cancellationToken);
+
+        if (defaultPriority is null)
+        {
+            return Conflict(new
+            {
+                message = "Nincs aktív alapértelmezett prioritás beállítva."
+            });
+        }
+
         var now = DateTime.UtcNow;
 
         var ticket = new Ticket
         {
             TicketNumber =
                 $"HIB-{now:yyyyMMdd}-{Guid.NewGuid().ToString("N")[..8].ToUpperInvariant()}",
+
             Title = request.Title.Trim(),
             Description = request.Description.Trim(),
-            Location = request.Location.Trim(),
+
+            // A felhasználó LocationId-t küld; a nevet a backend tölti ki.
+            LocationId = location.Id,
+            LocationData = location,
+            Location = location.Name,
+
             AssetIdentifier = string.IsNullOrWhiteSpace(request.AssetIdentifier)
                 ? null
                 : request.AssetIdentifier.Trim(),
+
             CategoryId = category.Id,
-            Priority = TicketPriority.Normál,
+            Category = category,
+
+            // Az új, adatbázisban kezelt prioritást használjuk.
+            PriorityId = defaultPriority.Id,
+            PriorityData = defaultPriority,
+            Priority = defaultPriority.Name,
+
             Status = TicketStatus.Új,
             ReporterId = userId,
+
             DueDate = AddWorkdays(
                 now,
-                GetDueWorkdays(TicketPriority.Normál)),
+                defaultPriority.DefaultDueDays),
+
             IsActive = true,
             CreatedAt = now,
             UpdatedAt = now
@@ -124,6 +169,8 @@ public sealed class TicketsController : ControllerBase
 
         if (!access.IsAdmin)
         {
+            // A saját és a felhasználó csoportjához rendelt ticketek
+            // ugyanabban a listában jelennek meg.
             query = query.Where(ticket =>
                 ticket.ReporterId == userId ||
                 (access.GroupId != null &&
@@ -249,10 +296,12 @@ public sealed class TicketsController : ControllerBase
             ticket.TicketNumber,
             ticket.Title,
             ticket.Description,
+            ticket.LocationId,
             ticket.Location,
             ticket.AssetIdentifier,
             ticket.CategoryId,
             ticket.Category.Name,
+            ticket.PriorityId,
             ticket.Priority,
             ticket.Status,
             ticket.ReporterId,
@@ -265,19 +314,9 @@ public sealed class TicketsController : ControllerBase
             ticket.ClosedAt);
     }
 
-    private static int GetDueWorkdays(TicketPriority priority)
-    {
-        return priority switch
-        {
-            TicketPriority.Sürgős => 1,
-            TicketPriority.Magas => 3,
-            TicketPriority.Normál => 5,
-            TicketPriority.Alacsony => 10,
-            _ => 5
-        };
-    }
-
-    private static DateTime AddWorkdays(DateTime start, int workdays)
+    private static DateTime AddWorkdays(
+        DateTime start,
+        int workdays)
     {
         var result = start;
 
