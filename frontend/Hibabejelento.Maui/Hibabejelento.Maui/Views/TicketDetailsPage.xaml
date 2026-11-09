@@ -33,6 +33,7 @@
 
                     <Button Grid.Column="1"
                             Text="✕"
+                            Command="{Binding CloseCommand}"
                             FontSize="16"
                             TextColor="White"
                             BackgroundColor="Transparent"
@@ -93,6 +94,16 @@
                                 <Label Text="{Binding SelectedTicket.DueDate, StringFormat='{0:yyyy-MM-dd}'}" FontSize="13" TextColor="#1F2937"/>
                             </VerticalStackLayout>
                         </Border>
+
+                        <Button Text="Hibajegy visszavonása"
+                                Command="{Binding WithdrawTicketCommand}"
+                                IsVisible="{Binding CanWithdraw}"
+                                BackgroundColor="#DC2626"
+                                TextColor="White"
+                                FontSize="12"
+                                HeightRequest="38"
+                                CornerRadius="6"
+                                Margin="0,6,0,0"/>
 
                     </VerticalStackLayout>
 

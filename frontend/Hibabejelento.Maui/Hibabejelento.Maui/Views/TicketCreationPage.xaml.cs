@@ -11,4 +11,10 @@ public partial class TicketCreationPage : ContentPage
 		_vm = vm;
 		BindingContext = _vm;
 	}
+
+	protected override async void OnAppearing()
+	{
+		base.OnAppearing();
+		await _vm.LoadCategoriesCommand.ExecuteAsync(null);
+	}
 }

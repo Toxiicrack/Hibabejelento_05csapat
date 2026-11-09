@@ -142,7 +142,10 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 app.UseCors("MauiPolicy");
 app.UseAuthentication();
 app.UseAuthorization();

@@ -166,6 +166,41 @@ public sealed class ApiService : IApiService
         }
     }
 
+    public async Task<List<Category>?> GetCategoriesAsync()
+    {
+        try
+        {
+            using var request = await CreateAuthorizedRequestAsync(
+                HttpMethod.Get, "api/categories");
+            using var response = await _http.SendAsync(request);
+            if (!response.IsSuccessStatusCode) return null;
+
+            return await response.Content.ReadFromJsonAsync<List<Category>>(
+                new System.Text.Json.JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+        }
+        catch (HttpRequestException) { return null; }
+        catch (TaskCanceledException) { return null; }
+        catch (System.Text.Json.JsonException) { return null; }
+        catch (InvalidOperationException) { return null; }
+    }
+
+    public async Task<bool> WithdrawTicketAsync(int ticketId)
+    {
+        try
+        {
+            using var request = await CreateAuthorizedRequestAsync(
+                HttpMethod.Post, $"api/tickets/{ticketId}/withdraw");
+            using var response = await _http.SendAsync(request);
+            return response.IsSuccessStatusCode;
+        }
+        catch (HttpRequestException) { return false; }
+        catch (TaskCanceledException) { return false; }
+        catch (InvalidOperationException) { return false; }
+    }
+
     private static async Task<HttpRequestMessage> CreateAuthorizedRequestAsync(
         HttpMethod method, string relativeUrl)
     {

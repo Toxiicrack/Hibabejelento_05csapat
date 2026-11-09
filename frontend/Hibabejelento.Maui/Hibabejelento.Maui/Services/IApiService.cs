@@ -1,4 +1,4 @@
-﻿using Hibabejelento.Maui.Models;
+using Hibabejelento.Maui.Models;
 
 namespace Hibabejelento.Maui.Services;
 
@@ -9,6 +9,6 @@ public interface IApiService
     Task<Ticket?> GetTicketAsync(int ticketId);
     Task<IEnumerable<Ticket>> GetTicketsAsync();
     Task<string> Login(string email, string password);
-
-
+    Task<List<Category>?> GetCategoriesAsync();
+    Task<bool> WithdrawTicketAsync(int ticketId);
 }

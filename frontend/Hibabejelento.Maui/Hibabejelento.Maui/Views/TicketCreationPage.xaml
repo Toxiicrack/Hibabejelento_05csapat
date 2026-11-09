@@ -53,8 +53,18 @@
                     <Label Text="Add meg a hiba részleteit" FontSize="13" TextColor="#6B7280" HorizontalTextAlignment="Center" Margin="0,0,0,10"/>
 
                     <VerticalStackLayout Spacing="4">
-                        <Label Text="Hibajegy cím" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
+                        <Label Text="Hibajegy cím *" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
                         <Entry Text="{Binding TicketTitle}" Placeholder="Pl. Hálózati hiba" TextColor="#1F2937" PlaceholderColor="#9CA3AF" HeightRequest="40" BackgroundColor="#F9FAFB"/>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Kategória *" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
+                        <Picker ItemsSource="{Binding Categories}"
+                                SelectedItem="{Binding SelectedCategory}"
+                                ItemDisplayBinding="{Binding Name}"
+                                Title="Válassz kategóriát..."
+                                HeightRequest="40"
+                                BackgroundColor="#F9FAFB"/>
                     </VerticalStackLayout>
 
                     <VerticalStackLayout Spacing="4">
@@ -98,26 +108,36 @@
                     <Label Text="Új hibajegy létrehozása" FontSize="22" FontAttributes="Bold" TextColor="#2563EB"/>
                     <Label Text="Töltsd ki az alábbi mezőket a hiba rögzítéséhez." FontSize="13" TextColor="#6B7280" Margin="0,0,0,5"/>
 
-                    <Grid ColumnDefinitions="*,*" ColumnSpacing="15" RowDefinitions="Auto,Auto" RowSpacing="12">
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="15" RowDefinitions="Auto,Auto,Auto" RowSpacing="12">
 
                         <VerticalStackLayout Grid.Row="0" Grid.Column="0" Spacing="4">
-                            <Label Text="Hibajegy cím" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
+                            <Label Text="Hibajegy cím *" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
                             <Entry Text="{Binding TicketTitle}" Placeholder="Pl. Hálózati hiba" TextColor="#1F2937" PlaceholderColor="#9CA3AF" HeightRequest="40" BackgroundColor="#F9FAFB"/>
                         </VerticalStackLayout>
 
                         <VerticalStackLayout Grid.Row="0" Grid.Column="1" Spacing="4">
-                            <Label Text="Hibajegy terület" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
-                            <Entry Text="{Binding TicketLocation}" Placeholder="Pl. Iroda / Szerverterem" TextColor="#1F2937" PlaceholderColor="#9CA3AF" HeightRequest="40" BackgroundColor="#F9FAFB"/>
+                            <Label Text="Kategória *" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
+                            <Picker ItemsSource="{Binding Categories}"
+                                    SelectedItem="{Binding SelectedCategory}"
+                                    ItemDisplayBinding="{Binding Name}"
+                                    Title="Válassz kategóriát..."
+                                    HeightRequest="40"
+                                    BackgroundColor="#F9FAFB"/>
                         </VerticalStackLayout>
 
                         <VerticalStackLayout Grid.Row="1" Grid.Column="0" Spacing="4">
-                            <Label Text="Hibajegy leírás" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
-                            <Entry Text="{Binding TicketDescription}" Placeholder="Részletek..." TextColor="#1F2937" PlaceholderColor="#9CA3AF" HeightRequest="40" BackgroundColor="#F9FAFB"/>
+                            <Label Text="Hibajegy terület *" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
+                            <Entry Text="{Binding TicketLocation}" Placeholder="Pl. Iroda / Szerverterem" TextColor="#1F2937" PlaceholderColor="#9CA3AF" HeightRequest="40" BackgroundColor="#F9FAFB"/>
                         </VerticalStackLayout>
 
                         <VerticalStackLayout Grid.Row="1" Grid.Column="1" Spacing="4">
                             <Label Text="Hibajegy asset" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
                             <Entry Text="{Binding TicketAssetIdentifier}" Placeholder="Eszköz azonosító" TextColor="#1F2937" PlaceholderColor="#9CA3AF" HeightRequest="40" BackgroundColor="#F9FAFB"/>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Grid.Row="2" Grid.ColumnSpan="2" Spacing="4">
+                            <Label Text="Hibajegy leírás *" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
+                            <Entry Text="{Binding TicketDescription}" Placeholder="Részletek (legalább 10 karakter)..." TextColor="#1F2937" PlaceholderColor="#9CA3AF" HeightRequest="40" BackgroundColor="#F9FAFB"/>
                         </VerticalStackLayout>
 
                     </Grid>
