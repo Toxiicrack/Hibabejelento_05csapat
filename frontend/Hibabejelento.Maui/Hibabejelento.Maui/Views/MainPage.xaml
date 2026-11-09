@@ -95,6 +95,7 @@
                 <Picker ItemsSource="{Binding StatusOptions}"
                         SelectedItem="{Binding SelectedStatus}"
                         FontSize="12"
+                        TextColor="Black"
                         WidthRequest="120"
                         VerticalOptions="Center" />
             </Border>

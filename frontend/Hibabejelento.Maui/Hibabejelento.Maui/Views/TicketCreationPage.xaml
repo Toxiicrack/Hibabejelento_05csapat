@@ -116,12 +116,13 @@
                         </VerticalStackLayout>
 
                         <VerticalStackLayout Grid.Row="0" Grid.Column="1" Spacing="4">
-                            <Label Text="Kategória *" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
+                            <Label Text="Válassz kategóriát... *" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
                             <Picker ItemsSource="{Binding Categories}"
                                     SelectedItem="{Binding SelectedCategory}"
-                                    ItemDisplayBinding="{Binding Name}"
-                                    Title="Válassz kategóriát..."
+                                    ItemDisplayBinding="{Binding Name}"        
+                                    SelectedIndex="0"
                                     HeightRequest="40"
+                                    TextColor="#4B5563"
                                     BackgroundColor="#F9FAFB"/>
                         </VerticalStackLayout>
 
