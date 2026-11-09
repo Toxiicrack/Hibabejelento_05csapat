@@ -83,7 +83,8 @@
                 <Entry Placeholder="Hibajegyek keresése..."
                        Text="{Binding SearchText}"
                        FontSize="12"
-                       VerticalOptions="Center" />
+                       VerticalOptions="Center" 
+                       TextColor="Black"/>
             </Border>
 
             <Border Grid.Column="1"
