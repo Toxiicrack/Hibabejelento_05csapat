@@ -4,6 +4,7 @@ using Hibabejelento.Api.Data;
 using Hibabejelento.Api.DTOs;
 using Hibabejelento.Api.Middleware.Entities;
 using Hibabejelento.Api.Middleware.Enums;
+using Hibabejelento.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,10 +17,14 @@ namespace Hibabejelento.Api.Controllers;
 public sealed class TicketsController : ControllerBase
 {
     private readonly AppDbContext _db;
+    private readonly INotificationService _notifications;
 
-    public TicketsController(AppDbContext db)
+    public TicketsController(
+        AppDbContext db,
+        INotificationService notifications)
     {
         _db = db;
+        _notifications = notifications;
     }
 
     [HttpPost]
@@ -125,6 +130,15 @@ public sealed class TicketsController : ControllerBase
             Reason = "Bejelentés létrehozása",
             CreatedAt = now
         });
+
+        await _db.SaveChangesAsync(cancellationToken);
+
+        await _notifications.NotifyAdminsAsync(
+            ticket.Id,
+            NotificationType.UjHibajegy,
+            $"Új hibajegy várja az elfogadást: {ticket.TicketNumber} – {ticket.Title}",
+            excludedUserId: userId,
+            cancellationToken);
 
         await _db.SaveChangesAsync(cancellationToken);
 
@@ -285,6 +299,19 @@ public sealed class TicketsController : ControllerBase
             .SingleAsync(
                 candidate => candidate.Id == id,
                 cancellationToken);
+
+        if (updatedTicket.ReporterId != userId)
+        {
+            _notifications.NotifyUser(
+                updatedTicket.ReporterId,
+                updatedTicket.Id,
+                NotificationType.HibajegyFelveve,
+                $"A(z) {updatedTicket.TicketNumber} hibajegyedet felvette " +
+                $"{updatedTicket.AssignedUser?.Name ?? "egy karbantartó"}, " +
+                "és megkezdte a kezelését.");
+
+            await _db.SaveChangesAsync(cancellationToken);
+        }
 
         return Ok(ToResponse(updatedTicket));
     }
@@ -457,6 +484,28 @@ public sealed class TicketsController : ControllerBase
             });
         }
 
+        if (isReporter)
+        {
+            if (ticket.AssignedUserId is int assignedUserId &&
+                assignedUserId != userId)
+            {
+                _notifications.NotifyUser(
+                    assignedUserId,
+                    ticket.Id,
+                    NotificationType.UjBejegyzes,
+                    $"A bejelentő új bejegyzést írt a(z) {ticket.TicketNumber} hibajegyhez.");
+            }
+        }
+        else
+        {
+            _notifications.NotifyUser(
+                ticket.ReporterId,
+                ticket.Id,
+                NotificationType.UjBejegyzes,
+                $"A karbantartó új bejegyzést írt a(z) {ticket.TicketNumber} " +
+                "hibajegyedhez, és a válaszodra vár.");
+        }
+
         await _db.SaveChangesAsync(cancellationToken);
 
         var response = await _db.TicketNotes
@@ -578,6 +627,16 @@ public sealed class TicketsController : ControllerBase
             CreatedAt = now
         });
 
+        if (ticket.ReporterId != userId)
+        {
+            _notifications.NotifyUser(
+                ticket.ReporterId,
+                ticket.Id,
+                NotificationType.HibajegyLezarva,
+                $"A(z) {ticket.TicketNumber} hibajegyedet lezárták. " +
+                $"Lezárás típusa: {GetClosureTypeName(request.ClosureTypeId)}.");
+        }
+
         await _db.SaveChangesAsync(cancellationToken);
 
         return Ok(new
@@ -674,6 +733,16 @@ public sealed class TicketsController : ControllerBase
             Reason = reason,
             CreatedAt = now
         });
+
+        if (ticket.AssignedUserId is int reopenAssigneeId &&
+            reopenAssigneeId != userId)
+        {
+            _notifications.NotifyUser(
+                reopenAssigneeId,
+                ticket.Id,
+                NotificationType.HibajegyUjranyitva,
+                $"A bejelentő újranyitotta a(z) {ticket.TicketNumber} hibajegyet.");
+        }
 
         await _db.SaveChangesAsync(cancellationToken);
 
@@ -847,6 +916,16 @@ public sealed class TicketsController : ControllerBase
             Reason = "A bejelentő visszavonta a ticketet.",
             CreatedAt = now
         });
+
+        if (ticket.AssignedUserId is int withdrawAssigneeId &&
+            withdrawAssigneeId != userId)
+        {
+            _notifications.NotifyUser(
+                withdrawAssigneeId,
+                ticket.Id,
+                NotificationType.HibajegyVisszavonva,
+                $"A bejelentő visszavonta a(z) {ticket.TicketNumber} hibajegyet.");
+        }
 
         await _db.SaveChangesAsync(cancellationToken);
 

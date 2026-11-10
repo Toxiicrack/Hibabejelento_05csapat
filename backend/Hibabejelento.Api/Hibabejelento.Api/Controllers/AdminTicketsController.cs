@@ -4,6 +4,7 @@ using Hibabejelento.Api.Data;
 using Hibabejelento.Api.DTOs;
 using Hibabejelento.Api.Middleware.Entities;
 using Hibabejelento.Api.Middleware.Enums;
+using Hibabejelento.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,10 +17,14 @@ namespace Hibabejelento.Api.Controllers;
 public sealed class AdminTicketsController : ControllerBase
 {
     private readonly AppDbContext _db;
+    private readonly INotificationService _notifications;
 
-    public AdminTicketsController(AppDbContext db)
+    public AdminTicketsController(
+        AppDbContext db,
+        INotificationService notifications)
     {
         _db = db;
+        _notifications = notifications;
     }
 
     [HttpGet]
@@ -147,6 +152,24 @@ public sealed class AdminTicketsController : ControllerBase
             Reason = "Adminisztrátori elfogadás és csoporthoz rendelés.",
             CreatedAt = now
         });
+
+        if (ticket.ReporterId != adminUserId)
+        {
+            _notifications.NotifyUser(
+                ticket.ReporterId,
+                ticket.Id,
+                NotificationType.HibajegyElfogadva,
+                $"A(z) {ticket.TicketNumber} hibajegyedet elfogadták, és a(z) " +
+                $"{group.Name} csoporthoz rendelték. Prioritás: {priority.Name}.");
+        }
+
+        await _notifications.NotifyGroupMembersAsync(
+            group.Id,
+            ticket.Id,
+            NotificationType.CsoporthozRendelve,
+            $"Új hibajegy érkezett a csoportodhoz: {ticket.TicketNumber} – {ticket.Title}",
+            new[] { ticket.ReporterId, adminUserId },
+            cancellationToken);
 
         await _db.SaveChangesAsync(cancellationToken);
 

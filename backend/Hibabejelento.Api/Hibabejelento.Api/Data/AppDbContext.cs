@@ -27,6 +27,8 @@ public sealed class AppDbContext : DbContext
     public DbSet<TicketStatusHistory> TicketStatusHistory =>
         Set<TicketStatusHistory>();
 
+    public DbSet<Notification> Notifications => Set<Notification>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -273,6 +275,45 @@ public sealed class AppDbContext : DbContext
             entity.HasOne(note => note.User)
                 .WithMany()
                 .HasForeignKey(note => note.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Notification>(entity =>
+        {
+            entity.ToTable("Notifications");
+
+            entity.HasKey(notification => notification.Id);
+
+            entity.Property(notification => notification.Type)
+                .HasConversion<string>()
+                .HasMaxLength(30)
+                .IsRequired();
+
+            entity.Property(notification => notification.Message)
+                .HasMaxLength(500)
+                .IsRequired();
+
+            entity.Property(notification => notification.IsRead)
+                .HasDefaultValue(false);
+
+            entity.Property(notification => notification.CreatedAt)
+                .IsRequired();
+
+            entity.HasIndex(notification => new
+            {
+                notification.UserId,
+                notification.IsRead,
+                notification.CreatedAt
+            });
+
+            entity.HasOne(notification => notification.User)
+                .WithMany()
+                .HasForeignKey(notification => notification.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(notification => notification.Ticket)
+                .WithMany()
+                .HasForeignKey(notification => notification.TicketId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
 

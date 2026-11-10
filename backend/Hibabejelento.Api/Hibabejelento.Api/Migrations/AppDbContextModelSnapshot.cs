@@ -110,6 +110,48 @@ namespace Hibabejelento.Api.Migrations
                     b.ToTable("Locations", (string)null);
                 });
 
+            modelBuilder.Entity("Hibabejelento.Api.Middleware.Entities.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsRead")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ReadAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("TicketId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TicketId");
+
+                    b.HasIndex("UserId", "IsRead", "CreatedAt");
+
+                    b.ToTable("Notifications", (string)null);
+                });
+
             modelBuilder.Entity("Hibabejelento.Api.Middleware.Entities.Priority", b =>
                 {
                     b.Property<int>("Id")
@@ -366,6 +408,24 @@ namespace Hibabejelento.Api.Migrations
                     b.HasIndex("GroupId");
 
                     b.ToTable("Users", (string)null);
+                });
+
+            modelBuilder.Entity("Hibabejelento.Api.Middleware.Entities.Notification", b =>
+                {
+                    b.HasOne("Hibabejelento.Api.Middleware.Entities.Ticket", "Ticket")
+                        .WithMany()
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Hibabejelento.Api.Middleware.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Ticket");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Hibabejelento.Api.Middleware.Entities.Ticket", b =>
