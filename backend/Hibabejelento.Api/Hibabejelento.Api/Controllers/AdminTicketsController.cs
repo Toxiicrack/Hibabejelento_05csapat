@@ -158,6 +158,7 @@ public sealed class AdminTicketsController : ControllerBase
         return _db.Tickets
             .AsNoTracking()
             .Include(ticket => ticket.Category)
+            .Include(ticket => ticket.Reporter)
             .Include(ticket => ticket.Group)
             .Include(ticket => ticket.AssignedUser);
     }
@@ -178,6 +179,7 @@ public sealed class AdminTicketsController : ControllerBase
             ticket.Priority,
             ticket.Status,
             ticket.ReporterId,
+            ticket.Reporter.Name,
             ticket.GroupId,
             ticket.Group == null ? null : ticket.Group.Name,
             ticket.DueDate,

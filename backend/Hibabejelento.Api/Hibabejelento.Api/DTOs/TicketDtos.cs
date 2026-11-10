@@ -92,6 +92,7 @@ public sealed record TicketResponse(
     string Priority,
     TicketStatus Status,
     int ReporterId,
+    string ReporterName,
     int? GroupId,
     string? GroupName,
     DateTime DueDate,
