@@ -4,6 +4,7 @@ using Hibabejelento.Api.Data;
 using Hibabejelento.Api.DTOs;
 using Hibabejelento.Api.Middleware.Entities;
 using Hibabejelento.Api.Middleware.Enums;
+using Hibabejelento.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,10 +17,14 @@ namespace Hibabejelento.Api.Controllers;
 public sealed class AdminTicketsController : ControllerBase
 {
     private readonly AppDbContext _db;
+    private readonly INotificationService _notifications;
 
-    public AdminTicketsController(AppDbContext db)
+    public AdminTicketsController(
+        AppDbContext db,
+        INotificationService notifications)
     {
         _db = db;
+        _notifications = notifications;
     }
 
     [HttpGet]
@@ -76,11 +81,14 @@ public sealed class AdminTicketsController : ControllerBase
             });
         }
 
-        var groupIsActive = await _db.Groups.AnyAsync(
-            group => group.Id == request.GroupId && group.IsActive,
-            cancellationToken);
+        var group = await _db.Groups
+            .SingleOrDefaultAsync(
+                candidate =>
+                    candidate.Id == request.GroupId &&
+                    candidate.IsActive,
+                cancellationToken);
 
-        if (!groupIsActive)
+        if (group is null)
         {
             return BadRequest(new
             {
@@ -88,13 +96,14 @@ public sealed class AdminTicketsController : ControllerBase
             });
         }
 
-        var categoryIsActive = await _db.Categories.AnyAsync(
-            category =>
-                category.Id == request.CategoryId &&
-                category.IsActive,
-            cancellationToken);
+        var category = await _db.Categories
+            .SingleOrDefaultAsync(
+                candidate =>
+                    candidate.Id == request.CategoryId &&
+                    candidate.IsActive,
+                cancellationToken);
 
-        if (!categoryIsActive)
+        if (category is null)
         {
             return BadRequest(new
             {
@@ -102,16 +111,36 @@ public sealed class AdminTicketsController : ControllerBase
             });
         }
 
+        var priority = await _db.Priorities
+            .SingleOrDefaultAsync(
+                candidate =>
+                    candidate.Id == request.PriorityId &&
+                    candidate.IsActive,
+                cancellationToken);
+
+        if (priority is null)
+        {
+            return BadRequest(new
+            {
+                message = "A prioritás nem létezik vagy inaktív."
+            });
+        }
+
         var now = DateTime.UtcNow;
         var oldStatus = ticket.Status;
 
-        ticket.GroupId = request.GroupId;
-        ticket.CategoryId = request.CategoryId;
-        ticket.Priority = request.Priority;
+        ticket.GroupId = group.Id;
+        ticket.Group = group;
+
+        ticket.CategoryId = category.Id;
+        ticket.Category = category;
+
+        ticket.PriorityId = priority.Id;
+        ticket.PriorityData = priority;
+        ticket.Priority = priority.Name;
+
         ticket.Status = TicketStatus.Folyamatban;
-        ticket.DueDate = AddWorkdays(
-            now,
-            GetDueWorkdays(request.Priority));
+        ticket.DueDate = AddWorkdays(now, priority.DefaultDueDays);
         ticket.UpdatedAt = now;
 
         _db.TicketStatusHistory.Add(new TicketStatusHistory
@@ -124,6 +153,24 @@ public sealed class AdminTicketsController : ControllerBase
             CreatedAt = now
         });
 
+        if (ticket.ReporterId != adminUserId)
+        {
+            _notifications.NotifyUser(
+                ticket.ReporterId,
+                ticket.Id,
+                NotificationType.HibajegyElfogadva,
+                $"A(z) {ticket.TicketNumber} hibajegyedet elfogadták, és a(z) " +
+                $"{group.Name} csoporthoz rendelték. Prioritás: {priority.Name}.");
+        }
+
+        await _notifications.NotifyGroupMembersAsync(
+            group.Id,
+            ticket.Id,
+            NotificationType.CsoporthozRendelve,
+            $"Új hibajegy érkezett a csoportodhoz: {ticket.TicketNumber} – {ticket.Title}",
+            new[] { ticket.ReporterId, adminUserId },
+            cancellationToken);
+
         await _db.SaveChangesAsync(cancellationToken);
 
         return NoContent();
@@ -134,7 +181,9 @@ public sealed class AdminTicketsController : ControllerBase
         return _db.Tickets
             .AsNoTracking()
             .Include(ticket => ticket.Category)
-            .Include(ticket => ticket.Group);
+            .Include(ticket => ticket.Reporter)
+            .Include(ticket => ticket.Group)
+            .Include(ticket => ticket.AssignedUser);
     }
 
     private static TicketResponse ToResponse(Ticket ticket)
@@ -144,35 +193,30 @@ public sealed class AdminTicketsController : ControllerBase
             ticket.TicketNumber,
             ticket.Title,
             ticket.Description,
+            ticket.LocationId,
             ticket.Location,
             ticket.AssetIdentifier,
             ticket.CategoryId,
             ticket.Category.Name,
+            ticket.PriorityId,
             ticket.Priority,
             ticket.Status,
             ticket.ReporterId,
+            ticket.Reporter.Name,
             ticket.GroupId,
             ticket.Group == null ? null : ticket.Group.Name,
             ticket.DueDate,
             ticket.IsActive,
             ticket.CreatedAt,
             ticket.UpdatedAt,
-            ticket.ClosedAt);
+            ticket.ClosedAt,
+            ticket.AssignedUserId,
+            ticket.AssignedUser == null ? null : ticket.AssignedUser.Name);
     }
 
-    private static int GetDueWorkdays(TicketPriority priority)
-    {
-        return priority switch
-        {
-            TicketPriority.Sürgős => 1,
-            TicketPriority.Magas => 3,
-            TicketPriority.Normál => 5,
-            TicketPriority.Alacsony => 10,
-            _ => 5
-        };
-    }
-
-    private static DateTime AddWorkdays(DateTime start, int workdays)
+    private static DateTime AddWorkdays(
+        DateTime start,
+        int workdays)
     {
         var result = start;
 
