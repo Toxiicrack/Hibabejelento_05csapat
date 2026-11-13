@@ -19,15 +19,18 @@ public sealed class AuthController : ControllerBase
     private readonly AppDbContext _db;
     private readonly IPasswordHasher<User> _passwordHasher;
     private readonly ITokenService _tokenService;
+    private readonly INotificationService _notifications;
 
     public AuthController(
         AppDbContext db,
         IPasswordHasher<User> passwordHasher,
-        ITokenService tokenService)
+        ITokenService tokenService,
+        INotificationService notifications)
     {
         _db = db;
         _passwordHasher = passwordHasher;
         _tokenService = tokenService;
+        _notifications = notifications;
     }
 
     [AllowAnonymous]
@@ -65,6 +68,15 @@ public sealed class AuthController : ControllerBase
             request.Password);
 
         _db.Users.Add(user);
+        await _db.SaveChangesAsync(cancellationToken);
+
+        await _notifications.NotifyAdminsAsync(
+            ticketId: null,
+            NotificationType.UjRegisztracio,
+            $"Új regisztráció vár jóváhagyásra: {user.Name} ({user.Email}).",
+            excludedUserId: null,
+            cancellationToken);
+
         await _db.SaveChangesAsync(cancellationToken);
 
         return Accepted(new
