@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+namespace Hibabejelento.Maui.Models;
 
-namespace Hibabejelento.Maui.Models
+public class TicketStatusHistory
 {
-    public class TicketStatusHistory
-    {
-        public int Id{ get; set; }
-        public int TicketId { get; set; }
-        public int PreviousStatusId { get; set; }
-        public int NewStatusId { get; set; }
-        public int ChangedByUserId { get; set; }
-        public string Reason { get; set; }
-        public DateTime ChangedAt { get; set; }
-    }
+    public int Id { get; set; }
+    public int TicketId { get; set; }
+    public string? OldStatus { get; set; }
+    public string NewStatus { get; set; } = string.Empty;
+    public int ChangedByUserId { get; set; }
+    public string ChangedByUserName { get; set; } = string.Empty;
+    public string? Reason { get; set; }
+    public DateTime CreatedAt { get; set; }
+
+    public string TransitionDisplay =>
+        $"{(string.IsNullOrWhiteSpace(OldStatus) ? "Kezdeti" : OldStatus)} → {NewStatus}";
 }

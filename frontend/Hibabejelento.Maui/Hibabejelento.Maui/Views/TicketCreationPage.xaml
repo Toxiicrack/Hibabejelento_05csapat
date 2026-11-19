@@ -60,21 +60,28 @@
                     <VerticalStackLayout Spacing="4">
                         <Label Text="Kategória *" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
                         <Picker ItemsSource="{Binding Categories}"
-                                SelectedItem="{Binding SelectedCategory}"
+                                SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"
                                 ItemDisplayBinding="{Binding Name}"
-                                Title="Válassz kategóriát..."
+                                SelectedIndex="0"
                                 HeightRequest="40"
-                                BackgroundColor="#F9FAFB"/>
+                                BackgroundColor="#F8FAFC"
+                                TextColor="#0F172A"/>
                     </VerticalStackLayout>
 
                     <VerticalStackLayout Spacing="4">
-                        <Label Text="Hibajegy leírás" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
-                        <Entry Text="{Binding TicketDescription}" Placeholder="Részletek..." TextColor="#1F2937" PlaceholderColor="#9CA3AF" HeightRequest="40" BackgroundColor="#F9FAFB"/>
+                        <Label Text="Helyszín *" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
+                        <Picker SelectedIndex="0"
+                                ItemsSource="{Binding Locations}"
+                                SelectedItem="{Binding SelectedLocation, Mode=TwoWay}"
+                                ItemDisplayBinding="{Binding Name}"
+                                HeightRequest="40"
+                                BackgroundColor="#F8FAFC"
+                                TextColor="#0F172A"/>
                     </VerticalStackLayout>
 
                     <VerticalStackLayout Spacing="4">
-                        <Label Text="Hibajegy terület" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
-                        <Entry Text="{Binding TicketLocation}" Placeholder="Pl. Iroda / Szerverterem" TextColor="#1F2937" PlaceholderColor="#9CA3AF" HeightRequest="40" BackgroundColor="#F9FAFB"/>
+                        <Label Text="Hibajegy leírás *" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
+                        <Entry Text="{Binding TicketDescription}" Placeholder="Részletek (legalább 10 karakter)..." TextColor="#1F2937" PlaceholderColor="#9CA3AF" HeightRequest="40" BackgroundColor="#F9FAFB"/>
                     </VerticalStackLayout>
 
                     <VerticalStackLayout Spacing="4">
@@ -82,13 +89,22 @@
                         <Entry Text="{Binding TicketAssetIdentifier}" Placeholder="Eszköz azonosító" TextColor="#1F2937" PlaceholderColor="#9CA3AF" HeightRequest="40" BackgroundColor="#F9FAFB"/>
                     </VerticalStackLayout>
 
-                    <Button Text="Ticket létrehozása" 
-                            Command="{Binding CreateTicketCommand}"
-                            BackgroundColor="#2563EB" 
-                            TextColor="White" 
-                            CornerRadius="8" 
-                            HeightRequest="42" 
-                            Margin="0,10,0,0"/>
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10" Margin="0,10,0,0">
+                        <Button Grid.Column="0"
+                                Text="Mégse"
+                                Command="{Binding CancelCommand}"
+                                BackgroundColor="#F1F5F9"
+                                TextColor="#475569"
+                                CornerRadius="8"
+                                HeightRequest="42"/>
+                        <Button Grid.Column="1"
+                                Text="Ticket létrehozása" 
+                                Command="{Binding CreateTicketCommand}"
+                                BackgroundColor="#2563EB" 
+                                TextColor="White" 
+                                CornerRadius="8" 
+                                HeightRequest="42"/>
+                    </Grid>
 
                     <Label Text="{Binding TicketError}" TextColor="#DC2626" FontSize="12" HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
                 </VerticalStackLayout>
@@ -116,19 +132,25 @@
                         </VerticalStackLayout>
 
                         <VerticalStackLayout Grid.Row="0" Grid.Column="1" Spacing="4">
-                            <Label Text="Válassz kategóriát... *" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
-                            <Picker ItemsSource="{Binding Categories}"
-                                    SelectedItem="{Binding SelectedCategory}"
-                                    ItemDisplayBinding="{Binding Name}"        
-                                    SelectedIndex="0"
+                            <Label Text="Kategória *" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
+                            <Picker SelectedIndex="0"
+                                    ItemsSource="{Binding Categories}"
+                                    SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"
+                                    ItemDisplayBinding="{Binding Name}"
                                     HeightRequest="40"
-                                    TextColor="#4B5563"
-                                    BackgroundColor="#F9FAFB"/>
+                                    TextColor="#0F172A"
+                                    BackgroundColor="#F8FAFC"/>
                         </VerticalStackLayout>
 
                         <VerticalStackLayout Grid.Row="1" Grid.Column="0" Spacing="4">
-                            <Label Text="Hibajegy terület *" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
-                            <Entry Text="{Binding TicketLocation}" Placeholder="Pl. Iroda / Szerverterem" TextColor="#1F2937" PlaceholderColor="#9CA3AF" HeightRequest="40" BackgroundColor="#F9FAFB"/>
+                            <Label Text="Helyszín *" FontSize="12" TextColor="#4B5563" FontAttributes="Bold"/>
+                            <Picker SelectedIndex="0"
+                                    ItemsSource="{Binding Locations}"
+                                    SelectedItem="{Binding SelectedLocation, Mode=TwoWay}"
+                                    ItemDisplayBinding="{Binding Name}"
+                                    HeightRequest="40"
+                                    BackgroundColor="#F8FAFC"
+                                    TextColor="#0F172A"/>
                         </VerticalStackLayout>
 
                         <VerticalStackLayout Grid.Row="1" Grid.Column="1" Spacing="4">
@@ -143,14 +165,24 @@
 
                     </Grid>
 
-                    <Button Text="Ticket létrehozása" 
-                            Command="{Binding CreateTicketCommand}"
-                            BackgroundColor="#2563EB" 
-                            TextColor="White" 
-                            CornerRadius="8" 
-                            HeightRequest="42" 
-                            HorizontalOptions="Fill"
-                            Margin="0,10,0,0"/>
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" Margin="0,10,0,0">
+                        <Button Grid.Column="0"
+                                Text="Mégse"
+                                Command="{Binding CancelCommand}"
+                                BackgroundColor="#F1F5F9"
+                                TextColor="#475569"
+                                CornerRadius="8"
+                                HeightRequest="42"
+                                Padding="20,0"/>
+                        <Button Grid.Column="1"
+                                Text="Ticket létrehozása" 
+                                Command="{Binding CreateTicketCommand}"
+                                BackgroundColor="#2563EB" 
+                                TextColor="White" 
+                                CornerRadius="8" 
+                                HeightRequest="42" 
+                                HorizontalOptions="Fill"/>
+                    </Grid>
 
                     <Label Text="{Binding TicketError}" TextColor="#DC2626" FontSize="12" HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
                 </VerticalStackLayout>

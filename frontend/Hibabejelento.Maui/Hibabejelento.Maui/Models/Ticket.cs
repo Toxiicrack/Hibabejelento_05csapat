@@ -1,4 +1,3 @@
-﻿
 namespace Hibabejelento.Maui.Models;
 
 public class Ticket
@@ -11,21 +10,27 @@ public class Ticket
 
     public string Description { get; set; } = string.Empty;
 
+    public int LocationId { get; set; }
+
     public string Location { get; set; } = string.Empty;
 
-    public string AssetIdentifier { get; set; } = string.Empty;
+    public string? AssetIdentifier { get; set; }
 
     public int CategoryId { get; set; }
 
     public string CategoryName { get; set; } = string.Empty;
 
+    public int PriorityId { get; set; }
+
     // Például: "Alacsony", "Normál", "Magas"
     public string Priority { get; set; } = string.Empty;
 
-    // Például: "Új", "Folyamatban", "Lezárt"
+    // Például: "Új", "Folyamatban", "Lezárt", "Újranyitva", "Visszavonva", "VálaszraVár"
     public string Status { get; set; } = string.Empty;
 
     public int ReporterId { get; set; }
+
+    public string ReporterName { get; set; } = string.Empty;
 
     public int? GroupId { get; set; }
 
@@ -40,4 +45,8 @@ public class Ticket
     public DateTime UpdatedAt { get; set; }
 
     public DateTime? ClosedAt { get; set; }
+
+    public int? AssignedUserId { get; set; }
+
+    public string? AssignedUserName { get; set; }
 }

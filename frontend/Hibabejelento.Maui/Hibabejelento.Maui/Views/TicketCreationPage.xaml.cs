@@ -4,7 +4,7 @@ namespace Hibabejelento.Maui.Views;
 
 public partial class TicketCreationPage : ContentPage
 {
-	private TicketCreationViewModel _vm;
+	private readonly TicketCreationViewModel _vm;
 	public TicketCreationPage(TicketCreationViewModel vm)
 	{
 		InitializeComponent();
@@ -15,6 +15,6 @@ public partial class TicketCreationPage : ContentPage
 	protected override async void OnAppearing()
 	{
 		base.OnAppearing();
-		await _vm.LoadCategoriesCommand.ExecuteAsync(null);
+		await _vm.LoadFormDataCommand.ExecuteAsync(null);
 	}
 }

@@ -18,33 +18,107 @@ public partial class MainViewModel : BaseViewModel
     [ObservableProperty] private DateTime lastCheck;
     [ObservableProperty] private Color statusColor = Colors.Gray;
     [ObservableProperty] private List<Ticket> tickets = new();
-    [ObservableProperty] private string userName = "";
+    [ObservableProperty] private string userName = string.Empty;
+    [ObservableProperty] private string userInitials = string.Empty;
+    [ObservableProperty] private int unreadNotificationCount;
+    [ObservableProperty] private bool hasUnreadNotifications;
+
+    [ObservableProperty] private bool isMaintenanceUser;
+    [ObservableProperty] private bool isMaintenanceMode;
+    [ObservableProperty] private bool isNotificationsOpen;
+    [ObservableProperty] private List<Notification> notifications = new();
 
     [ObservableProperty] private string searchText = string.Empty;
     [ObservableProperty] private string selectedStatus = "Összes";
 
+    public string ActiveViewLabel => IsMaintenanceMode ? "Karbantartói csoport hibajegyei" : "Saját hibajegyek";
+    public string ToggleModeButtonText => IsMaintenanceMode ? "Saját jegyek" : "Karbantartói nézet";
+
     public List<string> StatusOptions { get; } = new()
     {
-        "Összes", "Új", "Folyamatban", "Lezárt", "Újranyitva", "Visszavonva"
+        "Összes", "Új", "Folyamatban", "VálaszraVár", "Lezárt", "Újranyitva", "Visszavonva"
     };
 
     public MainViewModel(IApiService api) => _api = api;
 
+    partial void OnIsMaintenanceModeChanged(bool value)
+    {
+        OnPropertyChanged(nameof(ActiveViewLabel));
+        OnPropertyChanged(nameof(ToggleModeButtonText));
+    }
+
     [RelayCommand]
     private async Task LoadTicketsAsync()
     {
-        userName = await SecureStorage.GetAsync("userName") ?? string.Empty;
+        UserName = await SecureStorage.GetAsync("userName") ?? string.Empty;
+        UserInitials = string.Join("", UserName.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(x => char.ToUpperInvariant(x[0])));
+
+        var groupIdStr = await SecureStorage.GetAsync("userGroupId");
+        IsMaintenanceUser = int.TryParse(groupIdStr, out var gid) && gid > 0;
+        if (!IsMaintenanceUser)
+            IsMaintenanceMode = false;
+
+        await RefreshNotificationsAsync();
+
         if (IsBusy) return;
         IsBusy = true;
         try
         {
-            var result = await _api.GetTicketsAsync();
+            var result = IsMaintenanceMode
+                ? await _api.GetMaintenanceTicketsAsync()
+                : await _api.GetMyTicketsAsync();
             _allTickets = result.ToList();
             ApplyFilter();
         }
         finally
         {
             IsBusy = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task ToggleTicketViewModeAsync()
+    {
+        if (!IsMaintenanceUser) return;
+        IsMaintenanceMode = !IsMaintenanceMode;
+        await LoadTicketsAsync();
+    }
+
+    [RelayCommand]
+    private async Task ToggleNotificationsPanelAsync()
+    {
+        IsNotificationsOpen = !IsNotificationsOpen;
+        if (IsNotificationsOpen)
+            await RefreshNotificationsAsync();
+    }
+
+    [RelayCommand]
+    private async Task RefreshNotificationsAsync()
+    {
+        UnreadNotificationCount = await _api.GetUnreadNotificationCountAsync();
+        HasUnreadNotifications = UnreadNotificationCount > 0;
+        if (IsNotificationsOpen)
+        {
+            Notifications = await _api.GetNotificationsAsync(false, 50);
+        }
+    }
+
+    [RelayCommand]
+    private async Task MarkNotificationReadAsync(Notification? notification)
+    {
+        if (notification is null || notification.IsRead) return;
+        if (await _api.MarkNotificationReadAsync(notification.Id))
+        {
+            await RefreshNotificationsAsync();
+        }
+    }
+
+    [RelayCommand]
+    private async Task MarkAllNotificationsReadAsync()
+    {
+        if (await _api.MarkAllNotificationsReadAsync())
+        {
+            await RefreshNotificationsAsync();
         }
     }
 
@@ -89,11 +163,12 @@ public partial class MainViewModel : BaseViewModel
     [RelayCommand]
     private async Task Login()
     {
-        //await Shell.Current.GoToAsync(nameof(LoginPage));
+        await Shell.Current.GoToAsync("//home");
     }
 
     [ObservableProperty]
-    private Ticket? selectedTicket;  
+    private Ticket? selectedTicket;
+
     partial void OnSelectedTicketChanged(Ticket? value)
     {
         if (value == null) return;
@@ -102,20 +177,26 @@ public partial class MainViewModel : BaseViewModel
         {
             { "SelectedTicket", value }
         };
-        
+
         SelectedTicket = null;
-        Shell.Current.GoToAsync(nameof(TicketDetailsPage), parameters);        
+        if (IsMaintenanceMode)
+            Shell.Current.GoToAsync(nameof(TicketEditPage), parameters);
+        else
+            Shell.Current.GoToAsync(nameof(TicketDetailsPage), parameters);
     }
 
     [RelayCommand]
     private async Task Logout()
     {
-
+        SecureStorage.Remove("userId");
         SecureStorage.Remove("userName");
         SecureStorage.Remove("userEmail");
         SecureStorage.Remove("userToken");
         SecureStorage.Remove("userExp");
-        await Shell.Current.GoToAsync(nameof(LoginPage));
+        SecureStorage.Remove("userIsAdmin");
+        SecureStorage.Remove("userGroupId");
+        SecureStorage.Remove("userGroupName");
+        await Shell.Current.GoToAsync("//home");
     }
 
     [RelayCommand]

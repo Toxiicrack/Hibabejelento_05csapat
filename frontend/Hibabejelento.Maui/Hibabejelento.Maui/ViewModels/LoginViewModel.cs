@@ -1,18 +1,15 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Hibabejelento.Maui.Services;
 using Hibabejelento.Maui.Views;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Hibabejelento.Maui.ViewModels
 {
-    public partial class LoginViewModel: BaseViewModel
+    public partial class LoginViewModel : BaseViewModel
     {
         private readonly IApiService _api;
-        [ObservableProperty] public string userEmail;
-        [ObservableProperty] public string userPwd;
+        [ObservableProperty] public string userEmail = string.Empty;
+        [ObservableProperty] public string userPwd = string.Empty;
         [ObservableProperty] public string userError = string.Empty;
 
         public LoginViewModel(IApiService api)
@@ -23,25 +20,28 @@ namespace Hibabejelento.Maui.ViewModels
         [RelayCommand]
         public async Task Login()
         {
-            if (string.IsNullOrWhiteSpace(userEmail) || !userEmail.Contains('@'))
+            UserError = string.Empty;
+
+            if (string.IsNullOrWhiteSpace(UserEmail) || !UserEmail.Contains('@'))
             {
-                userError = "Hibás email cím!";
+                UserError = "Hibás email cím!";
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(userPwd))
+            if (string.IsNullOrWhiteSpace(UserPwd))
             {
-                userError = "Kérem adja meg a jelszavát!";
+                UserError = "Kérem adja meg a jelszavát!";
                 return;
             }
-            string success = await _api.Login(userEmail,userPwd);
-            if (string.IsNullOrEmpty(success))
+
+            string error = await _api.Login(UserEmail, UserPwd);
+            if (string.IsNullOrEmpty(error))
             {
                 await Shell.Current.GoToAsync(nameof(MainPage));
             }
             else
             {
-                UserError = success;
+                UserError = error;
             }
         }
     }

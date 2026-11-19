@@ -1,5 +1,5 @@
+using System.Globalization;
 using Hibabejelento.Maui.ViewModels;
-using Hibabejelento.Maui.Views;
 
 namespace Hibabejelento.Maui.Views;
 
@@ -23,15 +23,20 @@ public partial class MainPage : ContentPage
 
         try
         {
-            DateTime check = Convert.ToDateTime(await SecureStorage.GetAsync("userExp"));
-            if (DateTime.UtcNow > check)
+            var token = await SecureStorage.GetAsync("userToken");
+            var expStr = await SecureStorage.GetAsync("userExp");
+            if (string.IsNullOrWhiteSpace(token) ||
+                string.IsNullOrWhiteSpace(expStr) ||
+                !DateTime.TryParse(expStr, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var check) ||
+                DateTime.UtcNow >= check.ToUniversalTime())
             {
                 _redirecting = true;
-                await Shell.Current.GoToAsync($"//home");
+                await Shell.Current.GoToAsync("//home");
                 return;
             }
+
             LoginButton.IsVisible = false;
-            LoggedInGrid.IsVisible = true;            
+            LoggedInGrid.IsVisible = true;
             await _vm.CheckHealthCommand.ExecuteAsync(null);
             await _vm.LoadTicketsCommand.ExecuteAsync(null);
         }

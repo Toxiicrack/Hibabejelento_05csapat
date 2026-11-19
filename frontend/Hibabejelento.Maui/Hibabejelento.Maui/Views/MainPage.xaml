@@ -8,8 +8,8 @@
     BackgroundColor="#F5F6FA">
 
     <Grid Padding="15"
-          RowDefinitions="Auto,*"
-          RowSpacing="15">
+          RowDefinitions="Auto,Auto,*"
+          RowSpacing="12">
         
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="ResponsiveStates">
@@ -70,7 +70,7 @@
 
 
         <Grid Grid.Row="0"
-              ColumnDefinitions="*,Auto,Auto,Auto,Auto"
+              ColumnDefinitions="*,Auto,Auto,Auto,Auto,Auto,Auto"
               ColumnSpacing="10">
 
             <Border Grid.Column="0"
@@ -101,19 +101,53 @@
                         VerticalOptions="Center" />
             </Border>
 
+            <Button Grid.Column="2"
+                    Text="{Binding ToggleModeButtonText}"
+                    IsVisible="{Binding IsMaintenanceUser}"
+                    Command="{Binding ToggleTicketViewModeCommand}"
+                    BackgroundColor="#EEF2FF"
+                    TextColor="#4338CA"
+                    FontSize="12"
+                    FontAttributes="Bold"
+                    Padding="12,0"
+                    HeightRequest="42"/>
+
             <Grid x:Name="LoggedInGrid"
-                    Grid.Column="2"
-                    Padding="10,0"
-                    HeightRequest="42"
-                    IsVisible="False" ColumnDefinitions="*,*">
-                <Label Text="{Binding UserName}" Grid.Column="0" FontSize="12" TextColor="Black"/>
+                  Grid.Column="3"
+                  Padding="6,0"
+                  HeightRequest="42"
+                  IsVisible="False"
+                  ColumnDefinitions="Auto,Auto"
+                  ColumnSpacing="8">
+                <Label Text="{Binding UserName}" Grid.Column="0" FontSize="12" TextColor="Black" VerticalOptions="Center"/>
                 <Button Grid.Column="1"
                         Text="Kijelentkezés"
                         FontSize="12"
-                        HeightRequest="42"
+                        HeightRequest="38"
+                        Padding="10,0"
                         Command="{Binding LogoutCommand}"/>
             </Grid>
-            <Button Grid.Column="3"
+
+            <Border Grid.Column="4"
+                    BackgroundColor="#EEF2FF"
+                    Stroke="Transparent"
+                    StrokeShape="RoundRectangle 21"
+                    WidthRequest="42"
+                    HeightRequest="42"
+                    IsVisible="True"
+                    VerticalOptions="Center">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ToggleNotificationsPanelCommand}" />
+                </Border.GestureRecognizers>
+                <Grid>
+                    <Label Text="{Binding UserInitials}" TextColor="#4338CA" FontAttributes="Bold" FontSize="13" HorizontalOptions="Center" VerticalOptions="Center"/>
+                    <Border BackgroundColor="#DC2626" Stroke="White" StrokeThickness="1" StrokeShape="RoundRectangle 10" WidthRequest="18" HeightRequest="18" HorizontalOptions="End" VerticalOptions="Start" IsVisible="{Binding HasUnreadNotifications}">
+                        <Label Text="{Binding UnreadNotificationCount}" TextColor="White" FontSize="9" FontAttributes="Bold" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <Button Grid.Column="5"
                     Text="Bejelentkezés"
                     FontSize="12"
                     Padding="10,0"
@@ -121,7 +155,7 @@
                     x:Name="LoginButton"
                     Command="{Binding LoginCommand}"/>
 
-            <Button Grid.Column="4"
+            <Button Grid.Column="6"
                     Text="+ Új"
                     FontSize="12"
                     Padding="12,0"
@@ -132,8 +166,57 @@
 
         </Grid>
 
+        <VerticalStackLayout Grid.Row="1" Spacing="8">
+            <Grid ColumnDefinitions="*,Auto">
+                <Label Text="{Binding ActiveViewLabel}" FontSize="13" FontAttributes="Bold" TextColor="#334155" VerticalOptions="Center"/>
+                <Button Grid.Column="1" Text="↻ Frissítés" Command="{Binding LoadTicketsCommand}" BackgroundColor="Transparent" TextColor="#4F46E5" FontSize="12" HeightRequest="32" Padding="8,0"/>
+            </Grid>
 
-        <Grid Grid.Row="1">
+            <Border IsVisible="{Binding IsNotificationsOpen}"
+                    BackgroundColor="White"
+                    Stroke="#CBD5E1"
+                    StrokeShape="RoundRectangle 12"
+                    Padding="14">
+                <VerticalStackLayout Spacing="8">
+                    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                        <Label Text="Értesítések" FontSize="14" FontAttributes="Bold" TextColor="#0F172A" VerticalOptions="Center"/>
+                        <Button Grid.Column="1" Text="Mind olvasott" Command="{Binding MarkAllNotificationsReadCommand}" BackgroundColor="#EEF2FF" TextColor="#4338CA" FontSize="11" HeightRequest="32" Padding="10,0"/>
+                        <Button Grid.Column="2" Text="✕" Command="{Binding ToggleNotificationsPanelCommand}" BackgroundColor="Transparent" TextColor="#64748B" FontSize="12" HeightRequest="32" WidthRequest="32" Padding="0"/>
+                    </Grid>
+
+                    <CollectionView ItemsSource="{Binding Notifications}" MaximumHeightRequest="200">
+                        <CollectionView.EmptyView>
+                            <Label Text="Nincsenek értesítések." FontSize="12" TextColor="#64748B" Padding="0,6"/>
+                        </CollectionView.EmptyView>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border BackgroundColor="#F8FAFC" Stroke="#E2E8F0" StrokeShape="RoundRectangle 8" Padding="10" Margin="0,0,0,6">
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                        <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                            <Label Text="{Binding Message}" FontSize="12" TextColor="#1E293B"/>
+                                            <Label Text="{Binding CreatedAt, StringFormat='{0:yyyy-MM-dd HH:mm}'}" FontSize="10" TextColor="#94A3B8"/>
+                                        </VerticalStackLayout>
+                                        <Button Grid.Column="1"
+                                                Text="Olvasva"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.MarkNotificationReadCommand}"
+                                                CommandParameter="{Binding .}"
+                                                BackgroundColor="#E0E7FF"
+                                                TextColor="#3730A3"
+                                                FontSize="10"
+                                                HeightRequest="30"
+                                                Padding="8,0"
+                                                VerticalOptions="Center"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+
+
+        <Grid Grid.Row="2">
 
 
             <CollectionView
@@ -215,7 +298,7 @@
                                            TextColor="#2563EB"/>
 
                                     <Label Grid.Row="1"
-                                           Text="{Binding ReporterId,
+                                           Text="{Binding ReporterName,
                                            StringFormat='Bejelentő ID: {0}'}"
                                            FontSize="12"
                                            TextColor="#6B7280"/>
@@ -403,7 +486,7 @@
                                        VerticalOptions="Center"/>
 
                                 <Label Grid.Column="4"
-                                       Text="{Binding ReporterId}"
+                                       Text="{Binding ReporterName}"
                                        FontSize="12"
                                        TextColor="#4B5563"
                                        VerticalOptions="Center"/>
