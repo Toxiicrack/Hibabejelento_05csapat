@@ -1,0 +1,617 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:views="clr-namespace:Hibabejelento.Maui.Views"
+             x:Class="Hibabejelento.Maui.Views.AdminTicketsPage"
+             Title="Adminisztráció"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="#F5F6FA">
+
+    <Grid Padding="16"
+          RowDefinitions="Auto,Auto,*"
+          RowSpacing="14">
+
+        <!-- 1. FEJLÉC -->
+        <Grid Grid.Row="0"
+              ColumnDefinitions="Auto,*,Auto"
+              ColumnSpacing="12">
+
+            <Button Grid.Column="0"
+                    Text="← Vissza a főoldalra"
+                    Command="{Binding GoBackCommand}"
+                    BackgroundColor="#EEF2FF"
+                    TextColor="#4338CA"
+                    FontSize="12"
+                    FontAttributes="Bold"
+                    CornerRadius="8"
+                    HeightRequest="40"
+                    Padding="14,0"/>
+
+            <Label Grid.Column="1"
+                   Text="Adminisztrációs Vezérlőpult"
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   TextColor="#0F172A"
+                   VerticalOptions="Center"/>
+
+            <Button Grid.Column="2"
+                    Text="↻ Frissítés"
+                    Command="{Binding LoadCurrentTabCommand}"
+                    BackgroundColor="#EEF2FF"
+                    TextColor="#4338CA"
+                    FontSize="12"
+                    FontAttributes="Bold"
+                    CornerRadius="8"
+                    HeightRequest="40"
+                    Padding="14,0"/>
+        </Grid>
+
+        <!-- 2. TAB SÁV (Segmented buttons) -->
+        <ScrollView Grid.Row="1" Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+            <HorizontalStackLayout Spacing="8">
+                <Button Text=" Hibajegyek"
+                        Command="{Binding SelectTabCommand}"
+                        CommandParameter="Tickets"
+                        BackgroundColor="{Binding TicketsTabBg}"
+                        TextColor="{Binding TicketsTabFg}"
+                        FontSize="12"
+                        FontAttributes="Bold"
+                        CornerRadius="8"
+                        HeightRequest="38"
+                        Padding="16,0"/>
+
+                <Button Text=" Felhasználók"
+                        Command="{Binding SelectTabCommand}"
+                        CommandParameter="Users"
+                        BackgroundColor="{Binding UsersTabBg}"
+                        TextColor="{Binding UsersTabFg}"
+                        FontSize="12"
+                        FontAttributes="Bold"
+                        CornerRadius="8"
+                        HeightRequest="38"
+                        Padding="16,0"/>
+
+                <Button Text=" Csoportok"
+                        Command="{Binding SelectTabCommand}"
+                        CommandParameter="Groups"
+                        BackgroundColor="{Binding GroupsTabBg}"
+                        TextColor="{Binding GroupsTabFg}"
+                        FontSize="12"
+                        FontAttributes="Bold"
+                        CornerRadius="8"
+                        HeightRequest="38"
+                        Padding="16,0"/>
+
+                <Button Text=" Kategóriák"
+                        Command="{Binding SelectTabCommand}"
+                        CommandParameter="Categories"
+                        BackgroundColor="{Binding CategoriesTabBg}"
+                        TextColor="{Binding CategoriesTabFg}"
+                        FontSize="12"
+                        FontAttributes="Bold"
+                        CornerRadius="8"
+                        HeightRequest="38"
+                        Padding="16,0"/>
+
+                <Button Text=" Helyszínek"
+                        Command="{Binding SelectTabCommand}"
+                        CommandParameter="Locations"
+                        BackgroundColor="{Binding LocationsTabBg}"
+                        TextColor="{Binding LocationsTabFg}"
+                        FontSize="12"
+                        FontAttributes="Bold"
+                        CornerRadius="8"
+                        HeightRequest="38"
+                        Padding="16,0"/>
+
+                <Button Text=" Prioritások"
+                        Command="{Binding SelectTabCommand}"
+                        CommandParameter="Priorities"
+                        BackgroundColor="{Binding PrioritiesTabBg}"
+                        TextColor="{Binding PrioritiesTabFg}"
+                        FontSize="12"
+                        FontAttributes="Bold"
+                        CornerRadius="8"
+                        HeightRequest="38"
+                        Padding="16,0"/>
+            </HorizontalStackLayout>
+        </ScrollView>
+
+        <!-- 3. TARTALMI NÉZETEK -->
+        <Grid Grid.Row="2">
+
+            <!-- ============================================== -->
+            <!-- TAB 1: HIBAJEGYEK (TICKETS)                    -->
+            <!-- ============================================== -->
+            <Grid IsVisible="{Binding IsTicketsTab}"
+                  RowDefinitions="Auto,*"
+                  RowSpacing="10">
+
+                <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+                    <Label Text="Hibajegyek áttekintése és elfogadása" FontSize="14" FontAttributes="Bold" TextColor="#334155" VerticalOptions="Center"/>
+                    <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
+                        <Label Text="Csak új státuszúak:" FontSize="12" TextColor="#475569" VerticalOptions="Center"/>
+                        <Switch IsToggled="{Binding ShowNewOnly}" OnColor="#4F46E5"/>
+                    </HorizontalStackLayout>
+                </Grid>
+
+                <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="14">
+                    <CollectionView Grid.Column="0" ItemsSource="{Binding Tickets}" SelectionMode="None">
+                        <CollectionView.EmptyView>
+                            <VerticalStackLayout Padding="30" Spacing="6" VerticalOptions="Center" HorizontalOptions="Center">
+                                <Label Text="Nincsenek hibajegyek." FontSize="15" FontAttributes="Bold" TextColor="#475569" HorizontalTextAlignment="Center"/>
+                                <Label Text="Próbáld meg kikapcsolni a 'Csak új' kapcsolót." FontSize="12" TextColor="Gray" HorizontalTextAlignment="Center"/>
+                            </VerticalStackLayout>
+                        </CollectionView.EmptyView>
+
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border BackgroundColor="White" Stroke="#E1E5EC" StrokeShape="RoundRectangle 10" Padding="14" Margin="0,0,0,10">
+                                    <Grid RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="6">
+                                        <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+                                            <Label Text="{Binding TicketNumber}" FontSize="12" FontAttributes="Bold" TextColor="#2563EB"/>
+                                            <Border Grid.Column="1" BackgroundColor="#EEF2FF" Stroke="Transparent" StrokeShape="RoundRectangle 6" Padding="8,2">
+                                                <Label Text="{Binding Status}" FontSize="11" FontAttributes="Bold" TextColor="#4338CA"/>
+                                            </Border>
+                                        </Grid>
+
+                                        <Label Grid.Row="1" Text="{Binding Title}" FontSize="14" FontAttributes="Bold" TextColor="#1F2937"/>
+
+                                        <Grid Grid.Row="2" ColumnDefinitions="*,*">
+                                            <Label Text="{Binding ReporterName, StringFormat='Bejelentő: {0}'}" FontSize="11" TextColor="#6B7280"/>
+                                            <Label Grid.Column="1" Text="{Binding CategoryName, StringFormat='Kategória: {0}'}" FontSize="11" TextColor="#6B7280"/>
+                                        </Grid>
+
+                                        <Grid Grid.Row="3" ColumnDefinitions="*,Auto">
+                                            <Label Text="{Binding CreatedAt, StringFormat='Létrehozva: {0:yyyy.MM.dd HH:mm}'}" FontSize="10" TextColor="#94A3B8" VerticalOptions="Center"/>
+                                            <Button Grid.Column="1"
+                                                    Text="Elfogadás ▸"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type views:AdminTicketsPage}}, Path=BindingContext.SelectTicketCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                    BackgroundColor="#4F46E5"
+                                                    TextColor="White"
+                                                    FontSize="11"
+                                                    FontAttributes="Bold"
+                                                    HeightRequest="32"
+                                                    Padding="12,0"
+                                                    CornerRadius="6"/>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <!-- Elfogadási oldalpanel -->
+                    <Border Grid.Column="1"
+                            IsVisible="{Binding IsAcceptPanelVisible}"
+                            BackgroundColor="White"
+                            Stroke="#C7D2FE"
+                            StrokeShape="RoundRectangle 12"
+                            Padding="16"
+                            WidthRequest="320"
+                            VerticalOptions="Start">
+                        <VerticalStackLayout Spacing="12">
+                            <Label Text="Ticket elfogadása" FontSize="15" FontAttributes="Bold" TextColor="#1E293B"/>
+                            <Label Text="{Binding SelectedTicket.TicketNumber}" FontSize="12" TextColor="#4338CA" FontAttributes="Bold"/>
+                            <Label Text="{Binding SelectedTicket.Title}" FontSize="13" TextColor="#334155" LineBreakMode="WordWrap"/>
+
+                            <Label Text="Csoport*" FontSize="12" FontAttributes="Bold" TextColor="#475569"/>
+                            <Border BackgroundColor="#F8FAFC" Stroke="#E2E8F0" StrokeShape="RoundRectangle 6" Padding="6,2">
+                                <Picker ItemsSource="{Binding Groups}" SelectedItem="{Binding SelectedGroup}" ItemDisplayBinding="{Binding Name}" FontSize="12" TextColor="#0F172A"/>
+                            </Border>
+
+                            <Label Text="Kategória*" FontSize="12" FontAttributes="Bold" TextColor="#475569"/>
+                            <Border BackgroundColor="#F8FAFC" Stroke="#E2E8F0" StrokeShape="RoundRectangle 6" Padding="6,2">
+                                <Picker ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}" ItemDisplayBinding="{Binding Name}" FontSize="12" TextColor="#0F172A"/>
+                            </Border>
+
+                            <Label Text="Prioritás*" FontSize="12" FontAttributes="Bold" TextColor="#475569"/>
+                            <Border BackgroundColor="#F8FAFC" Stroke="#E2E8F0" StrokeShape="RoundRectangle 6" Padding="6,2">
+                                <Picker ItemsSource="{Binding Priorities}" SelectedItem="{Binding SelectedPriority}" ItemDisplayBinding="{Binding Name}" FontSize="12" TextColor="#0F172A"/>
+                            </Border>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="8" Margin="0,8,0,0">
+                                <Button Grid.Column="0" Text="Mégsem" Command="{Binding CancelAcceptCommand}" BackgroundColor="#F1F5F9" TextColor="#475569" FontSize="12" HeightRequest="38" CornerRadius="6"/>
+                                <Button Grid.Column="1" Text="✓ Elfogad" Command="{Binding AcceptTicketCommand}" BackgroundColor="#16A34A" TextColor="White" FontSize="12" FontAttributes="Bold" HeightRequest="38" CornerRadius="6"/>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+            </Grid>
+
+            <!-- ============================================== -->
+            <!-- TAB 2: FELHASZNÁLÓK (USERS)                    -->
+            <!-- ============================================== -->
+            <Grid IsVisible="{Binding IsUsersTab}"
+                  RowDefinitions="Auto,*"
+                  RowSpacing="10">
+
+                <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="12">
+                    <Label Text="Felhasználók kezelése és jóváhagyása" FontSize="14" FontAttributes="Bold" TextColor="#334155" VerticalOptions="Center"/>
+                    <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
+                        <Label Text="Csak jóváhagyásra várók:" FontSize="12" TextColor="#475569" VerticalOptions="Center"/>
+                        <Switch IsToggled="{Binding ShowPendingUsersOnly}" OnColor="#4F46E5"/>
+                    </HorizontalStackLayout>
+                    <Button Grid.Column="2"
+                            Text="+ Új felhasználó"
+                            Command="{Binding OpenCreateUserCommand}"
+                            BackgroundColor="#2563EB"
+                            TextColor="White"
+                            FontSize="12"
+                            FontAttributes="Bold"
+                            HeightRequest="36"
+                            Padding="14,0"
+                            CornerRadius="6"/>
+                </Grid>
+
+                <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="14">
+                    <CollectionView Grid.Column="0" ItemsSource="{Binding Users}" SelectionMode="None">
+                        <CollectionView.EmptyView>
+                            <Label Text="Nincsenek megjeleníthető felhasználók." FontSize="13" TextColor="Gray" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </CollectionView.EmptyView>
+
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border BackgroundColor="White" Stroke="#E1E5EC" StrokeShape="RoundRectangle 10" Padding="14" Margin="0,0,0,10">
+                                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" RowSpacing="6">
+                                        <VerticalStackLayout Grid.Column="0" Grid.Row="0" Spacing="2">
+                                            <Label Text="{Binding Name}" FontSize="14" FontAttributes="Bold" TextColor="#1E293B"/>
+                                            <Label Text="{Binding Email}" FontSize="12" TextColor="#64748B"/>
+                                        </VerticalStackLayout>
+
+                                        <HorizontalStackLayout Grid.Column="0" Grid.Row="1" Spacing="6">
+                                            <Border BackgroundColor="#EEF2FF" Stroke="Transparent" StrokeShape="RoundRectangle 6" Padding="6,2">
+                                                <Label Text="{Binding RoleDisplay, StringFormat='Típus: {0}'}" FontSize="11" TextColor="#4338CA" FontAttributes="Bold"/>
+                                            </Border>
+
+                                            <Border BackgroundColor="#F1F5F9" Stroke="Transparent" StrokeShape="RoundRectangle 6" Padding="6,2">
+                                                <Label Text="{Binding RegistrationStatus, StringFormat='Státusz: {0}'}" FontSize="11" TextColor="#334155"/>
+                                            </Border>
+
+                                            <Border BackgroundColor="#FEF3C7" IsVisible="{Binding HasGroup}" Stroke="Transparent" StrokeShape="RoundRectangle 6" Padding="6,2">
+                                                <Label Text="{Binding GroupName, StringFormat='Csoport: {0}'}" FontSize="11" TextColor="#B45309"/>
+                                            </Border>
+
+                                            <Border BackgroundColor="#F8FAFC" Stroke="Transparent" StrokeShape="RoundRectangle 6" Padding="6,2">
+                                                <Label Text="{Binding ActiveStatusDisplay}" FontSize="11" TextColor="#64748B"/>
+                                            </Border>
+                                        </HorizontalStackLayout>
+
+                                        <HorizontalStackLayout Grid.Column="1" Grid.RowSpan="2" Spacing="6" VerticalOptions="Center">
+                                            <Button Text="✓ Jóváhagy"
+                                                    IsVisible="{Binding CanApprove}"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type views:AdminTicketsPage}}, Path=BindingContext.ApproveUserCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                    BackgroundColor="#DCFCE7"
+                                                    TextColor="#15803D"
+                                                    FontSize="11"
+                                                    FontAttributes="Bold"
+                                                    HeightRequest="32"
+                                                    Padding="10,0"
+                                                    CornerRadius="6"/>
+
+                                            <Button Text="Csoport"
+                                                    IsVisible="{Binding CanAssignGroup}"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type views:AdminTicketsPage}}, Path=BindingContext.OpenAssignGroupCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                    BackgroundColor="#EEF2FF"
+                                                    TextColor="#4338CA"
+                                                    FontSize="11"
+                                                    FontAttributes="Bold"
+                                                    HeightRequest="32"
+                                                    Padding="10,0"
+                                                    CornerRadius="6"/>
+
+                                            <Button Text="✕ Inaktiválás"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type views:AdminTicketsPage}}, Path=BindingContext.DeactivateUserCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                    BackgroundColor="#FEE2E2"
+                                                    TextColor="#B91C1C"
+                                                    FontSize="11"
+                                                    FontAttributes="Bold"
+                                                    HeightRequest="32"
+                                                    Padding="10,0"
+                                                    CornerRadius="6"/>
+                                        </HorizontalStackLayout>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <!-- Oldalpanelek felhasználóknak -->
+                    <VerticalStackLayout Grid.Column="1" Spacing="12" WidthRequest="320" VerticalOptions="Start">
+                        <!-- 1. Új felhasználó felvitele -->
+                        <Border IsVisible="{Binding IsCreateUserPanelVisible}"
+                                BackgroundColor="White"
+                                Stroke="#C7D2FE"
+                                StrokeShape="RoundRectangle 12"
+                                Padding="16">
+                            <VerticalStackLayout Spacing="10">
+                                <Label Text="Új felhasználó felvitele" FontSize="14" FontAttributes="Bold" TextColor="#1E293B"/>
+
+                                <Label Text="Név*" FontSize="12" FontAttributes="Bold" TextColor="#475569"/>
+                                <Border BackgroundColor="#F8FAFC" Stroke="#E2E8F0" StrokeShape="RoundRectangle 6" Padding="8,4">
+                                    <Entry Text="{Binding NewUserName}" Placeholder="Pl. Kovács Béla" FontSize="12" TextColor="#0F172A"/>
+                                </Border>
+
+                                <Label Text="Email cím*" FontSize="12" FontAttributes="Bold" TextColor="#475569"/>
+                                <Border BackgroundColor="#F8FAFC" Stroke="#E2E8F0" StrokeShape="RoundRectangle 6" Padding="8,4">
+                                    <Entry Text="{Binding NewUserEmail}" Placeholder="bela@ceg.hu" Keyboard="Email" FontSize="12" TextColor="#0F172A"/>
+                                </Border>
+
+                                <Label Text="Jelszó*" FontSize="12" FontAttributes="Bold" TextColor="#475569"/>
+                                <Border BackgroundColor="#F8FAFC" Stroke="#E2E8F0" StrokeShape="RoundRectangle 6" Padding="8,4">
+                                    <Entry Text="{Binding NewUserPassword}" IsPassword="True" Placeholder="Minimum 4 karakter" FontSize="12" TextColor="#0F172A"/>
+                                </Border>
+
+                                <Label Text="Felhasználó típusa*" FontSize="12" FontAttributes="Bold" TextColor="#475569"/>
+                                <Border BackgroundColor="#F8FAFC" Stroke="#E2E8F0" StrokeShape="RoundRectangle 6" Padding="6,2">
+                                    <Picker ItemsSource="{Binding RoleTypeOptions}" SelectedItem="{Binding NewUserRoleType}" FontSize="12" TextColor="#0F172A"/>
+                                </Border>
+
+                                <VerticalStackLayout IsVisible="{Binding IsGroupSelectionVisible}" Spacing="4">
+                                    <Label Text="Karbantartói csoport*" FontSize="12" FontAttributes="Bold" TextColor="#475569"/>
+                                    <Border BackgroundColor="#F8FAFC" Stroke="#E2E8F0" StrokeShape="RoundRectangle 6" Padding="6,2">
+                                        <Picker ItemsSource="{Binding AvailableGroupsForUser}" SelectedItem="{Binding NewUserSelectedGroup}" ItemDisplayBinding="{Binding Name}" FontSize="12" TextColor="#0F172A"/>
+                                    </Border>
+                                    <Label Text="Csoportot csak karbantartóhoz rendelünk hozzá." FontSize="10" TextColor="#64748B"/>
+                                </VerticalStackLayout>
+
+                                <Grid ColumnDefinitions="*,*" ColumnSpacing="8" Margin="0,8,0,0">
+                                    <Button Grid.Column="0" Text="Mégsem" Command="{Binding CancelCreateUserCommand}" BackgroundColor="#F1F5F9" TextColor="#475569" FontSize="12" HeightRequest="38" CornerRadius="6"/>
+                                    <Button Grid.Column="1" Text="Létrehozás" Command="{Binding SaveCreateUserCommand}" BackgroundColor="#16A34A" TextColor="White" FontSize="12" FontAttributes="Bold" HeightRequest="38" CornerRadius="6"/>
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- 2. Csoport hozzárendelő oldalpanel -->
+                        <Border IsVisible="{Binding IsAssignGroupPanelVisible}"
+                                BackgroundColor="White"
+                                Stroke="#C7D2FE"
+                                StrokeShape="RoundRectangle 12"
+                                Padding="16">
+                            <VerticalStackLayout Spacing="12">
+                                <Label Text="Csoport hozzárendelése" FontSize="14" FontAttributes="Bold" TextColor="#1E293B"/>
+                                <Label Text="{Binding SelectedUserForGroup.Name}" FontSize="13" FontAttributes="Bold" TextColor="#4338CA"/>
+                                <Label Text="{Binding SelectedUserForGroup.Email}" FontSize="11" TextColor="#64748B"/>
+
+                                <Label Text="Válassz csoportot:" FontSize="12" FontAttributes="Bold" TextColor="#475569"/>
+                                <Border BackgroundColor="#F8FAFC" Stroke="#E2E8F0" StrokeShape="RoundRectangle 6" Padding="6,2">
+                                    <Picker ItemsSource="{Binding AvailableGroupsForUser}" SelectedItem="{Binding SelectedGroupForUser}" ItemDisplayBinding="{Binding Name}" FontSize="12" TextColor="#0F172A"/>
+                                </Border>
+
+                                <Button Text="Mentés" Command="{Binding SaveAssignGroupCommand}" BackgroundColor="#4F46E5" TextColor="White" FontSize="12" FontAttributes="Bold" HeightRequest="36" CornerRadius="6"/>
+                                <Button Text="Eltávolítás a csoportból" Command="{Binding RemoveUserGroupCommand}" BackgroundColor="#FEE2E2" TextColor="#B91C1C" FontSize="11" HeightRequest="34" CornerRadius="6"/>
+                                <Button Text="Mégsem" Command="{Binding CancelAssignGroupCommand}" BackgroundColor="#F1F5F9" TextColor="#475569" FontSize="12" HeightRequest="34" CornerRadius="6"/>
+                            </VerticalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
+                </Grid>
+            </Grid>
+
+            <!-- ============================================== -->
+            <!-- TAB 3: CSOPORTOK (GROUPS)                      -->
+            <!-- ============================================== -->
+            <Grid IsVisible="{Binding IsGroupsTab}"
+                  RowDefinitions="Auto,*"
+                  RowSpacing="10">
+
+                <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+                    <Label Text="Karbantartói csoportok kezelése" FontSize="14" FontAttributes="Bold" TextColor="#334155" VerticalOptions="Center"/>
+                    <Button Grid.Column="1" Text="+ Új csoport" Command="{Binding OpenCreateGroupCommand}" BackgroundColor="#2563EB" TextColor="White" FontSize="12" FontAttributes="Bold" HeightRequest="36" Padding="14,0" CornerRadius="6"/>
+                </Grid>
+
+                <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="14">
+                    <CollectionView Grid.Column="0" ItemsSource="{Binding GroupsList}" SelectionMode="None">
+                        <CollectionView.EmptyView>
+                            <Label Text="Nincsenek aktív csoportok." FontSize="13" TextColor="Gray" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </CollectionView.EmptyView>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border BackgroundColor="White" Stroke="#E1E5EC" StrokeShape="RoundRectangle 10" Padding="14" Margin="0,0,0,10">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                            <Label Text="{Binding Name}" FontSize="14" FontAttributes="Bold" TextColor="#1E293B"/>
+                                            <Label Text="{Binding Description}" FontSize="12" TextColor="#64748B"/>
+                                            <Label Text="{Binding MemberCount, StringFormat='Tagok száma: {0} fő'}" FontSize="11" TextColor="#4338CA" FontAttributes="Bold"/>
+                                        </VerticalStackLayout>
+
+                                        <HorizontalStackLayout Grid.Column="1" Spacing="6" VerticalOptions="Center">
+                                            <Button Text="Módosítás" Command="{Binding Source={RelativeSource AncestorType={x:Type views:AdminTicketsPage}}, Path=BindingContext.OpenEditGroupCommand}" CommandParameter="{Binding .}" BackgroundColor="#EEF2FF" TextColor="#4338CA" FontSize="11" FontAttributes="Bold" HeightRequest="32" Padding="10,0" CornerRadius="6"/>
+                                            <Button Text="✕ Inaktiválás" Command="{Binding Source={RelativeSource AncestorType={x:Type views:AdminTicketsPage}}, Path=BindingContext.DeactivateGroupCommand}" CommandParameter="{Binding .}" BackgroundColor="#FEE2E2" TextColor="#B91C1C" FontSize="11" FontAttributes="Bold" HeightRequest="32" Padding="10,0" CornerRadius="6"/>
+                                        </HorizontalStackLayout>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <!-- Létrehozás / Módosítás panel -->
+                    <Border Grid.Column="1" IsVisible="{Binding IsGroupPanelVisible}" BackgroundColor="White" Stroke="#C7D2FE" StrokeShape="RoundRectangle 12" Padding="16" WidthRequest="300" VerticalOptions="Start">
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="{Binding GroupPanelTitle}" FontSize="14" FontAttributes="Bold" TextColor="#1E293B"/>
+                            <Label Text="Csoport neve*" FontSize="12" FontAttributes="Bold" TextColor="#475569"/>
+                            <Entry Text="{Binding GroupNameInput}" Placeholder="pl. IT Karbantartók" FontSize="12"/>
+                            <Label Text="Leírás" FontSize="12" FontAttributes="Bold" TextColor="#475569"/>
+                            <Entry Text="{Binding GroupDescriptionInput}" Placeholder="Rövid leírás..." FontSize="12"/>
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="8" Margin="0,8,0,0">
+                                <Button Grid.Column="0" Text="Mégsem" Command="{Binding CancelGroupEditCommand}" BackgroundColor="#F1F5F9" TextColor="#475569" FontSize="12" HeightRequest="36" CornerRadius="6"/>
+                                <Button Grid.Column="1" Text="Mentés" Command="{Binding SaveGroupCommand}" BackgroundColor="#4F46E5" TextColor="White" FontSize="12" FontAttributes="Bold" HeightRequest="36" CornerRadius="6"/>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+            </Grid>
+
+            <!-- ============================================== -->
+            <!-- TAB 4: KATEGÓRIÁK (CATEGORIES)                 -->
+            <!-- ============================================== -->
+            <Grid IsVisible="{Binding IsCategoriesTab}"
+                  RowDefinitions="Auto,*"
+                  RowSpacing="10">
+
+                <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+                    <Label Text="Hibakategóriák kezelése" FontSize="14" FontAttributes="Bold" TextColor="#334155" VerticalOptions="Center"/>
+                    <Button Grid.Column="1" Text="+ Új kategória" Command="{Binding OpenCreateCategoryCommand}" BackgroundColor="#2563EB" TextColor="White" FontSize="12" FontAttributes="Bold" HeightRequest="36" Padding="14,0" CornerRadius="6"/>
+                </Grid>
+
+                <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="14">
+                    <CollectionView Grid.Column="0" ItemsSource="{Binding CategoriesList}" SelectionMode="None">
+                        <CollectionView.EmptyView>
+                            <Label Text="Nincsenek aktív kategóriák." FontSize="13" TextColor="Gray" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </CollectionView.EmptyView>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border BackgroundColor="White" Stroke="#E1E5EC" StrokeShape="RoundRectangle 10" Padding="14" Margin="0,0,0,10">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                            <Label Text="{Binding Name}" FontSize="14" FontAttributes="Bold" TextColor="#1E293B"/>
+                                            <Label Text="{Binding Description}" FontSize="12" TextColor="#64748B"/>
+                                        </VerticalStackLayout>
+
+                                        <Button Grid.Column="1" Text="✕ Inaktiválás" Command="{Binding Source={RelativeSource AncestorType={x:Type views:AdminTicketsPage}}, Path=BindingContext.DeactivateCategoryCommand}" CommandParameter="{Binding .}" BackgroundColor="#FEE2E2" TextColor="#B91C1C" FontSize="11" FontAttributes="Bold" HeightRequest="32" Padding="10,0" CornerRadius="6" VerticalOptions="Center"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <!-- Létrehozás panel -->
+                    <Border Grid.Column="1" IsVisible="{Binding IsCategoryPanelVisible}" BackgroundColor="White" Stroke="#C7D2FE" StrokeShape="RoundRectangle 12" Padding="16" WidthRequest="300" VerticalOptions="Start">
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="Új kategória létrehozása" FontSize="14" FontAttributes="Bold" TextColor="#1E293B"/>
+                            <Label Text="Kategória neve*" FontSize="12" FontAttributes="Bold" TextColor="#475569"/>
+                            <Entry Text="{Binding CategoryNameInput}" Placeholder="pl. Hardver" FontSize="12"/>
+                            <Label Text="Leírás" FontSize="12" FontAttributes="Bold" TextColor="#475569"/>
+                            <Entry Text="{Binding CategoryDescriptionInput}" Placeholder="Rövid leírás..." FontSize="12"/>
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="8" Margin="0,8,0,0">
+                                <Button Grid.Column="0" Text="Mégsem" Command="{Binding CancelCategoryEditCommand}" BackgroundColor="#F1F5F9" TextColor="#475569" FontSize="12" HeightRequest="36" CornerRadius="6"/>
+                                <Button Grid.Column="1" Text="Mentés" Command="{Binding SaveCategoryCommand}" BackgroundColor="#4F46E5" TextColor="White" FontSize="12" FontAttributes="Bold" HeightRequest="36" CornerRadius="6"/>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+            </Grid>
+
+            <!-- ============================================== -->
+            <!-- TAB 5: HELYSZÍNEK (LOCATIONS)                  -->
+            <!-- ============================================== -->
+            <Grid IsVisible="{Binding IsLocationsTab}"
+                  RowDefinitions="Auto,*"
+                  RowSpacing="10">
+
+                <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+                    <Label Text="Helyszínek kezelése" FontSize="14" FontAttributes="Bold" TextColor="#334155" VerticalOptions="Center"/>
+                    <Button Grid.Column="1" Text="+ Új helyszín" Command="{Binding OpenCreateLocationCommand}" BackgroundColor="#2563EB" TextColor="White" FontSize="12" FontAttributes="Bold" HeightRequest="36" Padding="14,0" CornerRadius="6"/>
+                </Grid>
+
+                <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="14">
+                    <CollectionView Grid.Column="0" ItemsSource="{Binding LocationsList}" SelectionMode="None">
+                        <CollectionView.EmptyView>
+                            <Label Text="Nincsenek aktív helyszínek." FontSize="13" TextColor="Gray" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </CollectionView.EmptyView>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border BackgroundColor="White" Stroke="#E1E5EC" StrokeShape="RoundRectangle 10" Padding="14" Margin="0,0,0,10">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                            <Label Text="{Binding Name}" FontSize="14" FontAttributes="Bold" TextColor="#1E293B"/>
+                                            <Label Text="{Binding Description}" FontSize="12" TextColor="#64748B"/>
+                                        </VerticalStackLayout>
+
+                                        <HorizontalStackLayout Grid.Column="1" Spacing="6" VerticalOptions="Center">
+                                            <Button Text="Módosítás" Command="{Binding Source={RelativeSource AncestorType={x:Type views:AdminTicketsPage}}, Path=BindingContext.OpenEditLocationCommand}" CommandParameter="{Binding .}" BackgroundColor="#EEF2FF" TextColor="#4338CA" FontSize="11" FontAttributes="Bold" HeightRequest="32" Padding="10,0" CornerRadius="6"/>
+                                            <Button Text="✕ Inaktiválás" Command="{Binding Source={RelativeSource AncestorType={x:Type views:AdminTicketsPage}}, Path=BindingContext.DeactivateLocationCommand}" CommandParameter="{Binding .}" BackgroundColor="#FEE2E2" TextColor="#B91C1C" FontSize="11" FontAttributes="Bold" HeightRequest="32" Padding="10,0" CornerRadius="6"/>
+                                        </HorizontalStackLayout>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <!-- Létrehozás / Módosítás panel -->
+                    <Border Grid.Column="1" IsVisible="{Binding IsLocationPanelVisible}" BackgroundColor="White" Stroke="#C7D2FE" StrokeShape="RoundRectangle 12" Padding="16" WidthRequest="300" VerticalOptions="Start">
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="{Binding LocationPanelTitle}" FontSize="14" FontAttributes="Bold" TextColor="#1E293B"/>
+                            <Label Text="Helyszín megnevezése*" FontSize="12" FontAttributes="Bold" TextColor="#475569"/>
+                            <Entry Text="{Binding LocationNameInput}" Placeholder="pl. Főépület 1. emelet 102." FontSize="12"/>
+                            <Label Text="Leírás" FontSize="12" FontAttributes="Bold" TextColor="#475569"/>
+                            <Entry Text="{Binding LocationDescriptionInput}" Placeholder="Részletek..." FontSize="12"/>
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="8" Margin="0,8,0,0">
+                                <Button Grid.Column="0" Text="Mégsem" Command="{Binding CancelLocationEditCommand}" BackgroundColor="#F1F5F9" TextColor="#475569" FontSize="12" HeightRequest="36" CornerRadius="6"/>
+                                <Button Grid.Column="1" Text="Mentés" Command="{Binding SaveLocationCommand}" BackgroundColor="#4F46E5" TextColor="White" FontSize="12" FontAttributes="Bold" HeightRequest="36" CornerRadius="6"/>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+            </Grid>
+
+            <!-- ============================================== -->
+            <!-- TAB 6: PRIORITÁSOK (PRIORITIES)                -->
+            <!-- ============================================== -->
+            <Grid IsVisible="{Binding IsPrioritiesTab}"
+                  RowDefinitions="Auto,*"
+                  RowSpacing="10">
+
+                <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+                    <Label Text="Prioritási szintek és határidők" FontSize="14" FontAttributes="Bold" TextColor="#334155" VerticalOptions="Center"/>
+                    <Button Grid.Column="1" Text="+ Új prioritás" Command="{Binding OpenCreatePriorityCommand}" BackgroundColor="#2563EB" TextColor="White" FontSize="12" FontAttributes="Bold" HeightRequest="36" Padding="14,0" CornerRadius="6"/>
+                </Grid>
+
+                <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="14">
+                    <CollectionView Grid.Column="0" ItemsSource="{Binding PrioritiesList}" SelectionMode="None">
+                        <CollectionView.EmptyView>
+                            <Label Text="Nincsenek aktív prioritások." FontSize="13" TextColor="Gray" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </CollectionView.EmptyView>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border BackgroundColor="White" Stroke="#E1E5EC" StrokeShape="RoundRectangle 10" Padding="14" Margin="0,0,0,10">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                            <HorizontalStackLayout Spacing="8">
+                                                <Label Text="{Binding Name}" FontSize="14" FontAttributes="Bold" TextColor="#1E293B"/>
+                                                <Border IsVisible="{Binding IsDefault}" BackgroundColor="#DCFCE7" Stroke="Transparent" StrokeShape="RoundRectangle 6" Padding="6,2">
+                                                    <Label Text="Alapértelmezett" FontSize="10" FontAttributes="Bold" TextColor="#15803D"/>
+                                                </Border>
+                                            </HorizontalStackLayout>
+                                            <Label Text="{Binding DefaultDueDays, StringFormat='Alapértelmezett határidő: {0} munkanap'}" FontSize="12" TextColor="#64748B"/>
+                                        </VerticalStackLayout>
+
+                                        <HorizontalStackLayout Grid.Column="1" Spacing="6" VerticalOptions="Center">
+                                            <Button Text="Módosítás" Command="{Binding Source={RelativeSource AncestorType={x:Type views:AdminTicketsPage}}, Path=BindingContext.OpenEditPriorityCommand}" CommandParameter="{Binding .}" BackgroundColor="#EEF2FF" TextColor="#4338CA" FontSize="11" FontAttributes="Bold" HeightRequest="32" Padding="10,0" CornerRadius="6"/>
+                                            <Button Text="✕ Inaktiválás" Command="{Binding Source={RelativeSource AncestorType={x:Type views:AdminTicketsPage}}, Path=BindingContext.DeactivatePriorityCommand}" CommandParameter="{Binding .}" BackgroundColor="#FEE2E2" TextColor="#B91C1C" FontSize="11" FontAttributes="Bold" HeightRequest="32" Padding="10,0" CornerRadius="6"/>
+                                        </HorizontalStackLayout>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <!-- Létrehozás / Módosítás panel -->
+                    <Border Grid.Column="1" IsVisible="{Binding IsPriorityPanelVisible}" BackgroundColor="White" Stroke="#C7D2FE" StrokeShape="RoundRectangle 12" Padding="16" WidthRequest="300" VerticalOptions="Start">
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="{Binding PriorityPanelTitle}" FontSize="14" FontAttributes="Bold" TextColor="#1E293B"/>
+                            <Label Text="Prioritás neve*" FontSize="12" FontAttributes="Bold" TextColor="#475569"/>
+                            <Entry Text="{Binding PriorityNameInput}" Placeholder="pl. Sürgős" FontSize="12"/>
+                            <Label Text="Határidő munkanapokban*" FontSize="12" FontAttributes="Bold" TextColor="#475569"/>
+                            <Entry Text="{Binding PriorityDueDaysInput}" Keyboard="Numeric" FontSize="12"/>
+
+                            <HorizontalStackLayout Spacing="8" Margin="0,4">
+                                <Switch IsToggled="{Binding PriorityIsDefaultInput}" OnColor="#4F46E5"/>
+                                <Label Text="Legyen ez az alapértelmezett" FontSize="12" TextColor="#334155" VerticalOptions="Center"/>
+                            </HorizontalStackLayout>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="8" Margin="0,8,0,0">
+                                <Button Grid.Column="0" Text="Mégsem" Command="{Binding CancelPriorityEditCommand}" BackgroundColor="#F1F5F9" TextColor="#475569" FontSize="12" HeightRequest="36" CornerRadius="6"/>
+                                <Button Grid.Column="1" Text="Mentés" Command="{Binding SavePriorityCommand}" BackgroundColor="#4F46E5" TextColor="White" FontSize="12" FontAttributes="Bold" HeightRequest="36" CornerRadius="6"/>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+            </Grid>
+
+        </Grid>
+    </Grid>
+</ContentPage>

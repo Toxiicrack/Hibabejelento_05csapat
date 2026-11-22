@@ -1,4 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Hibabejelento.Api.Data;
 using Hibabejelento.Api.DTOs;
@@ -24,15 +24,21 @@ public sealed class AdminCategoriesController : ControllerBase
 
     [HttpGet]
     public async Task<IActionResult> GetCategories(
-        CancellationToken cancellationToken)
+        [FromQuery] bool includeInactive = false,
+        CancellationToken cancellationToken = default)
     {
         if (!await CurrentUserIsAdminAsync(cancellationToken))
         {
             return Forbid();
         }
 
-        var categories = await _db.Categories
-            .AsNoTracking()
+        var query = _db.Categories.AsNoTracking();
+        if (!includeInactive)
+        {
+            query = query.Where(category => category.IsActive);
+        }
+
+        var categories = await query
             .OrderBy(category => category.Name)
             .Select(category => new CategoryResponse(
                 category.Id,

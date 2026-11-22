@@ -1,4 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Hibabejelento.Api.Data;
 using Hibabejelento.Api.DTOs;
@@ -24,15 +24,21 @@ public sealed class AdminLocationsController : ControllerBase
 
     [HttpGet]
     public async Task<IActionResult> GetLocations(
-        CancellationToken cancellationToken)
+        [FromQuery] bool includeInactive = false,
+        CancellationToken cancellationToken = default)
     {
         if (!await CurrentUserIsAdminAsync(cancellationToken))
         {
             return Forbid();
         }
 
-        var locations = await _db.Locations
-            .AsNoTracking()
+        var query = _db.Locations.AsNoTracking();
+        if (!includeInactive)
+        {
+            query = query.Where(location => location.IsActive);
+        }
+
+        var locations = await query
             .OrderBy(location => location.Name)
             .Select(location => new LocationResponse(
                 location.Id,

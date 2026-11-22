@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -36,5 +36,23 @@ namespace Hibabejelento.Maui.Models
         public string GroupName { get; set; }
         public bool IsActive { get; set; }
         public string RegistrationStatus { get; set; }
+
+        public string RoleDisplay
+        {
+            get
+            {
+                if (IsAdmin) return "Admin";
+                if (GroupId.HasValue) return "Karbantartó";
+                return "Bejelentő";
+            }
+        }
+
+        public string ActiveStatusDisplay => IsActive ? "Aktív" : "Inaktív";
+
+        public bool CanApprove => !string.Equals(RegistrationStatus, "Approved", StringComparison.OrdinalIgnoreCase);
+
+        public bool CanAssignGroup => !IsAdmin && GroupId.HasValue;
+
+        public bool HasGroup => !string.IsNullOrWhiteSpace(GroupName);
     }
 }

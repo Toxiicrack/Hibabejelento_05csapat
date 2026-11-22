@@ -1,4 +1,5 @@
-﻿using Hibabejelento.Api.Data;
+using Hibabejelento.Api.Data;
+using Hibabejelento.Api.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -25,12 +26,12 @@ public sealed class CategoriesController : ControllerBase
             .AsNoTracking()
             .Where(category => category.IsActive)
             .OrderBy(category => category.Name)
-            .Select(category => new
-            {
+            .Select(category => new CategoryResponse(
                 category.Id,
                 category.Name,
-                category.Description
-            })
+                category.Description,
+                category.IsActive,
+                category.CreatedAt))
             .ToListAsync(cancellationToken);
 
         return Ok(categories);

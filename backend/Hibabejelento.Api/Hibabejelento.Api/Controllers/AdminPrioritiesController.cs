@@ -1,4 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Hibabejelento.Api.Data;
 using Hibabejelento.Api.DTOs;
@@ -24,15 +24,21 @@ public sealed class AdminPrioritiesController : ControllerBase
 
     [HttpGet]
     public async Task<IActionResult> GetPriorities(
-        CancellationToken cancellationToken)
+        [FromQuery] bool includeInactive = false,
+        CancellationToken cancellationToken = default)
     {
         if (!await CurrentUserIsAdminAsync(cancellationToken))
         {
             return Forbid();
         }
 
-        var priorities = await _db.Priorities
-            .AsNoTracking()
+        var query = _db.Priorities.AsNoTracking();
+        if (!includeInactive)
+        {
+            query = query.Where(priority => priority.IsActive);
+        }
+
+        var priorities = await query
             .OrderBy(priority => priority.DefaultDueDays)
             .Select(priority => new PriorityResponse(
                 priority.Id,

@@ -1,4 +1,4 @@
-﻿using Hibabejelento.Maui.Views;
+using Hibabejelento.Maui.Views;
 
 namespace Hibabejelento.Maui
 {
@@ -15,6 +15,7 @@ namespace Hibabejelento.Maui
             Routing.RegisterRoute(nameof(FilterPage), typeof(FilterPage));
             Routing.RegisterRoute(nameof(ProfilePage), typeof(ProfilePage));
             Routing.RegisterRoute(nameof(MainPage), typeof(MainPage));
+            Routing.RegisterRoute(nameof(AdminTicketsPage), typeof(AdminTicketsPage));
         }
     }
 }

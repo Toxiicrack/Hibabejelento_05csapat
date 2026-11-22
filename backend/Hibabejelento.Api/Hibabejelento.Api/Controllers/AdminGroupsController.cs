@@ -1,4 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Hibabejelento.Api.Data;
 using Hibabejelento.Api.DTOs;
@@ -24,15 +24,21 @@ public sealed class AdminGroupsController : ControllerBase
 
     [HttpGet]
     public async Task<IActionResult> GetGroups(
-        CancellationToken cancellationToken)
+        [FromQuery] bool includeInactive = false,
+        CancellationToken cancellationToken = default)
     {
         if (!await CurrentUserIsAdminAsync(cancellationToken))
         {
             return Forbid();
         }
 
-        var groups = await _db.Groups
-            .AsNoTracking()
+        var query = _db.Groups.AsNoTracking();
+        if (!includeInactive)
+        {
+            query = query.Where(group => group.IsActive);
+        }
+
+        var groups = await query
             .OrderBy(group => group.Name)
             .Select(group => new
             {

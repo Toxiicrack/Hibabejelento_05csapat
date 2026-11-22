@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using Hibabejelento.Api.Middleware.Enums;
 
 namespace Hibabejelento.Api.DTOs;
@@ -53,6 +53,26 @@ public sealed record LoginResponse(
 public sealed class AssignGroupRequest
 {
     // Null értékkel eltávolítható a felhasználó a csoportból.
+    public int? GroupId { get; init; }
+}
+
+public sealed class CreateUserRequest
+{
+    [Required]
+    [StringLength(100, MinimumLength = 2)]
+    public string Name { get; init; } = string.Empty;
+
+    [Required]
+    [EmailAddress]
+    [StringLength(150)]
+    public string Email { get; init; } = string.Empty;
+
+    [Required]
+    [StringLength(100, MinimumLength = 4)]
+    public string Password { get; init; } = string.Empty;
+
+    public bool IsAdmin { get; init; }
+
     public int? GroupId { get; init; }
 }
 

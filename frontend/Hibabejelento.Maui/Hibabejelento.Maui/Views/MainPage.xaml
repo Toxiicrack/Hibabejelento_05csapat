@@ -109,24 +109,21 @@
                     TextColor="#4338CA"
                     FontSize="12"
                     FontAttributes="Bold"
-                    Padding="12,0"
+                    CornerRadius="8"
+                    Padding="14,0"
                     HeightRequest="42"/>
 
-            <Grid x:Name="LoggedInGrid"
-                  Grid.Column="3"
-                  Padding="6,0"
-                  HeightRequest="42"
-                  IsVisible="False"
-                  ColumnDefinitions="Auto,Auto"
-                  ColumnSpacing="8">
-                <Label Text="{Binding UserName}" Grid.Column="0" FontSize="12" TextColor="Black" VerticalOptions="Center"/>
-                <Button Grid.Column="1"
-                        Text="Kijelentkezés"
-                        FontSize="12"
-                        HeightRequest="38"
-                        Padding="10,0"
-                        Command="{Binding LogoutCommand}"/>
-            </Grid>
+            <Button Grid.Column="3"
+                    Text="Admin panel"
+                    IsVisible="{Binding IsAdmin}"
+                    Command="{Binding OpenAdminPanelCommand}"
+                    BackgroundColor="#EEF2FF"
+                    TextColor="#4338CA"
+                    FontSize="12"
+                    FontAttributes="Bold"
+                    CornerRadius="8"
+                    Padding="14,0"
+                    HeightRequest="42"/>
 
             <Border Grid.Column="4"
                     BackgroundColor="#EEF2FF"
@@ -147,19 +144,48 @@
                 </Grid>
             </Border>
 
-            <Button Grid.Column="5"
-                    Text="Bejelentkezés"
-                    FontSize="12"
-                    Padding="10,0"
-                    HeightRequest="42"
-                    x:Name="LoginButton"
-                    Command="{Binding LoginCommand}"/>
+            <HorizontalStackLayout Grid.Column="5"
+                                   Spacing="8"
+                                   VerticalOptions="Center">
+                <Grid x:Name="LoggedInGrid"
+                      HeightRequest="42"
+                      IsVisible="False"
+                      ColumnDefinitions="Auto,Auto"
+                      ColumnSpacing="8"
+                      VerticalOptions="Center">
+                    <Label Text="{Binding UserName}"
+                           Grid.Column="0"
+                           FontSize="12"
+                           FontAttributes="Bold"
+                           TextColor="#334155"
+                           VerticalOptions="Center"/>
+                    <Button Grid.Column="1"
+                            Text="Kijelentkezés"
+                            FontSize="12"
+                            HeightRequest="38"
+                            Padding="12,0"
+                            CornerRadius="8"
+                            BackgroundColor="#F1F5F9"
+                            TextColor="#475569"
+                            Command="{Binding LogoutCommand}"/>
+                </Grid>
+
+                <Button Text="Bejelentkezés"
+                        FontSize="12"
+                        Padding="12,0"
+                        HeightRequest="42"
+                        CornerRadius="8"
+                        x:Name="LoginButton"
+                        Command="{Binding LoginCommand}"/>
+            </HorizontalStackLayout>
 
             <Button Grid.Column="6"
                     Text="+ Új"
                     FontSize="12"
-                    Padding="12,0"
+                    FontAttributes="Bold"
+                    Padding="16,0"
                     HeightRequest="42"
+                    CornerRadius="8"
                     BackgroundColor="#2563EB"
                     TextColor="White"
                     Command="{Binding CreateTicketCommand}"/>

@@ -25,13 +25,16 @@ public partial class MainViewModel : BaseViewModel
 
     [ObservableProperty] private bool isMaintenanceUser;
     [ObservableProperty] private bool isMaintenanceMode;
+    [ObservableProperty] private bool isAdmin;
     [ObservableProperty] private bool isNotificationsOpen;
     [ObservableProperty] private List<Notification> notifications = new();
 
     [ObservableProperty] private string searchText = string.Empty;
     [ObservableProperty] private string selectedStatus = "Összes";
 
-    public string ActiveViewLabel => IsMaintenanceMode ? "Karbantartói csoport hibajegyei" : "Saját hibajegyek";
+    public string ActiveViewLabel =>
+        IsAdmin ? "Összes hibajegy (Admin nézet)" :
+        IsMaintenanceMode ? "Karbantartói csoport hibajegyei" : "Saját hibajegyek";
     public string ToggleModeButtonText => IsMaintenanceMode ? "Saját jegyek" : "Karbantartói nézet";
 
     public List<string> StatusOptions { get; } = new()
@@ -47,6 +50,17 @@ public partial class MainViewModel : BaseViewModel
         OnPropertyChanged(nameof(ToggleModeButtonText));
     }
 
+    partial void OnIsAdminChanged(bool value)
+    {
+        OnPropertyChanged(nameof(ActiveViewLabel));
+    }
+
+    [RelayCommand]
+    private async Task OpenAdminPanelAsync()
+    {
+        await Shell.Current.GoToAsync(nameof(Views.AdminTicketsPage));
+    }
+
     [RelayCommand]
     private async Task LoadTicketsAsync()
     {
@@ -58,15 +72,24 @@ public partial class MainViewModel : BaseViewModel
         if (!IsMaintenanceUser)
             IsMaintenanceMode = false;
 
+        var isAdminStr = await SecureStorage.GetAsync("userIsAdmin");
+        bool.TryParse(isAdminStr, out var adminFlag);
+        IsAdmin = adminFlag;
+
         await RefreshNotificationsAsync();
 
         if (IsBusy) return;
         IsBusy = true;
         try
         {
-            var result = IsMaintenanceMode
-                ? await _api.GetMaintenanceTicketsAsync()
-                : await _api.GetMyTicketsAsync();
+            IEnumerable<Ticket> result;
+            if (IsAdmin)
+                result = await _api.GetAdminTicketsAsync(newOnly: false);
+            else if (IsMaintenanceMode)
+                result = await _api.GetMaintenanceTicketsAsync();
+            else
+                result = await _api.GetMyTicketsAsync();
+
             _allTickets = result.ToList();
             ApplyFilter();
         }

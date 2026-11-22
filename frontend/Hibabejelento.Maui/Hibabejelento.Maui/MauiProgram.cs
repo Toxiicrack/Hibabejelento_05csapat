@@ -1,4 +1,4 @@
-﻿using Hibabejelento.Maui.Services;
+using Hibabejelento.Maui.Services;
 using Hibabejelento.Maui.ViewModels;
 using Hibabejelento.Maui.Views;
 using Microsoft.Extensions.Logging;
@@ -30,7 +30,8 @@ public static class MauiProgram
         builder.Services.AddTransient<ProfileViewModel>();
         builder.Services.AddTransient<SearchViewModel>();
         builder.Services.AddTransient<TicketDetailsViewModel>();
-        builder.Services.AddTransient<TicketEditViewModel>();        
+        builder.Services.AddTransient<TicketEditViewModel>();
+        builder.Services.AddTransient<AdminTicketsViewModel>();
 
         // View
         builder.Services.AddTransient<MainPage>();
@@ -41,6 +42,7 @@ public static class MauiProgram
         builder.Services.AddTransient<SearchPage>();
         builder.Services.AddTransient<FilterPage>();
         builder.Services.AddTransient<ProfilePage>();
+        builder.Services.AddTransient<AdminTicketsPage>();
 
 #if DEBUG
         builder.Logging.AddDebug();
